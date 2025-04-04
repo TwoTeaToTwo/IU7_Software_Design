@@ -1,4 +1,5 @@
-import type { Id, Platform, Url, Password, UInt} from "../types.ts";
+import { pipeline } from "zod";
+import type { Id, Password, Platform, UInt, Url } from "../types.ts";
 
 export class Podcast {
 	constructor(
@@ -6,7 +7,8 @@ export class Podcast {
 		private _url: Url,
 		private _title: string,
 		private _platform: Platform,
-		private _duration_seconds: UInt
+		private _duration_seconds: UInt,
+		private _relevance: Date,
 	) {}
 	get id() {
 		return this._id;
@@ -20,10 +22,20 @@ export class Podcast {
 	get platform() {
 		return this._platform;
 	}
-	/** Return duration of podcast in seconds
+	/**
+	 * Return duration in seconds
 	 */
 	get duration_s() {
 		return this._duration_seconds;
+	}
+	/**
+	 * Return getTime() of the date podcast creation
+	 */
+	get relevance() {
+		return this._relevance.getTime();
+	}
+	public static compareByRelevance(p1: Podcast, p2: Podcast): number {
+		return p2.relevance - p1.relevance;
 	}
 }
 
@@ -52,7 +64,7 @@ export class User {
 	constructor(
 		private _id: Id,
 		private _login: string,
-		private _password: Password
+		private _password: Password,
 	) {}
 	get id() {
 		return this._id;

@@ -1,6 +1,6 @@
 import type { ICommand } from "./commands.ts";
 
-class Controller {
+export class Controller {
 	private static instance: Controller;
 
 	private constructor() {}

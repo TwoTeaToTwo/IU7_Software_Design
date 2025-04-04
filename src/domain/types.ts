@@ -10,3 +10,4 @@ export enum Platform {
 	RuTube,
 }
 export type Password = string;
+export type CompareFunction<Type> = (a: Type, b: Type) => number;
