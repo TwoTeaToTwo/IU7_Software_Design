@@ -1,10 +1,11 @@
-import type { CompareFunction, Id } from "../types.ts";
-import type { Podcast, Subscribe } from "./models.ts";
+import { Provider } from "../services/provider.ts";
 import {
-	GetAllUserSubscribes,
-	GetLastPodcasts,
-} from "../Controller/commands.ts";
-import { Controller } from "../Controller/controller.ts";
+	type SearchService,
+	SearchServiceSymbol,
+} from "../services/search_service.ts";
+import type { CompareFunction, Id } from "../types.ts";
+import type { Podcast } from "./podcast.ts";
+import type { Subscribe } from "./subscribe.ts";
 
 export class Feed {
 	public static readonly DEFAULT_FEED_SIZE = 10;
@@ -12,33 +13,27 @@ export class Feed {
 	public static readonly DEFAULT_SEARCH_DEPTH = 1;
 	public static readonly EXPAND_SEARCH_DEPTH_STEP = 1;
 	private max_size = Feed.DEFAULT_FEED_SIZE;
-	private current_size = 0;
 	private search_depth = Feed.DEFAULT_SEARCH_DEPTH;
 	private _contents = new Array<Podcast>();
 	private subscribes = new Array<Subscribe>();
-	private controller: Controller;
 
 	constructor(private _user_id: Id) {
-		this.controller = Controller.getInstance();
 	}
 	public update(): void {
 		this.updateSubscribes();
 		this.updateContent();
 	}
 	private updateSubscribes(): void {
-		const cmd = new GetAllUserSubscribes(this._user_id, this.subscribes);
-		this.controller.exec(cmd);
+		// TODO
 	}
 	private updateContent(): void {
 		for (const subscribe of this.subscribes) {
-			const podcasts = new Array<Podcast>();
-			const cmd = new GetLastPodcasts(
-				this._user_id,
-				subscribe,
-				podcasts,
+			const container = Provider.getContainer();
+			const search = container.get<SearchService>(SearchServiceSymbol);
+			const podcasts = search.getLastPodcastsByChannel(
+				subscribe.url,
 				this.search_depth,
 			);
-			this.controller.exec(cmd);
 			for (const content of podcasts) {
 				this.addContent(content);
 			}
