@@ -1,7 +1,7 @@
 import type { Subscribe } from "../models/subscribe.ts";
 import type { Id } from "../types.ts";
 
-interface ISubscribeRepository {
+export interface ISubscribeRepository {
 	delete(subscribe: Subscribe): void;
 	findById(subscribe_id: Id): Subscribe;
 	save(subscribe: Subscribe): void;

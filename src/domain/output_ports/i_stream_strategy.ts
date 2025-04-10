@@ -1,5 +1,7 @@
-type Stream = ReadableStream<Uint8Array<ArrayBuffer>>;
+import type { PodcastStream, StreamToolName } from "../types.ts";
 
 export interface IStreamStrategy {
-	streamPodcast(url: URL): Stream;
+	streamPodcast(url: URL): PodcastStream;
+	isSupportedURL(url: URL): boolean;
+	getStrategyName(): StreamToolName;
 }

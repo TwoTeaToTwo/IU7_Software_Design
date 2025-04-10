@@ -1,5 +1,5 @@
 import type { Podcast } from "../models/podcast.ts";
-import type { UInt } from "../types.ts";
+import type { SearchPlatform, UInt } from "../types.ts";
 
 export interface ISearchStrategy {
 	searchPodcast(query: string): Array<Podcast>;
@@ -13,4 +13,5 @@ export interface ISearchStrategy {
 	 */
 	isCorrectURL(url: URL): boolean;
 	getLastPodcastsByChannel(channel_url: URL, count: UInt): Array<Podcast>;
+	getPlatform(): SearchPlatform;
 }

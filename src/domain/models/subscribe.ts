@@ -1,11 +1,11 @@
-import type { Id, Platform } from "../types.ts";
+import type { Id, SearchPlatform } from "../types.ts";
 
 export class Subscribe {
 	constructor(
 		private _id: Id,
 		private _url: URL,
 		private _title: string,
-		private _platform: Platform,
+		private _platform: SearchPlatform,
 	) {}
 	get id() {
 		return this._id;

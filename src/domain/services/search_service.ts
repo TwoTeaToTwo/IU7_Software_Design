@@ -1,7 +1,8 @@
 import type { Podcast } from "../models/podcast.ts";
 import type { ISearchStrategy } from "../output_ports/i_search_strategy.ts";
-import type { Platform, UInt } from "../types.ts";
+import type { SearchPlatform, UInt } from "../types.ts";
 import { inject, injectable } from "inversify";
+import { INJECT_TYPES } from "../types.ts";
 
 export class UnknownPlatformError extends Error {
 	constructor() {
@@ -10,14 +11,11 @@ export class UnknownPlatformError extends Error {
 	}
 }
 
-export const SearchStrategiesSymbol = Symbol.for("SearchStrategies");
-export const SearchServiceSymbol = Symbol.for("SearchService");
-
 @injectable()
 export class SearchService {
 	constructor(
-		@inject(SearchStrategiesSymbol) private _searchers: Map<
-			Platform,
+		@inject(INJECT_TYPES.SearchStrategies) private _searchers: Map<
+			SearchPlatform,
 			ISearchStrategy
 		>,
 	) {}
@@ -28,8 +26,8 @@ export class SearchService {
 		}
 		return podcasts;
 	}
-	public getPlatformByURL(url: URL): Platform | null {
-		let platform: Platform | null = null;
+	public getPlatformByURL(url: URL): SearchPlatform | null {
+		let platform: SearchPlatform | null = null;
 		for (const searcher of this._searchers) {
 			if (searcher[1].isCorrectURL(url)) {
 				platform = searcher[0];

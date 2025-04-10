@@ -1,10 +1,10 @@
-import type { Platform, UInt } from "../types.ts";
+import type { SearchPlatform, UInt } from "../types.ts";
 
 export class Podcast {
 	constructor(
 		private _url: URL,
 		private _title: string,
-		private _platform: Platform,
+		private _platform: SearchPlatform,
 		private _duration_seconds: UInt,
 		private _relevance: Date,
 	) {}

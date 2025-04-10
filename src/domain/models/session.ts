@@ -4,6 +4,7 @@ import type { User } from "./user.ts";
 export class Session {
 	private _feed: Feed;
 	constructor(private _user: User) {
+		// TODO check user password and login
 		this._feed = new Feed(this._user.id);
 	}
 	get feed() {
