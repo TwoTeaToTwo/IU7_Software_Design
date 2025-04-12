@@ -22,9 +22,10 @@ export {
 export {
 	IncorrectPasswordError,
 	SessionsService,
-	UserFindError,
 } from "./services/sessions_service.ts";
 export { GetStreamerError, StreamService } from "./services/stream_service.ts";
+export { UserFindError } from "./services/errors.ts";
 
 // Types
 export * as types from "./types.ts";
+export type { Id } from "./types.ts";

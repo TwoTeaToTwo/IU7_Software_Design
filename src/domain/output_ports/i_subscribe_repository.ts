@@ -14,5 +14,8 @@ export interface ISubscribeRepository {
 	 * Return true on success
 	 */
 	save(subscribe: Subscribe): boolean;
-	findByUserId(user_id: Id): Array<Subscribe>;
+	/**
+	 * Return null if user doesn't exist
+	 */
+	findByUserId(user_id: Id): Array<Subscribe> | null;
 }

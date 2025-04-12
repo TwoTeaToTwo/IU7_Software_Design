@@ -3,13 +3,7 @@ import type { Password, User } from "../models/user.ts";
 import { type Id, INJECT_TYPES } from "../types.ts";
 import type { IUserRepository } from "../output_ports/i_user_repository.ts";
 import { inject, injectable } from "npm:inversify";
-
-export class UserFindError extends Error {
-	constructor() {
-		super("ERROR: Can't find user");
-		Object.setPrototypeOf(this, UserFindError.prototype);
-	}
-}
+import { UserFindError } from "./errors.ts";
 
 export class IncorrectPasswordError extends Error {
 	constructor() {
