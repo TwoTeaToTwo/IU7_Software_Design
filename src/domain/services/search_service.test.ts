@@ -1,5 +1,13 @@
 import { Container } from "inversify";
-import { GetPodcastError, Podcast, SearchService } from "../mod.ts";
+import {
+	createUInt,
+	GetPodcastError,
+	INJECT_TYPES,
+	NonExistentChannelError,
+	Podcast,
+	type SearchPlatform,
+	SearchService,
+} from "../mod.ts";
 import type { ISearchStrategy } from "../mod.ts";
 import {
 	anyNumber,
@@ -9,9 +17,7 @@ import {
 	mock,
 	when,
 } from "npm:ts-mockito";
-import { createUInt, INJECT_TYPES, type SearchPlatform } from "../types.ts";
 import { assertEquals, assertThrows } from "jsr:@std/assert";
-import { NonExistentChannelError } from "./search_service.ts";
 
 Deno.test("SearchService: searchPodcast: search existent podcast", () => {
 	const mock_searcher = mock<ISearchStrategy>();

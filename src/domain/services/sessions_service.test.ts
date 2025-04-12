@@ -1,14 +1,15 @@
 import { Container } from "inversify";
 import {
+	createUInt,
 	IncorrectPasswordError,
+	INJECT_TYPES,
+	Password,
 	SessionsService,
 	User,
 	UserFindError,
 } from "../mod.ts";
 import type { IUserRepository } from "../mod.ts";
-import { createUInt, INJECT_TYPES } from "../types.ts";
 import { assertEquals, assertThrows } from "jsr:@std/assert";
-import { Password } from "../models/user.ts";
 
 Deno.test("SessionsService: isSessionOpened: session isn't opened", () => {
 	const user_login = "user";

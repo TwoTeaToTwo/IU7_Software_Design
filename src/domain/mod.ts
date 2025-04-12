@@ -1,7 +1,7 @@
 // Models
 export { Feed } from "./models/feed.ts";
 export { Podcast } from "./models/podcast.ts";
-export { User } from "./models/user.ts";
+export { Password, User } from "./models/user.ts";
 export { Subscribe } from "./models/subscribe.ts";
 export { Session } from "./models/session.ts";
 
@@ -16,6 +16,7 @@ export { FeedService } from "./services/feed_service.ts";
 export {
 	GetPodcastError,
 	GetSearcherError,
+	NonExistentChannelError,
 	SearchService,
 	UnknownPlatformError,
 } from "./services/search_service.ts";
@@ -23,9 +24,14 @@ export {
 	IncorrectPasswordError,
 	SessionsService,
 } from "./services/sessions_service.ts";
-export { GetStreamerError, StreamService } from "./services/stream_service.ts";
+export {
+	GetStreamerError,
+	PodcastStreamError,
+	StreamService,
+	UnsupportableURLError,
+} from "./services/stream_service.ts";
 export { UserFindError } from "./services/errors.ts";
 
 // Types
-export * as types from "./types.ts";
-export type { Id } from "./types.ts";
+export type { Id, SearchPlatform, StreamToolName } from "./types.ts";
+export { createUInt, INJECT_TYPES } from "./types.ts";

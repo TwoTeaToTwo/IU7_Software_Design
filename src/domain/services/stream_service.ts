@@ -17,6 +17,13 @@ export class GetStreamerError extends Error {
 	}
 }
 
+export class PodcastStreamError extends Error {
+	constructor() {
+		super(`ERROR: can't stream`);
+		Object.setPrototypeOf(this, PodcastStreamError.prototype);
+	}
+}
+
 @injectable()
 export class StreamService {
 	constructor(
@@ -27,6 +34,8 @@ export class StreamService {
 	) {}
 	/**
 	 * throw GetStreamerError if can't find streamer for url
+	 *
+	 * throw PodcastStreamError if can't stream podcast
 	 */
 	public streamPodcast(url: URL): PodcastStream {
 		const tool_name = this.getToolNameByURL(url);
@@ -37,7 +46,12 @@ export class StreamService {
 			if (streamer === undefined) {
 				throw new GetStreamerError(tool_name);
 			} else {
-				return streamer.streamPodcast(url);
+				const stream = streamer.streamPodcast(url);
+				if (stream === null) {
+					throw new PodcastStreamError();
+				} else {
+					return stream;
+				}
 			}
 		}
 	}
