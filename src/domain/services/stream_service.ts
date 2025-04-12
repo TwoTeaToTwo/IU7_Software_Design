@@ -1,12 +1,19 @@
 import type { IStreamStrategy } from "../output_ports/i_stream_strategy.ts";
 import type { StreamToolName } from "../types.ts";
-import { inject, injectable } from "inversify";
+import { inject, injectable } from "npm:inversify";
 import { INJECT_TYPES, type PodcastStream } from "../types.ts";
 
 export class UnsupportableURLError extends Error {
 	constructor() {
 		super("ERROR: Unknown platform of url");
 		Object.setPrototypeOf(this, UnsupportableURLError.prototype);
+	}
+}
+
+export class GetStreamerError extends Error {
+	constructor(tool_name: StreamToolName) {
+		super(`ERROR: can't find implementation for streamer ${tool_name}`);
+		Object.setPrototypeOf(this, GetStreamerError.prototype);
 	}
 }
 
@@ -18,13 +25,20 @@ export class StreamService {
 			IStreamStrategy
 		>,
 	) {}
+	/**
+	 * throw GetStreamerError if can't find streamer for url
+	 */
 	public streamPodcast(url: URL): PodcastStream {
 		const tool_name = this.getToolNameByURL(url);
 		if (tool_name === null) {
 			throw new UnsupportableURLError();
 		} else {
 			const streamer = this._stream_strategies.get(tool_name);
-			return streamer!.streamPodcast(url);
+			if (streamer === undefined) {
+				throw new GetStreamerError(tool_name);
+			} else {
+				return streamer.streamPodcast(url);
+			}
 		}
 	}
 	public getToolNameByURL(url: URL): StreamToolName | null {

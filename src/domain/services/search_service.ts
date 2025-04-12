@@ -1,13 +1,34 @@
 import type { Podcast } from "../models/podcast.ts";
 import type { ISearchStrategy } from "../output_ports/i_search_strategy.ts";
 import type { SearchPlatform, UInt } from "../types.ts";
-import { inject, injectable } from "inversify";
+import { inject, injectable } from "npm:inversify";
 import { INJECT_TYPES } from "../types.ts";
 
 export class UnknownPlatformError extends Error {
 	constructor() {
 		super("ERROR: Unknown platform");
 		Object.setPrototypeOf(this, UnknownPlatformError.prototype);
+	}
+}
+
+export class GetPodcastError extends Error {
+	constructor() {
+		super("ERROR: can't find podcast using url");
+		Object.setPrototypeOf(this, GetPodcastError.prototype);
+	}
+}
+
+export class GetSearcherError extends Error {
+	constructor(platform: SearchPlatform) {
+		super(`ERROR: can't find implementation for searcher ${platform}`);
+		Object.setPrototypeOf(this, GetSearcherError.prototype);
+	}
+}
+
+export class NonExistentChannelError extends Error {
+	constructor() {
+		super("ERROR: can't find channel using url");
+		Object.setPrototypeOf(this, NonExistentChannelError.prototype);
 	}
 }
 
@@ -38,6 +59,10 @@ export class SearchService {
 	}
 	/**
 	 * throw UnknownPlatformError if can't find platform of URL
+	 *
+	 * throw GetSearcherError if can't find searcher for platform
+	 *
+	 * throw GetPodcastError if can't find podcast
 	 */
 	public searchByURL(url: URL): Podcast {
 		const platform = this.getPlatformByURL(url);
@@ -45,12 +70,22 @@ export class SearchService {
 			throw new UnknownPlatformError();
 		} else {
 			const search = this._searchers.get(platform);
-			return search!.searchByURL(url);
+			if (search === undefined) {
+				throw new GetSearcherError(platform);
+			} else {
+				const podcast = search.searchByURL(url);
+				if (podcast === null) {
+					throw new GetPodcastError();
+				} else {
+					return podcast;
+				}
+			}
 		}
 	}
 	/**
 	 * return false if can't find platform of URL
 	 * or can't find channel
+	 *
 	 * return true if channel exist
 	 */
 	public isChannelExist(url: URL): boolean {
@@ -65,7 +100,9 @@ export class SearchService {
 		return is_exist;
 	}
 	/**
-	 * throw UnknownPlatformError if can't find channel
+	 * throw UnknownPlatformError if can't find channel's platform
+	 *
+	 * throw NonExistentChannelError if can't find channel
 	 */
 	public getLastPodcastsByChannel(
 		channel_url: URL,
@@ -77,9 +114,17 @@ export class SearchService {
 			throw new UnknownPlatformError();
 		} else {
 			const search = this._searchers.get(platform);
-			podcasts.push(
-				...search!.getLastPodcastsByChannel(channel_url, count),
+			const last_podcasts = search!.getLastPodcastsByChannel(
+				channel_url,
+				count,
 			);
+			if (last_podcasts === null) {
+				throw new NonExistentChannelError();
+			} else {
+				podcasts.push(
+					...last_podcasts,
+				);
+			}
 		}
 		return podcasts;
 	}

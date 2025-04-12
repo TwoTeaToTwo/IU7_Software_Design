@@ -1,8 +1,8 @@
 import type { SearchService } from "./search_service.ts";
 import type { Feed } from "../models/feed.ts";
-import { inject, injectable } from "inversify";
+import { inject, injectable } from "npm:inversify";
 import type { ISubscribeRepository } from "../output_ports/i_subscribe_repository.ts";
-import { INJECT_TYPES } from "../types.ts";
+import { createUInt, INJECT_TYPES } from "../types.ts";
 
 @injectable()
 export class FeedService {
@@ -16,7 +16,7 @@ export class FeedService {
 		for (const subscribe of subscribes) {
 			const podcasts = this._searcher.getLastPodcastsByChannel(
 				subscribe.url,
-				feed.search_depth,
+				createUInt(feed.search_depth),
 			);
 			for (const content of podcasts) {
 				feed.addContent(content);

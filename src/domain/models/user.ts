@@ -16,6 +16,9 @@ export class Password {
 			throw new IncorrectPasswordError();
 		}
 	}
+	get password() {
+		return this._password;
+	}
 }
 
 export class User {

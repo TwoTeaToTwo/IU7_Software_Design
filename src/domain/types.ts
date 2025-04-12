@@ -1,7 +1,10 @@
-import { z } from "zod";
+import { z } from "npm:zod";
 
-const UIntSchema = z.number().int().nonnegative();
+const UIntSchema = z.number().int().nonnegative().brand<"UInt">();
 export type UInt = z.infer<typeof UIntSchema>;
+export function createUInt(value: number): UInt {
+	return UIntSchema.parse(value);
+}
 
 export type Id = UInt;
 export type CompareFunction<Type> = (a: Type, b: Type) => number;
