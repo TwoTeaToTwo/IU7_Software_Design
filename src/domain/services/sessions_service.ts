@@ -1,5 +1,5 @@
 import { Session } from "../models/session.ts";
-import type { Password, User } from "../models/user.ts";
+import type { Password } from "../models/user.ts";
 import { type Id, INJECT_TYPES } from "../types.ts";
 import type { IUserRepository } from "../output_ports/i_user_repository.ts";
 import { inject, injectable } from "npm:inversify";
@@ -28,9 +28,9 @@ export class SessionsService {
 		}
 		return false;
 	}
-	public getSessionByUser(user: User) {
+	public getSessionByUserId(user_id: Id) {
 		const session = this._sessions.find((value, _index, _) =>
-			value.user.id === user.id
+			value.user.id === user_id
 		);
 		return session;
 	}
@@ -49,7 +49,7 @@ export class SessionsService {
 				if (!this.isSessionOpened(rep_user.id)) {
 					this._sessions.push(new Session(rep_user));
 				}
-				return this.getSessionByUser(rep_user)!;
+				return this.getSessionByUserId(rep_user.id)!;
 			}
 		}
 	}
