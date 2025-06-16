@@ -1,2 +1,4 @@
 .vscode
-*.local
+*.env
+**/drizzle/
+**/node_modules/

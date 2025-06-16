@@ -5,6 +5,7 @@
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "npm:@fastify/cors@*": "11.0.1",
     "npm:@types/pg@^8.15.4": "8.15.4",
+    "npm:drizzle-kit@*": "0.31.1_esbuild@0.25.5",
     "npm:drizzle-kit@~0.31.1": "0.31.1_esbuild@0.25.5",
     "npm:drizzle-orm@~0.44.2": "0.44.2_@types+pg@8.15.4_pg@8.16.0",
     "npm:fastify@*": "5.2.2",
