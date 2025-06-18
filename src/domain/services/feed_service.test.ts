@@ -12,7 +12,7 @@ import { anyNumber, anyOfClass, instance, mock, when } from "npm:ts-mockito";
 import { createUInt, INJECT_TYPES, type SearchPlatform } from "../types.ts";
 import { assertEquals } from "jsr:@std/assert";
 
-Deno.test("FeedService: updateFeed: positive test", () => {
+Deno.test("FeedService: updateFeed: positive test", async () => {
 	// Create Searcher
 	const mock_searcher = mock<ISearchStrategy>();
 	const channel_url_1 = new URL(
@@ -79,12 +79,10 @@ Deno.test("FeedService: updateFeed: positive test", () => {
 		),
 	];
 	const mock_subscribe_repo: ISubscribeRepository = {
-		findByUserId: (_id) => {
-			return subscribes;
-		},
-		findById: (_id) => null,
-		save: (_sub) => true,
-		delete: (_sub) => true,
+		findByUserId: (_id) => Promise.resolve(subscribes),
+		findById: (_id) => Promise.resolve(null),
+		save: (_sub) => Promise.resolve(true),
+		delete: (_sub) => Promise.resolve(true),
 	};
 
 	// Create SearchService
@@ -108,6 +106,6 @@ Deno.test("FeedService: updateFeed: positive test", () => {
 
 	//test
 	const feed = new Feed(createUInt(1));
-	feed_service.updateFeed(feed);
+	await feed_service.updateFeed(feed);
 	assertEquals(feed.contents, [...podcasts1, ...podcasts2]);
 });

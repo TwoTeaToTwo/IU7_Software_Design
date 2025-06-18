@@ -8,14 +8,14 @@ import {
 
 export const users = pgTable("users", {
 	id: serial().primaryKey().notNull(),
-	login: text(),
-	password: text(),
+	login: text().notNull().unique(),
+	password: text().notNull(),
 });
 
 export const subscriptions = pgTable("subscriptions", {
 	id: serial("id").primaryKey(),
 	url: text("url").notNull().unique(),
-	title: text("title"),
+	title: text("title").notNull(),
 	platform: text("platform").notNull(),
 });
 

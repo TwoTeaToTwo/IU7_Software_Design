@@ -797,16 +797,10 @@
       "npm:@types/pg@^8.15.4",
       "npm:drizzle-kit@~0.31.1",
       "npm:drizzle-orm@~0.44.2",
-      "npm:pg@^8.16.0"
-    ],
-    "members": {
-      "domain": {
-        "dependencies": [
-          "npm:inversify@^7.5.0",
-          "npm:ts-mockito@^2.6.1",
-          "npm:zod@^3.24.2"
-        ]
-      }
-    }
+      "npm:inversify@^7.5.0",
+      "npm:pg@^8.16.0",
+      "npm:ts-mockito@^2.6.1",
+      "npm:zod@^3.24.2"
+    ]
   }
 }
