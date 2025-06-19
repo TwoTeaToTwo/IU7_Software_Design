@@ -1,11 +1,10 @@
-import { createUInt, User } from "@podcast/domain";
+import { createUInt, User, Password } from "@podcast/domain";
 import type { Id, IUserRepository } from "@podcast/domain";
 import type { PostgresDB } from "../database.ts";
 import { inject, injectable } from "npm:inversify";
 import { INJECT_TYPES } from "../types.ts";
 import { users } from "../schema.ts";
 import { eq } from "drizzle-orm";
-import { Password } from "../../../domain/models/user.ts";
 
 @injectable()
 export class UserRepository implements IUserRepository {
@@ -14,14 +13,10 @@ export class UserRepository implements IUserRepository {
 	 * Return true on success
 	 */
 	public async delete(user: User): Promise<boolean> {
-		let is_deleted = true;
 		const result = await this._db.delete(users).where(
 			eq(users.id, user.id),
 		);
-		if (result.rowCount === 0) {
-			is_deleted = false;
-		}
-		return is_deleted;
+		return result.rowCount === 0;
 	}
 	/**
 	 * Return User if can find, else null
@@ -47,7 +42,6 @@ export class UserRepository implements IUserRepository {
 	 * Return true on success, insert or update password
 	 */
 	public async save(user: User): Promise<boolean> {
-        let is_edited = true;
 		const result = await this._db.insert(users).values({
 			id: user.id,
 			login: user.login,
@@ -56,9 +50,7 @@ export class UserRepository implements IUserRepository {
 			target: users.id,
 			set: { password: user.password.password },
 		});
-        if (result.rowCount === 0)
-            is_edited = false;
-        return is_edited;
+        return result.rowCount === 0;
 	}
 	/**
 	 * Return User if can find, else null
