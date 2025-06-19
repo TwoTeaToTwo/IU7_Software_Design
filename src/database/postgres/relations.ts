@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations } from "npm:drizzle-orm";
 import { subscriptions, users, usersHaveSubscriptions } from "./schema.ts";
 
 export const userRelations = relations(users, ({ many }) => ({

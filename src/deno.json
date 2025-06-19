@@ -5,6 +5,7 @@
 		"indentWidth": 4
 	},
 	"imports": {
+		"@std/testing": "jsr:@std/testing@^1.0.14",
 		"inversify": "npm:inversify@^7.5.0",
 		"ts-mockito": "npm:ts-mockito@^2.6.1",
 		"zod": "npm:zod@^3.24.2",

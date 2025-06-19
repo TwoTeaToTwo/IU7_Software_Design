@@ -4,7 +4,7 @@ import type { PostgresDB } from "../database.ts";
 import { inject, injectable } from "npm:inversify";
 import { INJECT_TYPES } from "../types.ts";
 import { users } from "../schema.ts";
-import { eq } from "drizzle-orm";
+import { eq } from "npm:drizzle-orm";
 
 @injectable()
 export class UserRepository implements IUserRepository {
@@ -43,6 +43,7 @@ export class UserRepository implements IUserRepository {
 	 */
 	public async save(user: User): Promise<boolean> {
 		const result = await this._db.update(users).set({
+			login: user.login,
 			password: user.password.password,
 		}).where(eq(users.id, user.id));
 		return result.rowCount !== 0;

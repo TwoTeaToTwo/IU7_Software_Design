@@ -4,7 +4,7 @@ import type { PostgresDB } from "../database.ts";
 import { inject, injectable } from "npm:inversify";
 import { INJECT_TYPES } from "../types.ts";
 import { subscriptions, usersHaveSubscriptions } from "../schema.ts";
-import { eq } from "drizzle-orm";
+import { eq } from "npm:drizzle-orm";
 
 @injectable()
 export class SubscribeRepository implements ISubscribeRepository {
