@@ -1,5 +1,5 @@
 import { createUInt, Subscribe } from "@podcast/domain";
-import type { Id, ISubscribeRepository } from "@podcast/domain";
+import type { Id, ISubscribeRepository, SearchPlatform } from "@podcast/domain";
 import type { PostgresDB } from "../database.ts";
 import { inject, injectable } from "npm:inversify";
 import { INJECT_TYPES } from "../types.ts";
@@ -16,7 +16,7 @@ export class SubscribeRepository implements ISubscribeRepository {
 		const result = await this._db.delete(subscriptions).where(
 			eq(subscriptions.id, subscribe.id),
 		);
-		return result.rowCount === 0;
+		return result.rowCount !== 0;
 	}
 	/**
 	 * Return Subscribe if can find, else null
@@ -43,20 +43,12 @@ export class SubscribeRepository implements ISubscribeRepository {
 	 * Return true on success
 	 */
 	public async save(subscribe: Subscribe): Promise<boolean> {
-		const result = await this._db.insert(subscriptions).values({
-			id: subscribe.id,
+		const result = await this._db.update(subscriptions).set({
 			url: subscribe.url.toString(),
 			title: subscribe.title,
 			platform: subscribe.platform,
-		}).onConflictDoUpdate({
-			target: subscriptions.id,
-			set: {
-				url: subscribe.url.toString(),
-				title: subscribe.title,
-				platform: subscribe.platform,
-			},
-		});
-		return result.rowCount === 0;
+		}).where(eq(subscriptions.id, subscribe.id));
+		return result.rowCount !== 0;
 	}
 	/**
 	 * Return null if user doesn't exist
@@ -88,5 +80,32 @@ export class SubscribeRepository implements ISubscribeRepository {
 			}
 		}
 		return subscribes;
+	}
+	/**
+	 * Return Subscribe on success, else null
+	 */
+	public async create(
+		url: URL,
+		title: string,
+		platform: SearchPlatform,
+	): Promise<Subscribe | null> {
+		let subscribe: Subscribe | null;
+		const result = await this._db.insert(subscriptions).values({
+			title: title,
+			url: url.toString(),
+			platform: platform,
+		}).onConflictDoNothing().returning();
+		if (result.length === 0) {
+			subscribe = null;
+		} else {
+			const record = result[0];
+			subscribe = new Subscribe(
+				createUInt(record.id),
+				new URL(record.url),
+				record.title,
+				record.platform,
+			);
+		}
+		return subscribe;
 	}
 }

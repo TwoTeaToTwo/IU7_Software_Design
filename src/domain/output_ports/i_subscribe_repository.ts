@@ -24,6 +24,6 @@ export interface ISubscribeRepository {
 	create(
 		url: URL,
 		title: string,
-		search_platform: SearchPlatform,
+		platform: SearchPlatform,
 	): Promise<Subscribe | null>;
 }
