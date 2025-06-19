@@ -83,6 +83,7 @@ Deno.test("FeedService: updateFeed: positive test", async () => {
 		findById: (_id) => Promise.resolve(null),
 		save: (_sub) => Promise.resolve(true),
 		delete: (_sub) => Promise.resolve(true),
+		create: (_url, _title, _platform) => Promise.resolve(null),
 	};
 
 	// Create SearchService

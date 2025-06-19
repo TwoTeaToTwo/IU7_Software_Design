@@ -1,5 +1,5 @@
 import type { Subscribe } from "../models/subscribe.ts";
-import type { Id } from "../types.ts";
+import type { Id, SearchPlatform } from "../types.ts";
 
 export interface ISubscribeRepository {
 	/**
@@ -18,4 +18,12 @@ export interface ISubscribeRepository {
 	 * Return null if user doesn't exist
 	 */
 	findByUserId(user_id: Id): Promise<Array<Subscribe> | null>;
+	/**
+	 * Return Subscribe on success, else null
+	 */
+	create(
+		url: URL,
+		title: string,
+		search_platform: SearchPlatform,
+	): Promise<Subscribe | null>;
 }

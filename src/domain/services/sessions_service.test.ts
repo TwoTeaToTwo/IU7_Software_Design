@@ -20,6 +20,7 @@ Deno.test("SessionsService: isSessionOpened: session isn't opened", () => {
 		findById: (_user_id) => Promise.resolve(null),
 		save: (_user) => Promise.resolve(true),
 		findByLogin: (_user_login: string) => Promise.resolve(user),
+		create: (_login, _password) => Promise.resolve(null),
 	};
 	const test_container = new Container();
 	test_container.bind(INJECT_TYPES.UserRepository).toConstantValue(mock_repo);
@@ -40,6 +41,7 @@ Deno.test("SessionsService: isSessionOpened: session is opened", async () => {
 		findById: (_user_id) => Promise.resolve(null),
 		save: (_user) => Promise.resolve(true),
 		findByLogin: (_user_login: string) => Promise.resolve(user),
+		create: (_login, _password) => Promise.resolve(null),
 	};
 	const test_container = new Container();
 	test_container.bind(INJECT_TYPES.UserRepository).toConstantValue(mock_repo);
@@ -61,6 +63,7 @@ Deno.test("SessionsService: getSessionByUser: session is opened", async () => {
 		findById: (_user_id) => Promise.resolve(null),
 		save: (_user) => Promise.resolve(true),
 		findByLogin: (_user_login: string) => Promise.resolve(user),
+		create: (_login, _password) => Promise.resolve(null),
 	};
 	const test_container = new Container();
 	test_container.bind(INJECT_TYPES.UserRepository).toConstantValue(mock_repo);
@@ -85,6 +88,7 @@ Deno.test("SessionsService: getSessionByUser: session isn't opened", () => {
 		findById: (_user_id) => Promise.resolve(null),
 		save: (_user) => Promise.resolve(true),
 		findByLogin: (_user_login: string) => Promise.resolve(user),
+		create: (_login, _password) => Promise.resolve(null),
 	};
 	const test_container = new Container();
 	test_container.bind(INJECT_TYPES.UserRepository).toConstantValue(mock_repo);
@@ -105,6 +109,7 @@ Deno.test("SessionsService: createSession: session isn't created", async () => {
 		findById: (_user_id) => Promise.resolve(null),
 		save: (_user) => Promise.resolve(true),
 		findByLogin: (_user_login: string) => Promise.resolve(user),
+		create: (_login, _password) => Promise.resolve(null),
 	};
 	const test_container = new Container();
 	test_container.bind(INJECT_TYPES.UserRepository).toConstantValue(mock_repo);
@@ -128,6 +133,7 @@ Deno.test("SessionsService: createSession: session is created", async () => {
 		findById: (_user_id) => Promise.resolve(null),
 		save: (_user) => Promise.resolve(true),
 		findByLogin: (_user_login: string) => Promise.resolve(user),
+		create: (_login, _password) => Promise.resolve(null),
 	};
 	const test_container = new Container();
 	test_container.bind(INJECT_TYPES.UserRepository).toConstantValue(mock_repo);
@@ -158,6 +164,7 @@ Deno.test("SessionsService: createSession: unknown user", async () => {
 				return Promise.resolve(null);
 			}
 		},
+		create: (_login, _password) => Promise.resolve(null),
 	};
 	const user_login2 = "user2";
 	const user_password2 = new Password("1234");
@@ -191,6 +198,7 @@ Deno.test("SessionsService: createSession: wrong password", async () => {
 				return Promise.resolve(null);
 			}
 		},
+		create: (_login, _password) => Promise.resolve(null),
 	};
 	const wrong_password = new Password("1234");
 	const test_container = new Container();

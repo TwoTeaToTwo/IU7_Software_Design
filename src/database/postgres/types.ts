@@ -1,3 +1,5 @@
 export const INJECT_TYPES = {
-	NodePgDatabase: Symbol.for("NodePgDatabase")
+	NodePgDatabase: Symbol.for("NodePgDatabase"),
+	UserRepository: Symbol.for("UserRepository"),
+	SubscribeRepository: Symbol.for("SubscribeRepository")
 };
