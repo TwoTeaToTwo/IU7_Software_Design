@@ -3,7 +3,7 @@ import type { Id, ISubscribeRepository, SearchPlatform } from "@podcast/domain";
 import type { PostgresDB } from "../database.ts";
 import { inject, injectable } from "npm:inversify";
 import { INJECT_TYPES } from "../types.ts";
-import { subscriptions, usersHaveSubscriptions } from "../schema.ts";
+import { subscriptions } from "../schema.ts";
 import { eq } from "npm:drizzle-orm";
 
 @injectable()
@@ -49,37 +49,6 @@ export class SubscribeRepository implements ISubscribeRepository {
 			platform: subscribe.platform,
 		}).where(eq(subscriptions.id, subscribe.id));
 		return result.rowCount !== 0;
-	}
-	/**
-	 * Return null if user doesn't exist
-	 */
-	public async findByUserId(user_id: Id): Promise<Array<Subscribe> | null> {
-		const result = await this._db.select({
-			id: subscriptions.id,
-			url: subscriptions.url,
-			title: subscriptions.title,
-			platform: subscriptions.platform,
-		}).from(subscriptions).innerJoin(
-			usersHaveSubscriptions,
-			eq(usersHaveSubscriptions.subscription_id, subscriptions.id),
-		).where(eq(usersHaveSubscriptions.user_id, user_id));
-		let subscribes: Array<Subscribe> | null;
-		if (result.length === 0) {
-			subscribes = null;
-		} else {
-			subscribes = new Array<Subscribe>();
-			for (const record of result) {
-				subscribes.push(
-					new Subscribe(
-						createUInt(record.id),
-						new URL(record.url),
-						record.title,
-						record.platform,
-					),
-				);
-			}
-		}
-		return subscribes;
 	}
 	/**
 	 * Return Subscribe on success, else null

@@ -15,10 +15,6 @@ export interface ISubscribeRepository {
 	 */
 	save(subscribe: Subscribe): Promise<boolean>;
 	/**
-	 * Return null if user doesn't exist
-	 */
-	findByUserId(user_id: Id): Promise<Array<Subscribe> | null>;
-	/**
 	 * Return Subscribe on success, else null
 	 */
 	create(

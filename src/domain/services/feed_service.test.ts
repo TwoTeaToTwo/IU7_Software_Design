@@ -2,7 +2,7 @@ import { Container } from "inversify";
 import {
 	Feed,
 	FeedService,
-	type ISubscribeRepository,
+	type ISubscribeManageRepository,
 	Podcast,
 	SearchService,
 	Subscribe,
@@ -78,12 +78,10 @@ Deno.test("FeedService: updateFeed: positive test", async () => {
 			"123",
 		),
 	];
-	const mock_subscribe_repo: ISubscribeRepository = {
+	const mock_subscribe_repo: ISubscribeManageRepository = {
 		findByUserId: (_id) => Promise.resolve(subscribes),
-		findById: (_id) => Promise.resolve(null),
-		save: (_sub) => Promise.resolve(true),
-		delete: (_sub) => Promise.resolve(true),
-		create: (_url, _title, _platform) => Promise.resolve(null),
+		subscribe: (user_id, subscribe_id) => Promise.resolve(true),
+		unsubscribe: (user_id, subscribe_id) => Promise.resolve(true),
 	};
 
 	// Create SearchService
@@ -98,7 +96,9 @@ Deno.test("FeedService: updateFeed: positive test", async () => {
 	);
 
 	// Create Feed Service
-	test_container.bind<ISubscribeRepository>(INJECT_TYPES.SubscribeRepository)
+	test_container.bind<ISubscribeManageRepository>(
+		INJECT_TYPES.SubscribeMangeRepository,
+	)
 		.toConstantValue(mock_subscribe_repo);
 	test_container.bind<FeedService>(INJECT_TYPES.FeedService).to(FeedService);
 	const feed_service = test_container.get<FeedService>(

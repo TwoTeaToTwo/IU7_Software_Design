@@ -43,7 +43,7 @@ Deno.test("Database: UserRepository: create: add new user", async () => {
 	assertEquals(result, user);
 });
 
-Deno.test("Database: UserRepository: create: add exist user", async () => {
+Deno.test("Database: UserRepository: create: add existing user", async () => {
 	const test_container = new Container();
 	const pool = new Pool({ connectionString: Deno.env.get("POSTGRES_URL")! });
 	const db = drizzle(pool);
