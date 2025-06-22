@@ -3,7 +3,7 @@ import type { Id, ISubscribeManageRepository } from "@podcast/domain";
 import type { PostgresDB } from "../database.ts";
 import { inject, injectable } from "npm:inversify";
 import { INJECT_TYPES } from "../types.ts";
-import { subscriptions, usersHaveSubscriptions } from "../schema.ts";
+import { subscriptions, users, usersHaveSubscriptions } from "../schema.ts";
 import { and, eq } from "npm:drizzle-orm";
 
 @injectable()
@@ -45,11 +45,25 @@ export class SubscribeManageRepository implements ISubscribeManageRepository {
 	 * Subscribe user on source
 	 */
 	public async subscribe(user_id: Id, subscribe_id: Id): Promise<boolean> {
-		const result = await this._db.insert(usersHaveSubscriptions).values({
-			user_id: user_id,
-			subscription_id: subscribe_id,
-		}).onConflictDoNothing();
-		return result.rowCount !== 0;
+		let is_inserted: boolean;
+		const userExists = await this._db.select().from(users).where(
+			eq(users.id, user_id),
+		);
+		const subExists = await this._db.select().from(subscriptions).where(
+			eq(subscriptions.id, subscribe_id),
+		);
+		if (userExists.length === 0 || subExists.length === 0) {
+			is_inserted = false;
+		} else {
+			const result = await this._db.insert(usersHaveSubscriptions).values(
+				{
+					user_id: user_id,
+					subscription_id: subscribe_id,
+				},
+			).onConflictDoNothing();
+			is_inserted = result.rowCount !== 0;
+		}
+		return is_inserted;
 	}
 	/**
 	 * Return true on success

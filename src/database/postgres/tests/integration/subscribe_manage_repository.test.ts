@@ -90,29 +90,29 @@ Deno.test("Database: SubscribeMangeRepository: subscribe: user and source exists
 	assertEquals(result, true);
 });
 
-// Deno.test("Database: SubscribeMangeRepository: subscribe: user and source doesn't exists", async () => {
-// 	// initialization
-// 	const test_container = new Container();
-// 	const pool = new Pool({ connectionString: Deno.env.get("POSTGRES_URL")! });
-// 	const db = drizzle(pool);
-// 	test_container.bind(INJECT_TYPES.NodePgDatabase).toConstantValue(
-// 		db,
-// 	);
-// 	test_container.bind(INJECT_TYPES.SubscribeManageRepository).to(
-// 		SubscribeManageRepository,
-// 	);
-// 	const manage = test_container.get<SubscribeManageRepository>(
-// 		INJECT_TYPES.SubscribeManageRepository,
-// 	);
-// 	// testing
-// 	const result = await manage.subscribe(
-// 		createUInt(await getLastUserId(db)),
-// 		createUInt(await getLastSubscribeId(db)),
-// 	);
-// 	//clearing
-// 	await pool.end();
-// 	assertEquals(result, false);
-// });
+Deno.test("Database: SubscribeMangeRepository: subscribe: user and source doesn't exists", async () => {
+	// initialization
+	const test_container = new Container();
+	const pool = new Pool({ connectionString: Deno.env.get("POSTGRES_URL")! });
+	const db = drizzle(pool);
+	test_container.bind(INJECT_TYPES.NodePgDatabase).toConstantValue(
+		db,
+	);
+	test_container.bind(INJECT_TYPES.SubscribeManageRepository).to(
+		SubscribeManageRepository,
+	);
+	const manage = test_container.get<SubscribeManageRepository>(
+		INJECT_TYPES.SubscribeManageRepository,
+	);
+	// testing
+	const result = await manage.subscribe(
+		createUInt(await getLastUserId(db) + 1),
+		createUInt(await getLastSubscribeId(db) + 1),
+	);
+	//clearing
+	await pool.end();
+	assertEquals(result, false);
+});
 
 // TODO add subscribe user function
 // Deno.test("Database: SubscribeRepository: save: subscribe exists", async () => {
