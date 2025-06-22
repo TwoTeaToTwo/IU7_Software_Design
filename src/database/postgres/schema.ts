@@ -1,7 +1,7 @@
 import {
+	foreignKey,
 	integer,
 	pgTable,
-	primaryKey,
 	serial,
 	text,
 } from "npm:drizzle-orm/pg-core";
@@ -20,10 +20,20 @@ export const subscriptions = pgTable("subscriptions", {
 });
 
 export const usersHaveSubscriptions = pgTable("user_have_subscriptions", {
+	id: serial("id").primaryKey(),
 	user_id: integer("user_id").references(() => users.id).notNull(),
 	subscription_id: integer("subscription_id").references(() =>
 		subscriptions.id
 	).notNull(),
-}, (table) => [{
-	pk: primaryKey({ columns: [table.user_id, table.subscription_id] }),
-}]);
+}, (table) => [
+	foreignKey({
+		name: "user_fk",
+		columns: [table.user_id],
+		foreignColumns: [users.id],
+	}).onDelete("cascade"),
+	foreignKey({
+		name: "subscription_fk",
+		columns: [table.subscription_id],
+		foreignColumns: [subscriptions.id],
+	}).onDelete("cascade"),
+]);
