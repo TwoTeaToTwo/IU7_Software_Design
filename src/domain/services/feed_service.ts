@@ -24,9 +24,10 @@ export class FeedService {
 	 * throw UserFindError if can't find user
 	 */
 	public async updateFeed(feed: Feed): Promise<void> {
-		const subscribes = await this._subscribe_manage_repo.findByUserId(
-			feed.user_id,
-		);
+		const subscribes = await this._subscribe_manage_repo
+			.findSubscribesByUserId(
+				feed.user_id,
+			);
 		if (subscribes === null) {
 			throw new UserFindError();
 		} else {

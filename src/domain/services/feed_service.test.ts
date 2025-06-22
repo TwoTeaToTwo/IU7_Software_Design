@@ -79,9 +79,9 @@ Deno.test("FeedService: updateFeed: positive test", async () => {
 		),
 	];
 	const mock_subscribe_repo: ISubscribeManageRepository = {
-		findByUserId: (_id) => Promise.resolve(subscribes),
-		subscribe: (user_id, subscribe_id) => Promise.resolve(true),
-		unsubscribe: (user_id, subscribe_id) => Promise.resolve(true),
+		findSubscribesByUserId: (_id) => Promise.resolve(subscribes),
+		subscribe: (_user_id, _subscribe_id) => Promise.resolve(true),
+		unsubscribe: (_user_id, _subscribe_id) => Promise.resolve(true),
 	};
 
 	// Create SearchService

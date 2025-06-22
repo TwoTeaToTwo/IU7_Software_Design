@@ -12,7 +12,9 @@ export class SubscribeManageRepository implements ISubscribeManageRepository {
 	/**
 	 * Return null if user doesn't exist
 	 */
-	public async findByUserId(user_id: Id): Promise<Array<Subscribe> | null> {
+	public async findSubscribesByUserId(
+		user_id: Id,
+	): Promise<Array<Subscribe> | null> {
 		const result = await this._db.select({
 			id: subscriptions.id,
 			url: subscriptions.url,

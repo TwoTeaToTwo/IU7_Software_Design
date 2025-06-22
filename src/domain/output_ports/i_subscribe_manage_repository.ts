@@ -5,7 +5,7 @@ export interface ISubscribeManageRepository {
 	/**
 	 * Return null if user doesn't exist
 	 */
-	findByUserId(user_id: Id): Promise<Array<Subscribe> | null>;
+	findSubscribesByUserId(user_id: Id): Promise<Array<Subscribe> | null>;
 	/**
 	 * Return true on success
 	 * Subscribe user on source
