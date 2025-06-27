@@ -9,17 +9,18 @@ import {
 	UserFindError,
 } from "../mod.ts";
 import type { IUserRepository } from "../mod.ts";
-import { assertEquals, assertThrows } from "jsr:@std/assert";
+import { assertEquals, assertRejects } from "jsr:@std/assert";
 
 Deno.test("SessionsService: isSessionOpened: session isn't opened", () => {
 	const user_login = "user";
 	const user_password = new Password("123");
 	const user = new User(createUInt(1), user_login, user_password);
 	const mock_repo: IUserRepository = {
-		delete: (_user) => true,
-		findById: (_user_id) => null,
-		save: (_user) => true,
-		findByLogin: (_user_login: string) => user,
+		delete: (_user) => Promise.resolve(true),
+		findById: (_user_id) => Promise.resolve(null),
+		save: (_user) => Promise.resolve(true),
+		findByLogin: (_user_login: string) => Promise.resolve(user),
+		create: (_login, _password) => Promise.resolve(null),
 	};
 	const test_container = new Container();
 	test_container.bind(INJECT_TYPES.UserRepository).toConstantValue(mock_repo);
@@ -31,15 +32,16 @@ Deno.test("SessionsService: isSessionOpened: session isn't opened", () => {
 	assertEquals(result, false);
 });
 
-Deno.test("SessionsService: isSessionOpened: session is opened", () => {
+Deno.test("SessionsService: isSessionOpened: session is opened", async () => {
 	const user_login = "user";
 	const user_password = new Password("123");
 	const user = new User(createUInt(1), user_login, user_password);
 	const mock_repo: IUserRepository = {
-		delete: (_user) => true,
-		findById: (_user_id) => null,
-		save: (_user) => true,
-		findByLogin: (_user_login: string) => user,
+		delete: (_user) => Promise.resolve(true),
+		findById: (_user_id) => Promise.resolve(null),
+		save: (_user) => Promise.resolve(true),
+		findByLogin: (_user_login: string) => Promise.resolve(user),
+		create: (_login, _password) => Promise.resolve(null),
 	};
 	const test_container = new Container();
 	test_container.bind(INJECT_TYPES.UserRepository).toConstantValue(mock_repo);
@@ -47,20 +49,21 @@ Deno.test("SessionsService: isSessionOpened: session is opened", () => {
 	const sessions_service = test_container.get<SessionsService>(
 		INJECT_TYPES.SessionsService,
 	);
-	sessions_service.createSession(user_login, user_password);
+	await sessions_service.createSession(user_login, user_password);
 	const result = sessions_service.isSessionOpened(user.id);
 	assertEquals(result, true);
 });
 
-Deno.test("SessionsService: getSessionByUser: session is opened", () => {
+Deno.test("SessionsService: getSessionByUser: session is opened", async () => {
 	const user_login = "user";
 	const user_password = new Password("123");
 	const user = new User(createUInt(1), user_login, user_password);
 	const mock_repo: IUserRepository = {
-		delete: (_user) => true,
-		findById: (_user_id) => null,
-		save: (_user) => true,
-		findByLogin: (_user_login: string) => user,
+		delete: (_user) => Promise.resolve(true),
+		findById: (_user_id) => Promise.resolve(null),
+		save: (_user) => Promise.resolve(true),
+		findByLogin: (_user_login: string) => Promise.resolve(user),
+		create: (_login, _password) => Promise.resolve(null),
 	};
 	const test_container = new Container();
 	test_container.bind(INJECT_TYPES.UserRepository).toConstantValue(mock_repo);
@@ -68,7 +71,10 @@ Deno.test("SessionsService: getSessionByUser: session is opened", () => {
 	const sessions_service = test_container.get<SessionsService>(
 		INJECT_TYPES.SessionsService,
 	);
-	const session = sessions_service.createSession(user_login, user_password);
+	const session = await sessions_service.createSession(
+		user_login,
+		user_password,
+	);
 	const result = sessions_service.getSessionByUserId(user.id);
 	assertEquals(result, session);
 });
@@ -78,10 +84,11 @@ Deno.test("SessionsService: getSessionByUser: session isn't opened", () => {
 	const user_password = new Password("123");
 	const user = new User(createUInt(1), user_login, user_password);
 	const mock_repo: IUserRepository = {
-		delete: (_user) => true,
-		findById: (_user_id) => null,
-		save: (_user) => true,
-		findByLogin: (_user_login: string) => user,
+		delete: (_user) => Promise.resolve(true),
+		findById: (_user_id) => Promise.resolve(null),
+		save: (_user) => Promise.resolve(true),
+		findByLogin: (_user_login: string) => Promise.resolve(user),
+		create: (_login, _password) => Promise.resolve(null),
 	};
 	const test_container = new Container();
 	test_container.bind(INJECT_TYPES.UserRepository).toConstantValue(mock_repo);
@@ -93,15 +100,16 @@ Deno.test("SessionsService: getSessionByUser: session isn't opened", () => {
 	assertEquals(result, undefined);
 });
 
-Deno.test("SessionsService: createSession: session isn't created", () => {
+Deno.test("SessionsService: createSession: session isn't created", async () => {
 	const user_login = "user";
 	const user_password = new Password("123");
 	const user = new User(createUInt(1), user_login, user_password);
 	const mock_repo: IUserRepository = {
-		delete: (_user) => true,
-		findById: (_user_id) => null,
-		save: (_user) => true,
-		findByLogin: (_user_login: string) => user,
+		delete: (_user) => Promise.resolve(true),
+		findById: (_user_id) => Promise.resolve(null),
+		save: (_user) => Promise.resolve(true),
+		findByLogin: (_user_login: string) => Promise.resolve(user),
+		create: (_login, _password) => Promise.resolve(null),
 	};
 	const test_container = new Container();
 	test_container.bind(INJECT_TYPES.UserRepository).toConstantValue(mock_repo);
@@ -109,19 +117,23 @@ Deno.test("SessionsService: createSession: session isn't created", () => {
 	const sessions_service = test_container.get<SessionsService>(
 		INJECT_TYPES.SessionsService,
 	);
-	const result = sessions_service.createSession(user_login, user_password);
+	const result = await sessions_service.createSession(
+		user_login,
+		user_password,
+	);
 	assertEquals(result.user, user);
 });
 
-Deno.test("SessionsService: createSession: session is created", () => {
+Deno.test("SessionsService: createSession: session is created", async () => {
 	const user_login = "user";
 	const user_password = new Password("123");
 	const user = new User(createUInt(1), user_login, user_password);
 	const mock_repo: IUserRepository = {
-		delete: (_user) => true,
-		findById: (_user_id) => null,
-		save: (_user) => true,
-		findByLogin: (_user_login: string) => user,
+		delete: (_user) => Promise.resolve(true),
+		findById: (_user_id) => Promise.resolve(null),
+		save: (_user) => Promise.resolve(true),
+		findByLogin: (_user_login: string) => Promise.resolve(user),
+		create: (_login, _password) => Promise.resolve(null),
 	};
 	const test_container = new Container();
 	test_container.bind(INJECT_TYPES.UserRepository).toConstantValue(mock_repo);
@@ -130,25 +142,29 @@ Deno.test("SessionsService: createSession: session is created", () => {
 		INJECT_TYPES.SessionsService,
 	);
 	sessions_service.createSession(user_login, user_password);
-	const result = sessions_service.createSession(user_login, user_password);
+	const result = await sessions_service.createSession(
+		user_login,
+		user_password,
+	);
 	assertEquals(result.user, user);
 });
 
-Deno.test("SessionsService: createSession: unknown user", () => {
+Deno.test("SessionsService: createSession: unknown user", async () => {
 	const user_login1 = "user";
 	const user_password1 = new Password("123");
 	const user1 = new User(createUInt(1), user_login1, user_password1);
 	const mock_repo: IUserRepository = {
-		delete: (_user) => true,
-		findById: (_user_id) => null,
-		save: (_user) => true,
+		delete: (_user) => Promise.resolve(true),
+		findById: (_user_id) => Promise.resolve(null),
+		save: (_user) => Promise.resolve(true),
 		findByLogin: (_user_login: string) => {
 			if (_user_login === user_login1) {
-				return user1;
+				return Promise.resolve(user1);
 			} else {
-				return null;
+				return Promise.resolve(null);
 			}
 		},
+		create: (_login, _password) => Promise.resolve(null),
 	};
 	const user_login2 = "user2";
 	const user_password2 = new Password("1234");
@@ -158,30 +174,31 @@ Deno.test("SessionsService: createSession: unknown user", () => {
 	const sessions_service = test_container.get<SessionsService>(
 		INJECT_TYPES.SessionsService,
 	);
-	sessions_service.createSession(user_login1, user_password1);
-	assertThrows(() => {
-		const _result = sessions_service.createSession(
+	await sessions_service.createSession(user_login1, user_password1);
+	assertRejects(async () => {
+		const _result = await sessions_service.createSession(
 			user_login2,
 			user_password2,
 		);
 	}, UserFindError);
 });
 
-Deno.test("SessionsService: createSession: wrong password", () => {
+Deno.test("SessionsService: createSession: wrong password", async () => {
 	const user_login1 = "user";
 	const user_password1 = new Password("123");
 	const user1 = new User(createUInt(1), user_login1, user_password1);
 	const mock_repo: IUserRepository = {
-		delete: (_user) => true,
-		findById: (_user_id) => null,
-		save: (_user) => true,
+		delete: (_user) => Promise.resolve(true),
+		findById: (_user_id) => Promise.resolve(null),
+		save: (_user) => Promise.resolve(true),
 		findByLogin: (_user_login: string) => {
 			if (_user_login === user_login1) {
-				return user1;
+				return Promise.resolve(user1);
 			} else {
-				return null;
+				return Promise.resolve(null);
 			}
 		},
+		create: (_login, _password) => Promise.resolve(null),
 	};
 	const wrong_password = new Password("1234");
 	const test_container = new Container();
@@ -190,9 +207,9 @@ Deno.test("SessionsService: createSession: wrong password", () => {
 	const sessions_service = test_container.get<SessionsService>(
 		INJECT_TYPES.SessionsService,
 	);
-	sessions_service.createSession(user_login1, user_password1);
-	assertThrows(() => {
-		const _result = sessions_service.createSession(
+	await sessions_service.createSession(user_login1, user_password1);
+	assertRejects(async () => {
+		const _result = await sessions_service.createSession(
 			user_login1,
 			wrong_password,
 		);

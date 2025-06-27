@@ -10,6 +10,7 @@ export type { ISearchStrategy } from "./output_ports/i_search_strategy.ts";
 export type { IStreamStrategy } from "./output_ports/i_stream_strategy.ts";
 export type { ISubscribeRepository } from "./output_ports/i_subscribe_repository.ts";
 export type { IUserRepository } from "./output_ports/i_user_repository.ts";
+export type { ISubscribeManageRepository } from "./output_ports/i_subscribe_manage_repository.ts";
 
 // Services
 export { FeedService } from "./services/feed_service.ts";

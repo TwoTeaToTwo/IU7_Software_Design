@@ -1,5 +1,5 @@
 {
-	"name": "@podcast/domain",
+	"name": "@podcast/database_postgres",
 	"exports": "./mod.ts",
 	"fmt": {
 		"useTabs": true,

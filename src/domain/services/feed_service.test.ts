@@ -2,7 +2,7 @@ import { Container } from "inversify";
 import {
 	Feed,
 	FeedService,
-	type ISubscribeRepository,
+	type ISubscribeManageRepository,
 	Podcast,
 	SearchService,
 	Subscribe,
@@ -12,7 +12,7 @@ import { anyNumber, anyOfClass, instance, mock, when } from "npm:ts-mockito";
 import { createUInt, INJECT_TYPES, type SearchPlatform } from "../types.ts";
 import { assertEquals } from "jsr:@std/assert";
 
-Deno.test("FeedService: updateFeed: positive test", () => {
+Deno.test("FeedService: updateFeed: positive test", async () => {
 	// Create Searcher
 	const mock_searcher = mock<ISearchStrategy>();
 	const channel_url_1 = new URL(
@@ -78,13 +78,10 @@ Deno.test("FeedService: updateFeed: positive test", () => {
 			"123",
 		),
 	];
-	const mock_subscribe_repo: ISubscribeRepository = {
-		findByUserId: (_id) => {
-			return subscribes;
-		},
-		findById: (_id) => null,
-		save: (_sub) => true,
-		delete: (_sub) => true,
+	const mock_subscribe_repo: ISubscribeManageRepository = {
+		findSubscribesByUserId: (_id) => Promise.resolve(subscribes),
+		subscribe: (_user_id, _subscribe_id) => Promise.resolve(true),
+		unsubscribe: (_user_id, _subscribe_id) => Promise.resolve(true),
 	};
 
 	// Create SearchService
@@ -99,7 +96,9 @@ Deno.test("FeedService: updateFeed: positive test", () => {
 	);
 
 	// Create Feed Service
-	test_container.bind<ISubscribeRepository>(INJECT_TYPES.SubscribeRepository)
+	test_container.bind<ISubscribeManageRepository>(
+		INJECT_TYPES.SubscribeMangeRepository,
+	)
 		.toConstantValue(mock_subscribe_repo);
 	test_container.bind<FeedService>(INJECT_TYPES.FeedService).to(FeedService);
 	const feed_service = test_container.get<FeedService>(
@@ -108,6 +107,6 @@ Deno.test("FeedService: updateFeed: positive test", () => {
 
 	//test
 	const feed = new Feed(createUInt(1));
-	feed_service.updateFeed(feed);
+	await feed_service.updateFeed(feed);
 	assertEquals(feed.contents, [...podcasts1, ...podcasts2]);
 });

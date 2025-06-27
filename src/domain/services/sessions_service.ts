@@ -38,8 +38,11 @@ export class SessionsService {
 	 * throw UserFindError if can't find user in database
 	 * throw IncorrectLoginError if login is incorrect
 	 */
-	public createSession(user_login: string, user_password: Password): Session {
-		const rep_user = this._user_repo.findByLogin(user_login);
+	public async createSession(
+		user_login: string,
+		user_password: Password,
+	): Promise<Session> {
+		const rep_user = await this._user_repo.findByLogin(user_login);
 		if (rep_user === null) {
 			throw new UserFindError();
 		} else {

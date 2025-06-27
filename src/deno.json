@@ -4,7 +4,17 @@
 		"lineWidth": 80,
 		"indentWidth": 4
 	},
-	"workspace": ["./domain"],
+	"imports": {
+		"@std/testing": "jsr:@std/testing@^1.0.14",
+		"inversify": "npm:inversify@^7.5.0",
+		"ts-mockito": "npm:ts-mockito@^2.6.1",
+		"zod": "npm:zod@^3.24.2",
+		"@types/pg": "npm:@types/pg@^8.15.4",
+		"drizzle-kit": "npm:drizzle-kit@^0.31.1",
+		"drizzle-orm": "npm:drizzle-orm@^0.44.2",
+		"pg": "npm:pg@^8.16.0"
+	},
+	"workspace": ["./domain", "./database/postgres"],
 	"compilerOptions": {
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
