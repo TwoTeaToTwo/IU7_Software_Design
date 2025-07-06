@@ -2,11 +2,11 @@ import type { Podcast } from "../models/podcast.ts";
 import type { SearchPlatform, UInt } from "../types.ts";
 
 export interface ISearchStrategy {
-	searchPodcast(query: string): Array<Podcast>;
+	searchPodcast(query: string): Promise<Array<Podcast>>;
 	/**
 	 * Return Podcast if can find, else null
 	 */
-	searchByURL(url: URL): Podcast | null;
+	searchByURL(url: URL): Promise<Podcast | null>;
 	/**
 	 * Return true if can find channel
 	 */
@@ -22,5 +22,8 @@ export interface ISearchStrategy {
 		channel_url: URL,
 		count: UInt,
 	): Array<Podcast> | null;
+	/**
+	 * Return platform of SearchStrategy
+	 */
 	getPlatform(): SearchPlatform;
 }
