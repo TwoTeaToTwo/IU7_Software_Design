@@ -26,6 +26,7 @@
     "npm:drizzle-orm@*": "0.44.2_@types+pg@8.15.4_pg@8.16.0",
     "npm:drizzle-orm@~0.44.2": "0.44.2_@types+pg@8.15.4_pg@8.16.0",
     "npm:fastify@*": "5.2.2",
+    "npm:googleapis@*": "150.0.1",
     "npm:googleapis@^150.0.1": "150.0.1",
     "npm:inversify@*": "7.5.0_reflect-metadata@0.2.2",
     "npm:inversify@^7.5.0": "7.5.0_reflect-metadata@0.2.2",

@@ -42,7 +42,9 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 
 	private async getVideoDuration(video_id: string): Promise<UInt | null> {
 		let result: UInt | null = null;
-		const video_data = await this.getVideoDetails(video_id);
+		const video_data = await this.getVideoInfo(video_id, [
+			"contentDetails",
+		]);
 		if (
 			video_data && video_data.contentDetails &&
 			video_data.contentDetails.duration
@@ -60,8 +62,8 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 	): Promise<Podcast | undefined> {
 		let podcast: Podcast | undefined;
 		if (
-			item.id && item.id.videoId && item.snippet &&
-			item.snippet.title && item.snippet.publishedAt
+			item.id && item.id?.videoId && item.snippet &&
+			item.snippet?.title && item.snippet?.publishedAt
 		) {
 			const url = new URL(
 				`https://www.youtube.com/watch?v=${item.id.videoId}`,
@@ -83,12 +85,18 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 	}
 
 	private async getPodcastFromVideo(
-		item: youtube_v3.Schema$Video,
+		video_id: string,
 	): Promise<Podcast | undefined> {
 		let podcast: Podcast | undefined;
+		const search_result = await this.youtube.videos.list({
+			id: [video_id],
+			part: ["snippet"],
+			maxResults: 1,
+		});
+		const item = search_result.data.items?.[0];
 		if (
-			item.id && item.snippet &&
-			item.snippet.title && item.snippet.publishedAt
+			item && item.id && item.snippet && item.snippet.title &&
+			item.snippet.publishedAt
 		) {
 			const url = new URL(
 				`https://www.youtube.com/watch?v=${item.id}`,
@@ -109,12 +117,13 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 		return podcast;
 	}
 
-	private async getVideoDetails(
+	private async getVideoInfo(
 		videoId: string,
+		part: string[],
 	): Promise<youtube_v3.Schema$Video | undefined> {
 		const result = await this.youtube.videos.list({
 			id: [videoId],
-			part: ["contentDetails"],
+			part: part,
 			maxResults: 1,
 		});
 		return result.data.items?.[0];
@@ -137,18 +146,7 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 		const id = this.getVideoIdFromUrl(url);
 		let podcast: Podcast | null = null;
 		if (id !== null) {
-			const search_result = await this.youtube.videos.list({
-				id: [id],
-				part: ["snippet"],
-				maxResults: 1,
-			});
-			const items = search_result.data.items;
-			if (items !== undefined) {
-				const data = await this.getPodcastFromVideo(items[0]);
-				if (data !== undefined) {
-					podcast = data;
-				}
-			}
+			podcast = await this.getPodcastFromVideo(id) ?? null;
 		}
 		return podcast;
 	}
@@ -214,9 +212,9 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 
 	private async getChannelInfo(
 		channel_id: ChannelId,
+		part: string[],
 	): Promise<youtube_v3.Schema$Channel | undefined> {
 		let channel_info: youtube_v3.Schema$Channel | undefined;
-		const part = ["snippet", "statistics"];
 		if (channel_id.type === "channel") {
 			channel_info = await this.getChannelInfoForChannel(
 				channel_id.id,
@@ -239,11 +237,13 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 	/**
 	 * Return true if can find channel
 	 */
-	public isChannelExist(url: URL): boolean {
+	public async isChannelExist(url: URL): Promise<boolean> {
 		const channel_id = this.getChannelId(url);
 		let is_exist = false;
 		if (channel_id !== null) {
-			is_exist = this.getChannelInfo(channel_id) !== undefined;
+			const part = ["snippet", "statistics"];
+			is_exist =
+				await this.getChannelInfo(channel_id, part) !== undefined;
 		}
 		return is_exist;
 	}
@@ -263,14 +263,53 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 		return this.getChannelId(url) !== null;
 	}
 
+	private async getPodcastsFromPlaylist(
+		playlist_id: string,
+		count: UInt,
+	): Promise<Array<Podcast>> {
+		const podcasts = new Array<Podcast>();
+		const result = await this.youtube.playlistItems.list({
+			id: [playlist_id],
+			part: ["snippet"],
+			maxResults: count,
+		});
+		const items = result.data.items;
+		if (items !== undefined) {
+			for (const item of items) {
+				const video_id = item.snippet?.resourceId?.videoId;
+				if (video_id) {
+					const podcast = await this.getPodcastFromVideo(video_id);
+					if (podcast) {
+						podcasts.push(podcast);
+					}
+				}
+			}
+		}
+		return podcasts;
+	}
+
 	/**
 	 * Return null if channel doesn't exist
 	 */
-	public getLastPodcastsByChannel(
+	public async getLastPodcastsByChannel(
 		channel_url: URL,
 		count: UInt,
-	): Array<Podcast> | null {
-		return null;
+	): Promise<Array<Podcast> | null> {
+		let podcasts: Array<Podcast> | null = null;
+		const channel_id = this.getChannelId(channel_url);
+		if (channel_id !== null) {
+			const part = ["contents"];
+			const channel_info = await this.getChannelInfo(channel_id, part);
+			const uploads_id = channel_info?.contentDetails?.relatedPlaylists
+				?.uploads;
+			if (uploads_id !== undefined) {
+				podcasts = await this.getPodcastsFromPlaylist(
+					uploads_id,
+					count,
+				);
+			}
+		}
+		return podcasts;
 	}
 
 	public getPlatform(): SearchPlatform {

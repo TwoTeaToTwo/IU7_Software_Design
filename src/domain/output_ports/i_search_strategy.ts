@@ -10,7 +10,7 @@ export interface ISearchStrategy {
 	/**
 	 * Return true if can find channel
 	 */
-	isChannelExist(url: URL): boolean;
+	isChannelExist(url: URL): Promise<boolean>;
 	/**
 	 * Return true if can work with given url
 	 */
@@ -21,7 +21,7 @@ export interface ISearchStrategy {
 	getLastPodcastsByChannel(
 		channel_url: URL,
 		count: UInt,
-	): Array<Podcast> | null;
+	): Promise<Array<Podcast> | null>;
 	/**
 	 * Return platform of SearchStrategy
 	 */
