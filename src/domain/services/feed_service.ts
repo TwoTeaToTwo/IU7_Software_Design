@@ -32,7 +32,7 @@ export class FeedService {
 			throw new UserFindError();
 		} else {
 			for (const subscribe of subscribes) {
-				const podcasts = this._searcher.getLastPodcastsByChannel(
+				const podcasts = await this._searcher.getLastPodcastsByChannel(
 					subscribe.url,
 					createUInt(feed.search_depth),
 				);

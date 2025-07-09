@@ -17,7 +17,7 @@ import {
 	mock,
 	when,
 } from "npm:ts-mockito";
-import { assertEquals, assertThrows } from "jsr:@std/assert";
+import { assertEquals, assertRejects } from "jsr:@std/assert";
 
 Deno.test("SearchService: searchPodcast: search existent podcast", async () => {
 	const mock_searcher = mock<ISearchStrategy>();
@@ -172,7 +172,7 @@ Deno.test("SearchService: searchByURL: get existent podcast", async () => {
 	assertEquals(result, podcast);
 });
 
-Deno.test("SearchService: searchByURL: get non-existent podcast", () => {
+Deno.test("SearchService: searchByURL: get non-existent podcast", async () => {
 	const mock_searcher = mock<ISearchStrategy>();
 	const podcast_url = new URL(
 		"https://youtu.be/dQw4w9WgXcQ?si=hve9SXqixHyDCs3J",
@@ -199,7 +199,7 @@ Deno.test("SearchService: searchByURL: get non-existent podcast", () => {
 	const search_service = test_container.get<SearchService>(
 		INJECT_TYPES.SearchService,
 	);
-	assertThrows(async () => {
+	await assertRejects(async () => {
 		const _result = await search_service.searchByURL(podcast_url);
 	}, GetPodcastError);
 });
@@ -315,7 +315,7 @@ Deno.test("SearchService: getLastPodcastsByChannel: channel exists", async () =>
 	assertEquals(result, podcasts);
 });
 
-Deno.test("SearchService: getLastPodcastsByChannel: channel doesn't exist", () => {
+Deno.test("SearchService: getLastPodcastsByChannel: channel doesn't exist", async () => {
 	const mock_searcher = mock<ISearchStrategy>();
 	const channel_url = new URL(
 		"https://www.youtube.com/channel/123",
@@ -341,7 +341,7 @@ Deno.test("SearchService: getLastPodcastsByChannel: channel doesn't exist", () =
 	const search_service = test_container.get<SearchService>(
 		INJECT_TYPES.SearchService,
 	);
-	assertThrows(async () => {
+	await assertRejects(async () => {
 		const _result = await search_service.getLastPodcastsByChannel(
 			channel_url,
 			createUInt(2),
