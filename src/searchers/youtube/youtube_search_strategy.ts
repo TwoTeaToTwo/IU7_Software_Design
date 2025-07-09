@@ -9,9 +9,11 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 	private readonly platform = "youtube";
 
 	constructor() {
+		const api_key = Deno.env.get("YOUTUBE_API_KEY");
+		console.log(api_key);
 		this.youtube = google.youtube({
 			version: "v3",
-			auth: Deno.env.get("YOUTUBE_API_KEY"),
+			auth: api_key,
 		});
 	}
 
@@ -25,11 +27,11 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 			q: query,
 			safeSearch: "none",
 			type: ["video"],
-			videoDefinition: "any",
-			videoLicense: "any",
-			videoPaidProductPlacement: "any",
-			videoSyndicated: "any",
-			videoType: "any",
+			// videoDefinition: "any",
+			// videoLicense: "any",
+			// videoPaidProductPlacement: "any",
+			// videoSyndicated: "any",
+			// videoType: "any",
 			maxResults: max_results,
 		});
 		const items = search_result.data.items;
