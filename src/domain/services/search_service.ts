@@ -3,6 +3,7 @@ import type { ISearchStrategy } from "../output_ports/i_search_strategy.ts";
 import type { SearchPlatform, UInt } from "../types.ts";
 import { inject, injectable } from "npm:inversify";
 import { INJECT_TYPES } from "../types.ts";
+import { createUInt } from "@podcast/domain";
 
 export class UnknownPlatformError extends Error {
 	constructor() {
@@ -40,10 +41,15 @@ export class SearchService {
 			ISearchStrategy
 		>,
 	) {}
-	public searchPodcast(query: string): Array<Podcast> {
+	public async searchPodcast(
+		query: string,
+		max_results: UInt = createUInt(5),
+	): Promise<Array<Podcast>> {
 		const podcasts: Array<Podcast> = new Array<Podcast>();
 		for (const searcher of this._searchers) {
-			podcasts.push(...searcher[1].searchPodcast(query));
+			podcasts.push(
+				...await searcher[1].searchPodcast(query, max_results),
+			);
 		}
 		return podcasts;
 	}
@@ -64,7 +70,7 @@ export class SearchService {
 	 *
 	 * throw GetPodcastError if can't find podcast
 	 */
-	public searchByURL(url: URL): Podcast {
+	public async searchByURL(url: URL): Promise<Podcast> {
 		const platform = this.getPlatformByURL(url);
 		if (platform === null) {
 			throw new UnknownPlatformError();
@@ -73,7 +79,7 @@ export class SearchService {
 			if (search === undefined) {
 				throw new GetSearcherError(platform);
 			} else {
-				const podcast = search.searchByURL(url);
+				const podcast = await search.searchByURL(url);
 				if (podcast === null) {
 					throw new GetPodcastError();
 				} else {
@@ -88,14 +94,14 @@ export class SearchService {
 	 *
 	 * return true if channel exist
 	 */
-	public isChannelExist(url: URL): boolean {
+	public async isChannelExist(url: URL): Promise<boolean> {
 		const platform = this.getPlatformByURL(url);
 		let is_exist: boolean;
 		if (platform === null) {
 			is_exist = false;
 		} else {
 			const search = this._searchers.get(platform);
-			is_exist = search!.isChannelExist(url);
+			is_exist = await search!.isChannelExist(url);
 		}
 		return is_exist;
 	}
@@ -104,17 +110,17 @@ export class SearchService {
 	 *
 	 * throw NonExistentChannelError if can't find channel
 	 */
-	public getLastPodcastsByChannel(
+	public async getLastPodcastsByChannel(
 		channel_url: URL,
 		count: UInt,
-	): Array<Podcast> {
+	): Promise<Array<Podcast>> {
 		const podcasts = new Array<Podcast>();
 		const platform = this.getPlatformByURL(channel_url);
 		if (platform === null) {
 			throw new UnknownPlatformError();
 		} else {
 			const search = this._searchers.get(platform);
-			const last_podcasts = search!.getLastPodcastsByChannel(
+			const last_podcasts = await search!.getLastPodcastsByChannel(
 				channel_url,
 				count,
 			);

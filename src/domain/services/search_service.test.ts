@@ -19,7 +19,7 @@ import {
 } from "npm:ts-mockito";
 import { assertEquals, assertThrows } from "jsr:@std/assert";
 
-Deno.test("SearchService: searchPodcast: search existent podcast", () => {
+Deno.test("SearchService: searchPodcast: search existent podcast", async () => {
 	const mock_searcher = mock<ISearchStrategy>();
 	const podcasts = new Array<Podcast>();
 	const podcast = new Podcast(
@@ -30,7 +30,9 @@ Deno.test("SearchService: searchPodcast: search existent podcast", () => {
 		new Date("2009-10-15"),
 	);
 	podcasts.push(podcast);
-	when(mock_searcher.searchPodcast(anyString())).thenReturn(podcasts);
+	when(mock_searcher.searchPodcast(anyString(), anyNumber())).thenReturn(
+		Promise.resolve(podcasts),
+	);
 	when(mock_searcher.getPlatform()).thenReturn("youtube");
 	const test_container = new Container();
 	const search_strategies = new Map<SearchPlatform, ISearchStrategy>();
@@ -45,14 +47,18 @@ Deno.test("SearchService: searchPodcast: search existent podcast", () => {
 	const search_service = test_container.get<SearchService>(
 		INJECT_TYPES.SearchService,
 	);
-	const result = search_service.searchPodcast("Never Gonna Give You Up");
+	const result = await search_service.searchPodcast(
+		"Never Gonna Give You Up",
+	);
 	assertEquals(result, podcasts);
 });
 
-Deno.test("SearchService: search non-existent podcast", () => {
+Deno.test("SearchService: search non-existent podcast", async () => {
 	const mock_searcher = mock<ISearchStrategy>();
 	const podcasts = new Array<Podcast>();
-	when(mock_searcher.searchPodcast(anyString())).thenReturn(podcasts);
+	when(mock_searcher.searchPodcast(anyString(), anyNumber())).thenReturn(
+		Promise.resolve(podcasts),
+	);
 	when(mock_searcher.getPlatform()).thenReturn("youtube");
 	const test_container = new Container();
 	const search_strategies = new Map<SearchPlatform, ISearchStrategy>();
@@ -67,7 +73,9 @@ Deno.test("SearchService: search non-existent podcast", () => {
 	const search_service = test_container.get<SearchService>(
 		INJECT_TYPES.SearchService,
 	);
-	const result = search_service.searchPodcast("Never Gonna Give You Up");
+	const result = await search_service.searchPodcast(
+		"Never Gonna Give You Up",
+	);
 	assertEquals(result, podcasts);
 });
 
@@ -126,7 +134,7 @@ Deno.test("SearchService: getPlatformByURL: get non-existent platform", () => {
 	assertEquals(result, null);
 });
 
-Deno.test("SearchService: searchByURL: get existent podcast", () => {
+Deno.test("SearchService: searchByURL: get existent podcast", async () => {
 	const mock_searcher = mock<ISearchStrategy>();
 	const podcast_url = new URL(
 		"https://youtu.be/dQw4w9WgXcQ?si=hve9SXqixHyDCs3J",
@@ -144,7 +152,9 @@ Deno.test("SearchService: searchByURL: get existent podcast", () => {
 		),
 	).thenReturn(true);
 	when(mock_searcher.getPlatform()).thenReturn("youtube");
-	when(mock_searcher.searchByURL(podcast_url)).thenReturn(podcast);
+	when(mock_searcher.searchByURL(podcast_url)).thenReturn(
+		Promise.resolve(podcast),
+	);
 	const test_container = new Container();
 	const search_strategies = new Map<SearchPlatform, ISearchStrategy>();
 	const searcher = instance(mock_searcher);
@@ -158,7 +168,7 @@ Deno.test("SearchService: searchByURL: get existent podcast", () => {
 	const search_service = test_container.get<SearchService>(
 		INJECT_TYPES.SearchService,
 	);
-	const result = search_service.searchByURL(podcast_url);
+	const result = await search_service.searchByURL(podcast_url);
 	assertEquals(result, podcast);
 });
 
@@ -173,7 +183,9 @@ Deno.test("SearchService: searchByURL: get non-existent podcast", () => {
 		),
 	).thenReturn(true);
 	when(mock_searcher.getPlatform()).thenReturn("youtube");
-	when(mock_searcher.searchByURL(podcast_url)).thenReturn(null);
+	when(mock_searcher.searchByURL(podcast_url)).thenReturn(
+		Promise.resolve(null),
+	);
 	const test_container = new Container();
 	const search_strategies = new Map<SearchPlatform, ISearchStrategy>();
 	const searcher = instance(mock_searcher);
@@ -187,12 +199,12 @@ Deno.test("SearchService: searchByURL: get non-existent podcast", () => {
 	const search_service = test_container.get<SearchService>(
 		INJECT_TYPES.SearchService,
 	);
-	assertThrows(() => {
-		const _result = search_service.searchByURL(podcast_url);
+	assertThrows(async () => {
+		const _result = await search_service.searchByURL(podcast_url);
 	}, GetPodcastError);
 });
 
-Deno.test("SearchService: isChannelExist: get existent channel", () => {
+Deno.test("SearchService: isChannelExist: get existent channel", async () => {
 	const mock_searcher = mock<ISearchStrategy>();
 	const channel_url = new URL(
 		"https://www.youtube.com/channel/UCuAXFkgsw1L7xaCfnd5JJOw",
@@ -203,7 +215,9 @@ Deno.test("SearchService: isChannelExist: get existent channel", () => {
 		),
 	).thenReturn(true);
 	when(mock_searcher.getPlatform()).thenReturn("youtube");
-	when(mock_searcher.isChannelExist(channel_url)).thenReturn(true);
+	when(mock_searcher.isChannelExist(channel_url)).thenReturn(
+		Promise.resolve(true),
+	);
 	const test_container = new Container();
 	const search_strategies = new Map<SearchPlatform, ISearchStrategy>();
 	const searcher = instance(mock_searcher);
@@ -217,11 +231,11 @@ Deno.test("SearchService: isChannelExist: get existent channel", () => {
 	const search_service = test_container.get<SearchService>(
 		INJECT_TYPES.SearchService,
 	);
-	const result = search_service.isChannelExist(channel_url);
+	const result = await search_service.isChannelExist(channel_url);
 	assertEquals(result, true);
 });
 
-Deno.test("SearchService: isChannelExist: get non-existent channel", () => {
+Deno.test("SearchService: isChannelExist: get non-existent channel", async () => {
 	const mock_searcher = mock<ISearchStrategy>();
 	const channel_url = new URL(
 		"https://www.youtube.com/channel/UCuAXFkgsw1L7xaCfnd5JJOw",
@@ -232,7 +246,9 @@ Deno.test("SearchService: isChannelExist: get non-existent channel", () => {
 		),
 	).thenReturn(true);
 	when(mock_searcher.getPlatform()).thenReturn("youtube");
-	when(mock_searcher.isChannelExist(anyOfClass(URL))).thenReturn(false);
+	when(mock_searcher.isChannelExist(anyOfClass(URL))).thenReturn(
+		Promise.resolve(false),
+	);
 	const test_container = new Container();
 	const search_strategies = new Map<SearchPlatform, ISearchStrategy>();
 	const searcher = instance(mock_searcher);
@@ -246,11 +262,11 @@ Deno.test("SearchService: isChannelExist: get non-existent channel", () => {
 	const search_service = test_container.get<SearchService>(
 		INJECT_TYPES.SearchService,
 	);
-	const result = search_service.isChannelExist(channel_url);
+	const result = await search_service.isChannelExist(channel_url);
 	assertEquals(result, false);
 });
 
-Deno.test("SearchService: getLastPodcastsByChannel: channel exists", () => {
+Deno.test("SearchService: getLastPodcastsByChannel: channel exists", async () => {
 	const mock_searcher = mock<ISearchStrategy>();
 	const channel_url = new URL(
 		"https://www.youtube.com/channel/UCuAXFkgsw1L7xaCfnd5JJOw",
@@ -278,7 +294,7 @@ Deno.test("SearchService: getLastPodcastsByChannel: channel exists", () => {
 	];
 	when(mock_searcher.getPlatform()).thenReturn("youtube");
 	when(mock_searcher.getLastPodcastsByChannel(channel_url, anyNumber()))
-		.thenReturn(podcasts);
+		.thenReturn(Promise.resolve(podcasts));
 	const test_container = new Container();
 	const search_strategies = new Map<SearchPlatform, ISearchStrategy>();
 	const searcher = instance(mock_searcher);
@@ -292,7 +308,7 @@ Deno.test("SearchService: getLastPodcastsByChannel: channel exists", () => {
 	const search_service = test_container.get<SearchService>(
 		INJECT_TYPES.SearchService,
 	);
-	const result = search_service.getLastPodcastsByChannel(
+	const result = await search_service.getLastPodcastsByChannel(
 		channel_url,
 		createUInt(2),
 	);
@@ -311,7 +327,7 @@ Deno.test("SearchService: getLastPodcastsByChannel: channel doesn't exist", () =
 	).thenReturn(true);
 	when(mock_searcher.getPlatform()).thenReturn("youtube");
 	when(mock_searcher.getLastPodcastsByChannel(channel_url, anyNumber()))
-		.thenReturn(null);
+		.thenReturn(Promise.resolve(null));
 	const test_container = new Container();
 	const search_strategies = new Map<SearchPlatform, ISearchStrategy>();
 	const searcher = instance(mock_searcher);
@@ -325,8 +341,8 @@ Deno.test("SearchService: getLastPodcastsByChannel: channel doesn't exist", () =
 	const search_service = test_container.get<SearchService>(
 		INJECT_TYPES.SearchService,
 	);
-	assertThrows(() => {
-		const _result = search_service.getLastPodcastsByChannel(
+	assertThrows(async () => {
+		const _result = await search_service.getLastPodcastsByChannel(
 			channel_url,
 			createUInt(2),
 		);

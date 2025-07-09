@@ -2,7 +2,7 @@ import type { Podcast } from "../models/podcast.ts";
 import type { SearchPlatform, UInt } from "../types.ts";
 
 export interface ISearchStrategy {
-	searchPodcast(query: string): Promise<Array<Podcast>>;
+	searchPodcast(query: string, max_results: UInt): Promise<Array<Podcast>>;
 	/**
 	 * Return Podcast if can find, else null
 	 */
@@ -20,7 +20,7 @@ export interface ISearchStrategy {
 	 */
 	getLastPodcastsByChannel(
 		channel_url: URL,
-		count: UInt,
+		max_results: UInt,
 	): Promise<Array<Podcast> | null>;
 	/**
 	 * Return platform of SearchStrategy

@@ -15,7 +15,10 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 		});
 	}
 
-	public async searchPodcast(query: string): Promise<Array<Podcast>> {
+	public async searchPodcast(
+		query: string,
+		max_results: UInt,
+	): Promise<Array<Podcast>> {
 		const podcasts = new Array<Podcast>();
 		const search_result = await this.youtube.search.list({
 			part: ["snippet"],
@@ -27,6 +30,7 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 			videoPaidProductPlacement: "any",
 			videoSyndicated: "any",
 			videoType: "any",
+			maxResults: max_results,
 		});
 		const items = search_result.data.items;
 		if (items !== undefined) {
@@ -293,7 +297,7 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 	 */
 	public async getLastPodcastsByChannel(
 		channel_url: URL,
-		count: UInt,
+		max_results: UInt,
 	): Promise<Array<Podcast> | null> {
 		let podcasts: Array<Podcast> | null = null;
 		const channel_id = this.getChannelId(channel_url);
@@ -305,7 +309,7 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 			if (uploads_id !== undefined) {
 				podcasts = await this.getPodcastsFromPlaylist(
 					uploads_id,
-					count,
+					max_results,
 				);
 			}
 		}
