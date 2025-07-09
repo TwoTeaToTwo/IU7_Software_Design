@@ -58,9 +58,9 @@ Deno.test("FeedService: updateFeed: positive test", async () => {
 	];
 	when(mock_searcher.getPlatform()).thenReturn("youtube");
 	when(mock_searcher.getLastPodcastsByChannel(channel_url_1, anyNumber()))
-		.thenReturn(podcasts1);
+		.thenReturn(Promise.resolve(podcasts1));
 	when(mock_searcher.getLastPodcastsByChannel(channel_url_2, anyNumber()))
-		.thenReturn(podcasts2);
+		.thenReturn(Promise.resolve(podcasts2));
 	const searcher = instance(mock_searcher);
 
 	// Create Subscribe Repository
