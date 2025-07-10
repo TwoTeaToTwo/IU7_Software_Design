@@ -12,6 +12,13 @@ export type { ISubscribeRepository } from "./output_ports/i_subscribe_repository
 export type { IUserRepository } from "./output_ports/i_user_repository.ts";
 export type { ISubscribeManageRepository } from "./output_ports/i_subscribe_manage_repository.ts";
 
+// Output ports Errors
+export {
+	SearchError,
+	SearchStrategyError,
+	SearchStrategyInitializationError,
+} from "./output_ports/i_search_strategy.ts";
+
 // Services
 export { FeedService } from "./services/feed_service.ts";
 export {

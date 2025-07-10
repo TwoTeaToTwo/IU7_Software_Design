@@ -30,6 +30,8 @@
     "npm:googleapis@^150.0.1": "150.0.1",
     "npm:inversify@*": "7.5.0_reflect-metadata@0.2.2",
     "npm:inversify@^7.5.0": "7.5.0_reflect-metadata@0.2.2",
+    "npm:iso8601-duration@*": "2.1.2",
+    "npm:iso8601-duration@^2.1.2": "2.1.2",
     "npm:pg@*": "8.16.0",
     "npm:pg@^8.16.0": "8.16.0",
     "npm:ts-mockito@*": "2.6.1",
@@ -844,6 +846,9 @@
     "ipaddr.js@2.2.0": {
       "integrity": "sha512-Ag3wB2o37wslZS19hZqorUnrnzSkpOVy+IiiDEiTqNubEYpYuHWIf6K4psgN2ZWKExS4xhVCrRVfb/wfW8fWJA=="
     },
+    "iso8601-duration@2.1.2": {
+      "integrity": "sha512-yXteYUiKv6x8seaDzyBwnZtPpmx766KfvQuaVNyPifYOjmPdOo3ajd4phDNa7Y5mTQGnXsNEcXFtVun1FjYXxQ=="
+    },
     "json-bigint@1.0.0": {
       "integrity": "sha512-SiPv/8VpZuWbvLSMtTDU8hEfrZWg/mH/nV/b4o0CYbSxu1UIQPLdwKOCIyLQX+VIPO5vrLX3i8qtqFyhdPSUSQ==",
       "dependencies": [
@@ -1147,6 +1152,7 @@
       "npm:drizzle-orm@~0.44.2",
       "npm:googleapis@^150.0.1",
       "npm:inversify@^7.5.0",
+      "npm:iso8601-duration@^2.1.2",
       "npm:pg@^8.16.0",
       "npm:ts-mockito@^2.6.1",
       "npm:zod@^3.24.2"
