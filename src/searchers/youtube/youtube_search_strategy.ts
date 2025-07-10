@@ -31,12 +31,13 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 		max_results: UInt,
 	): Promise<Array<Podcast>> {
 		const podcasts = new Array<Podcast>();
-		const url = `${this.youtube_api_url}\search?part=snippet` +
-			`&q=${query}` +
-			`&safeSearch=none` +
-			`&type=video` +
-			`&maxResults=${max_results}` +
-			`&key=${this.api_key}`;
+		const url = new URL(`${this.youtube_api_url}/search`);
+		url.searchParams.set("part", "snippet");
+		url.searchParams.set("q", query);
+		url.searchParams.set("safeSearch", "none");
+		url.searchParams.set("type", "video");
+		url.searchParams.set("maxResults", max_results.toString());
+		url.searchParams.set("key", this.api_key);
 		const search_result = await fetch(url);
 		if (!search_result.ok) {
 			throw new SearchError(
@@ -197,10 +198,11 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 		user_name: string,
 		part: string[],
 	): Promise<youtube_v3.Schema$Channel | undefined> {
-		const url = `${this.youtube_api_url}/channels?part=${part}` +
-			`&forUsername=${user_name}` +
-			`&maxResults=1` +
-			`&key=${this.api_key}`;
+		const url = new URL(`${this.youtube_api_url}/channels`);
+		url.searchParams.set("part", part.join(","));
+		url.searchParams.set("forUsername", user_name);
+		url.searchParams.set("maxResults", "1");
+		url.searchParams.set("key", this.api_key);
 		const result = await fetch(url);
 		if (!result.ok) {
 			throw new SearchError(
@@ -217,11 +219,12 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 		part: string[],
 	): Promise<youtube_v3.Schema$Channel | undefined> {
 		let channel_data: youtube_v3.Schema$Channel | undefined;
-		const handle_url = `${this.youtube_api_url}\search?part=snippet` +
-			`&type=channel` +
-			`&q=${handle_name}` +
-			`&maxResults=1` +
-			`&key=${this.api_key}`;
+		const handle_url = new URL(`${this.youtube_api_url}/search`);
+		handle_url.searchParams.set("part", "snippet");
+		handle_url.searchParams.set("type", "channel");
+		handle_url.searchParams.set("q", handle_name);
+		handle_url.searchParams.set("maxResults", "1");
+		handle_url.searchParams.set("key", this.api_key);
 		const handle_result = await fetch(handle_url);
 		if (!handle_result.ok) {
 			throw new SearchError(
@@ -299,10 +302,11 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 		count: UInt,
 	): Promise<Array<Podcast>> {
 		const podcasts = new Array<Podcast>();
-		const url = `${this.youtube_api_url}/playlistItems?part=snippet` +
-			`&id=${playlist_id}` +
-			`&maxResults=${count}` +
-			`&key=${this.api_key}`;
+		const url = new URL(`${this.youtube_api_url}/playlistItems`);
+		url.searchParams.set("part", "snippet");
+		url.searchParams.set("playlistId", playlist_id);
+		url.searchParams.set("maxResults", count.toString());
+		url.searchParams.set("key", this.api_key);
 		const result = await fetch(url);
 		if (!result.ok) {
 			throw new SearchError(
@@ -335,7 +339,7 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 		let podcasts: Array<Podcast> | null = null;
 		const channel_id = this.getChannelId(channel_url);
 		if (channel_id !== null) {
-			const part = ["contents"];
+			const part = ["contentDetails"];
 			const channel_info = await this.getChannelInfo(channel_id, part);
 			const uploads_id = channel_info?.contentDetails?.relatedPlaylists
 				?.uploads;
