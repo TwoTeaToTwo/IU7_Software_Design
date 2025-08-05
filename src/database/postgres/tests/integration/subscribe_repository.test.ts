@@ -4,7 +4,7 @@ import {
 	SubscribeRepository,
 } from "@podcast/database_postgres";
 import { subscriptions } from "../../schema.ts";
-import { createUInt, Subscribe } from "@podcast/domain";
+import { createUInt, Subscribe } from "@podcast/core";
 import { Container } from "inversify";
 import { assertEquals } from "jsr:@std/assert";
 import { max } from "npm:drizzle-orm";

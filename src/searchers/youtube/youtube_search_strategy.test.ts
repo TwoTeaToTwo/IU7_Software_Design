@@ -1,5 +1,5 @@
 import { YoutubeSearchStrategy } from "./youtube_search_strategy.ts";
-import { createUInt, Podcast } from "@podcast/domain";
+import { createUInt, Podcast } from "@podcast/core";
 import { assertEquals, assertNotEquals } from "jsr:@std/assert";
 
 Deno.test("YoutubeSearchStrategy: searchPodcast", async () => {

@@ -15,9 +15,10 @@
 		"@types/pg": "npm:@types/pg@^8.15.4",
 		"drizzle-kit": "npm:drizzle-kit@^0.31.1",
 		"drizzle-orm": "npm:drizzle-orm@^0.44.2",
+		"drizzle-orm/pg-core": "npm:drizzle-orm@^0.44.2/pg-core",
 		"pg": "npm:pg@^8.16.0"
 	},
-	"workspace": ["./domain", "./database/postgres", "./searchers/youtube"],
+	"workspace": ["./core", "./database/postgres", "./searchers/youtube"],
 	"compilerOptions": {
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true

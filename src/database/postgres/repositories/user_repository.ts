@@ -1,5 +1,5 @@
-import { createUInt, Password, User } from "@podcast/domain";
-import type { Id, IUserRepository } from "@podcast/domain";
+import { createUInt, Password, User } from "@podcast/core";
+import type { Id, IUserRepository } from "@podcast/core";
 import type { PostgresDB } from "../database.ts";
 import { inject, injectable } from "npm:inversify";
 import { INJECT_TYPES } from "../types.ts";

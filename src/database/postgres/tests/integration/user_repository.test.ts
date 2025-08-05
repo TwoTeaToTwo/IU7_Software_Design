@@ -4,9 +4,8 @@ import {
 	UserRepository,
 } from "@podcast/database_postgres";
 import { users } from "../../schema.ts";
-import { createUInt, User } from "@podcast/domain";
+import { createUInt, Password, User } from "@podcast/core";
 import { Container } from "inversify";
-import { Password } from "../../../../domain/models/user.ts";
 import { assertEquals } from "jsr:@std/assert";
 import { max } from "npm:drizzle-orm";
 import { drizzle } from "npm:drizzle-orm/node-postgres";

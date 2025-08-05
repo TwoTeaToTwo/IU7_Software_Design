@@ -1,5 +1,5 @@
-import { createUInt, Subscribe } from "@podcast/domain";
-import type { Id, ISubscribeRepository, SearchPlatform } from "@podcast/domain";
+import { createUInt, Subscribe } from "@podcast/core";
+import type { Id, ISubscribeRepository, SearchPlatform } from "@podcast/core";
 import type { PostgresDB } from "../database.ts";
 import { inject, injectable } from "npm:inversify";
 import { INJECT_TYPES } from "../types.ts";

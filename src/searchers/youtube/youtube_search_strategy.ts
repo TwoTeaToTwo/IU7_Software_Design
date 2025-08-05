@@ -3,8 +3,8 @@ import {
 	Podcast,
 	SearchError,
 	SearchStrategyInitializationError,
-} from "@podcast/domain";
-import type { ISearchStrategy, SearchPlatform, UInt } from "@podcast/domain";
+} from "@podcast/core";
+import type { ISearchStrategy, SearchPlatform, UInt } from "@podcast/core";
 import { parse, toSeconds } from "npm:iso8601-duration";
 import type { youtube_v3 } from "npm:googleapis";
 

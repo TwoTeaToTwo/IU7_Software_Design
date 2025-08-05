@@ -4,7 +4,7 @@ import {
 	pgTable,
 	serial,
 	text,
-} from "npm:drizzle-orm/pg-core";
+} from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
 	id: serial().primaryKey().notNull(),
