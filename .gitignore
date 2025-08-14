@@ -1,5 +1,4 @@
 .vscode
 *.env
-**/drizzle/
 **/node_modules/
 *.key

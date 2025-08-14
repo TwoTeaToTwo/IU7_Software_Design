@@ -1,10 +1,4 @@
-import {
-	foreignKey,
-	integer,
-	pgTable,
-	serial,
-	text,
-} from "drizzle-orm/pg-core";
+import { integer, pgTable, serial, text } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
 	id: serial().primaryKey().notNull(),
@@ -21,19 +15,11 @@ export const subscriptions = pgTable("subscriptions", {
 
 export const usersHaveSubscriptions = pgTable("user_have_subscriptions", {
 	id: serial("id").primaryKey(),
-	user_id: integer("user_id").references(() => users.id).notNull(),
-	subscription_id: integer("subscription_id").references(() =>
-		subscriptions.id
+	user_id: integer("user_id").references(() => users.id, {
+		onDelete: "cascade",
+	}).notNull(),
+	subscription_id: integer("subscription_id").references(
+		() => subscriptions.id,
+		{ onDelete: "cascade" },
 	).notNull(),
-}, (table) => [
-	foreignKey({
-		name: "user_fk",
-		columns: [table.user_id],
-		foreignColumns: [users.id],
-	}).onDelete("cascade"),
-	foreignKey({
-		name: "subscription_fk",
-		columns: [table.subscription_id],
-		foreignColumns: [subscriptions.id],
-	}).onDelete("cascade"),
-]);
+});
