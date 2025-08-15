@@ -4,7 +4,7 @@ export interface IStreamStrategy {
 	/**
 	 * Return null if can't stream url
 	 */
-	streamPodcast(url: URL): PodcastStream | null;
-	isSupportedURL(url: URL): boolean;
+	streamPodcast(url: URL): PodcastStream;
+	isSupportedURL(url: URL): Promise<boolean>;
 	getStrategyName(): StreamToolName;
 }

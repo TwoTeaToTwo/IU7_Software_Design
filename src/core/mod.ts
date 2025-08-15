@@ -41,5 +41,11 @@ export {
 export { UserFindError } from "./services/errors.ts";
 
 // Types
-export type { Id, SearchPlatform, StreamToolName, UInt } from "./types.ts";
+export type {
+	Id,
+	PodcastStream,
+	SearchPlatform,
+	StreamToolName,
+	UInt,
+} from "./types.ts";
 export { createUInt, INJECT_TYPES } from "./types.ts";
