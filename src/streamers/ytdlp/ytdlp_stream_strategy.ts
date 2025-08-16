@@ -16,6 +16,7 @@ export class YTDLPStreamStrategy implements IStreamStrategy {
 		});
 		const child = stream_cmd.spawn();
 		const cleanUp = async () => {
+			child.kill();
 			await child.stderr.cancel();
 		};
 		const stream = child.stdout;
