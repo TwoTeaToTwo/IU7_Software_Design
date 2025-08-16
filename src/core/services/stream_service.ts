@@ -37,8 +37,8 @@ export class StreamService {
 	 *
 	 * throw PodcastStreamError if can't stream podcast
 	 */
-	public streamPodcast(url: URL): PodcastStream {
-		const tool_name = this.getToolNameByURL(url);
+	public async streamPodcast(url: URL): Promise<PodcastStream> {
+		const tool_name = await this.getToolNameByURL(url);
 		if (tool_name === null) {
 			throw new UnsupportableURLError();
 		} else {
@@ -55,10 +55,10 @@ export class StreamService {
 			}
 		}
 	}
-	public getToolNameByURL(url: URL): StreamToolName | null {
+	public async getToolNameByURL(url: URL): Promise<StreamToolName | null> {
 		let tool_name: StreamToolName | null = null;
 		for (const streamer of this._stream_strategies) {
-			if (streamer[1].isSupportedURL(url)) {
+			if (await streamer[1].isSupportedURL(url)) {
 				tool_name = streamer[0];
 				break;
 			}
