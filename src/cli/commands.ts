@@ -64,10 +64,10 @@ const playStream = async (stream: IPodcastStream) => {
 		args: ["--no-video", "-"],
 		stdin: "piped",
 	});
-	const player_proccess = player_cmd.spawn();
-	await stream.getStream().pipeTo(player_proccess.stdin);
-	await player_proccess.stdin.close();
-	//await stream.cancel();
+	const player_process = player_cmd.spawn();
+	await stream.getStream().pipeTo(player_process.stdin);
+	await player_process.status;
+	await player_process.stdin.close();
 	await stream.close();
 };
 

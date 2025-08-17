@@ -21,7 +21,7 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 			this.api_key = api_key;
 		} else {
 			throw new SearchStrategyInitializationError(
-				"ERROR: YOUTUBE_API_KEY no found in env file",
+				"ERROR: YOUTUBE_API_KEY not found in env file",
 			);
 		}
 	}

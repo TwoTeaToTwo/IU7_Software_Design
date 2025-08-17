@@ -18,12 +18,33 @@ class YTDLPPodcastStream implements IPodcastStream {
 }
 
 export class YTDLPStreamStrategy implements IStreamStrategy {
+	private readonly cache_path: string;
 	private readonly ytdlp_cmd_name = "yt-dlp";
 	private readonly strategy_name = "yt-dlp";
 
+	constructor() {
+		const cache_path = Deno.env.get("YTDLP_CACHE_DIR_PATH");
+		if (cache_path) {
+			this.cache_path = cache_path;
+		} else {
+			throw new Error(
+				"ERROR: YTDLP_CACHE_DIR_PATH not found in env file",
+			);
+		}
+	}
+
 	public streamPodcast(url: URL): IPodcastStream | null {
 		const stream_cmd = new Deno.Command(this.ytdlp_cmd_name, {
-			args: ["-x", "--audio-format", "mp3", url.toString(), "-o", "-"],
+			args: [
+				"-x",
+				"--audio-format",
+				"mp3",
+				"--cache-dir",
+				this.cache_path,
+				url.toString(),
+				"-o",
+				"-",
+			],
 			stdout: "piped",
 			stderr: "piped",
 		});
@@ -41,6 +62,8 @@ export class YTDLPStreamStrategy implements IStreamStrategy {
 				"--no-download",
 				"--no-check-certificate",
 				"--flat-playlist",
+				"--cache-dir",
+				this.cache_path,
 				url.toString(),
 			],
 			stdout: "piped",
@@ -57,8 +80,3 @@ export class YTDLPStreamStrategy implements IStreamStrategy {
 		return this.strategy_name;
 	}
 }
-
-const q = new YTDLPStreamStrategy();
-await q.isSupportedURL(
-	new URL("https://youtu.be/GpIq-YDGP5U?si=09whqmj4YaV8h1t6"),
-);
