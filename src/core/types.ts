@@ -19,6 +19,5 @@ export const INJECT_TYPES = {
 	StreamStrategies: Symbol.for("StreamStrategies"),
 	StreamService: Symbol.for("StreamService"),
 	FeedService: Symbol.for("FeedService"),
-	SessionsService: Symbol.for("SessionsService"),
 	SubscribeMangeRepository: Symbol.for("ISubscribeManageRepository"),
 };

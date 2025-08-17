@@ -1,5 +1,5 @@
 import {
-	INJECT_TYPES,
+	DB_INJECT_TYPES as INJECT_TYPES,
 	type PostgresDB,
 	SubscribeManageRepository,
 	SubscribeRepository,

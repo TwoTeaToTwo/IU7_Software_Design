@@ -4,11 +4,12 @@ import {
 	GetPodcastError,
 	GetSearcherError,
 	INJECT_TYPES,
-	type IPodcastStream,
 	SearchService,
 	StreamService,
 	UnknownPlatformError,
 } from "@podcast/core";
+
+import type { IPodcastStream, IUserRepository } from "@podcast/core";
 
 const container = createDIContainer();
 const CLIName = "podcast";
@@ -53,6 +54,8 @@ const createSearchCommand = () => {
 						console.log("ERROR: Unknown error");
 					}
 				}
+			} else {
+				console.log("ERROR: no options");
 			}
 		},
 	);
@@ -67,8 +70,6 @@ const playStream = async (stream: IPodcastStream) => {
 	const player_process = player_cmd.spawn();
 	await stream.getStream().pipeTo(player_process.stdin);
 	await player_process.status;
-	await player_process.stdin.close();
-	await stream.close();
 };
 
 const createPlayCommand = () => {
@@ -81,6 +82,16 @@ const createPlayCommand = () => {
 			await playStream(stream);
 		},
 	);
+};
+
+const createSubscribeCommand = () => {
+	return new Command().arguments(
+		"<login:string> <password:string> <url:string>",
+	).action(async (_, login: string, password: string, url: string) => {
+		const user_repo = container.get<IUserRepository>(
+			INJECT_TYPES.UserRepository,
+		);
+	});
 };
 
 export const createCLI = () => {

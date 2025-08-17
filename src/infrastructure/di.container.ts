@@ -2,12 +2,22 @@ import { Container } from "inversify";
 import type {
 	ISearchStrategy,
 	IStreamStrategy,
+	ISubscribeManageRepository,
+	ISubscribeRepository,
+	IUserRepository,
 	SearchPlatform,
 	StreamToolName,
 } from "@podcast/core";
 import { INJECT_TYPES, SearchService, StreamService } from "@podcast/core";
 import { YoutubeSearchStrategy } from "@podcast/youtube_search";
 import { YTDLPStreamStrategy } from "@podcast/ytdlp";
+import {
+	createPostgresDB,
+	DB_INJECT_TYPES,
+	SubscribeManageRepository,
+	SubscribeRepository,
+	UserRepository,
+} from "@podcast/database_postgres";
 
 function createSearchStrategies(): Map<SearchPlatform, ISearchStrategy> {
 	const search_strategies = new Map<SearchPlatform, ISearchStrategy>();
@@ -36,5 +46,18 @@ export function createDIContainer(): Container {
 	container.bind<SearchService>(INJECT_TYPES.SearchService).to(SearchService);
 	container.bind<StreamService>(INJECT_TYPES.StreamService).to(StreamService);
 	// TODO other services
+	const db = createPostgresDB();
+	container.bind(DB_INJECT_TYPES.NodePgDatabase).toConstantValue(db);
+	container.bind<IUserRepository>(INJECT_TYPES.UserRepository).to(
+		UserRepository,
+	);
+	container.bind<ISubscribeRepository>(INJECT_TYPES.SubscribeRepository).to(
+		SubscribeRepository,
+	);
+	container.bind<ISubscribeManageRepository>(
+		INJECT_TYPES.SubscribeMangeRepository,
+	).to(
+		SubscribeManageRepository,
+	);
 	return container;
 }
