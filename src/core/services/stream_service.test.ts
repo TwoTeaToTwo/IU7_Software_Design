@@ -5,16 +5,18 @@ import {
 	StreamService,
 	UnsupportableURLError,
 } from "../mod.ts";
-import type { IStreamStrategy, StreamToolName } from "../mod.ts";
+import type {
+	IPodcastStream,
+	IStreamStrategy,
+	StreamToolName,
+} from "../mod.ts";
 import { anyOfClass, instance, mock, when } from "npm:ts-mockito";
 import { assertEquals, assertRejects } from "jsr:@std/assert";
 
 Deno.test("StreamService: getToolNameByURL: streamer exists", async () => {
 	const mock_streamer = mock<IStreamStrategy>();
 	const url = new URL("https://youtu.be/dQw4w9WgXcQ?si=hve9SXqixHyDCs3J");
-	when(mock_streamer.isSupportedURL(anyOfClass(URL))).thenReturn(
-		Promise.resolve(true),
-	);
+	when(mock_streamer.isSupportedURL(anyOfClass(URL))).thenResolve(true);
 	when(mock_streamer.getStrategyName()).thenReturn("ytdlp");
 	const test_container = new Container();
 	const stream_strategies = new Map<StreamToolName, IStreamStrategy>();
@@ -36,9 +38,7 @@ Deno.test("StreamService: getToolNameByURL: streamer exists", async () => {
 Deno.test("StreamService: getToolNameByURL: streamer doesn't exist", async () => {
 	const mock_streamer = mock<IStreamStrategy>();
 	const url = new URL("https://youtu.be/dQw4w9WgXcQ?si=hve9SXqixHyDCs3J");
-	when(mock_streamer.isSupportedURL(anyOfClass(URL))).thenReturn(
-		Promise.resolve(false),
-	);
+	when(mock_streamer.isSupportedURL(anyOfClass(URL))).thenResolve(false);
 	when(mock_streamer.getStrategyName()).thenReturn("ytdlp");
 	const test_container = new Container();
 	const stream_strategies = new Map<StreamToolName, IStreamStrategy>();
@@ -60,10 +60,12 @@ Deno.test("StreamService: getToolNameByURL: streamer doesn't exist", async () =>
 Deno.test("StreamService: streamPodcast: supported url", async () => {
 	const mock_streamer = mock<IStreamStrategy>();
 	const url = new URL("https://youtu.be/dQw4w9WgXcQ?si=hve9SXqixHyDCs3J");
-	const r_stream = new ReadableStream<Uint8Array<ArrayBuffer>>();
-	when(mock_streamer.isSupportedURL(anyOfClass(URL))).thenReturn(
-		Promise.resolve(true),
-	);
+	const stream = new ReadableStream<Uint8Array<ArrayBuffer>>();
+	const r_stream: IPodcastStream = {
+		getStream: () => stream,
+		close: async () => {},
+	};
+	when(mock_streamer.isSupportedURL(anyOfClass(URL))).thenResolve(true);
 	when(mock_streamer.getStrategyName()).thenReturn("ytdlp");
 	when(mock_streamer.streamPodcast(anyOfClass(URL))).thenReturn(r_stream);
 	const test_container = new Container();
@@ -86,10 +88,9 @@ Deno.test("StreamService: streamPodcast: supported url", async () => {
 Deno.test("StreamService: streamPodcast: unsupported url", async () => {
 	const mock_streamer = mock<IStreamStrategy>();
 	const url = new URL("https://youtu.be/dQw4w9WgXcQ?si=hve9SXqixHyDCs3J");
-	const r_stream = new ReadableStream<Uint8Array<ArrayBuffer>>();
-	when(mock_streamer.isSupportedURL(anyOfClass(URL))).thenReturn(
-		Promise.resolve(false),
-	);
+	const mock_stream = mock<IPodcastStream>();
+	const r_stream = instance(mock_stream);
+	when(mock_streamer.isSupportedURL(anyOfClass(URL))).thenResolve(false);
 	when(mock_streamer.getStrategyName()).thenReturn("ytdlp");
 	when(mock_streamer.streamPodcast(anyOfClass(URL))).thenReturn(r_stream);
 	const test_container = new Container();
@@ -113,9 +114,7 @@ Deno.test("StreamService: streamPodcast: unsupported url", async () => {
 Deno.test("StreamService: streamPodcast: podcast stream error", async () => {
 	const mock_streamer = mock<IStreamStrategy>();
 	const url = new URL("https://youtu.be/dQw4w9WgXcQ?si=hve9SXqixHyDCs3J");
-	when(mock_streamer.isSupportedURL(anyOfClass(URL))).thenReturn(
-		Promise.resolve(true),
-	);
+	when(mock_streamer.isSupportedURL(anyOfClass(URL))).thenResolve(true);
 	when(mock_streamer.getStrategyName()).thenReturn("ytdlp");
 	when(mock_streamer.streamPodcast(anyOfClass(URL))).thenReturn(null);
 	const test_container = new Container();

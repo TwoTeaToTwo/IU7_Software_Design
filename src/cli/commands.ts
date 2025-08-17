@@ -4,13 +4,16 @@ import {
 	GetPodcastError,
 	GetSearcherError,
 	INJECT_TYPES,
+	type IPodcastStream,
 	SearchService,
+	StreamService,
 	UnknownPlatformError,
 } from "@podcast/core";
 
 const container = createDIContainer();
 const CLIName = "podcast";
 const searchCommandName = "search";
+const streamCommandName = "play";
 
 const createSearchCommand = () => {
 	return new Command().option("-u, --url <url:string>", "url").option(
@@ -27,9 +30,7 @@ const createSearchCommand = () => {
 				console.log(`По запросу ${query} найдено:`);
 				for (let i = 0; i < podcasts.length; i++) {
 					const podcast = podcasts[i];
-					const output = `${
-						i + 1
-					}. ${podcast.title}; platform=${podcast.platform}`;
+					const output = `${i + 1}. ${JSON.stringify(podcast)}`;
 					console.log(output);
 				}
 			} else if (options.url) {
@@ -57,8 +58,34 @@ const createSearchCommand = () => {
 	);
 };
 
+const playStream = async (stream: IPodcastStream) => {
+	const player = "mpv";
+	const player_cmd = new Deno.Command(player, {
+		args: ["--no-video", "-"],
+		stdin: "piped",
+	});
+	const player_proccess = player_cmd.spawn();
+	await stream.getStream().pipeTo(player_proccess.stdin);
+	await player_proccess.stdin.close();
+	//await stream.cancel();
+	await stream.close();
+};
+
+const createPlayCommand = () => {
+	return new Command().arguments("<url:string>").action(
+		async (_, url: string) => {
+			const stream_service = container.get<StreamService>(
+				INJECT_TYPES.StreamService,
+			);
+			const stream = await stream_service.streamPodcast(new URL(url));
+			await playStream(stream);
+		},
+	);
+};
+
 export const createCLI = () => {
 	const main_command = new Command().name(CLIName);
 	main_command.command(searchCommandName, createSearchCommand());
+	main_command.command(streamCommandName, createPlayCommand());
 	return main_command;
 };

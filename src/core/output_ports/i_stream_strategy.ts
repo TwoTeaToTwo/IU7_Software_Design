@@ -1,10 +1,15 @@
-import type { PodcastStream, StreamToolName } from "../types.ts";
+import type { StreamToolName } from "../types.ts";
+
+export interface IPodcastStream {
+	getStream(): ReadableStream<Uint8Array<ArrayBuffer>>;
+	close(): Promise<void>;
+}
 
 export interface IStreamStrategy {
 	/**
 	 * Return null if can't stream url
 	 */
-	streamPodcast(url: URL): PodcastStream | null;
+	streamPodcast(url: URL): IPodcastStream | null;
 	isSupportedURL(url: URL): Promise<boolean>;
 	getStrategyName(): StreamToolName;
 }

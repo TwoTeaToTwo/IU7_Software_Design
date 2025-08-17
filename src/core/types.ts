@@ -8,7 +8,6 @@ export function createUInt(value: number): UInt {
 
 export type Id = UInt;
 export type CompareFunction<Type> = (a: Type, b: Type) => number;
-export type PodcastStream = ReadableStream<Uint8Array<ArrayBuffer>>;
 export type SearchPlatform = string;
 export type StreamToolName = string;
 

@@ -5,7 +5,7 @@ import type {
 	SearchPlatform,
 	StreamToolName,
 } from "@podcast/core";
-import { INJECT_TYPES, SearchService } from "@podcast/core";
+import { INJECT_TYPES, SearchService, StreamService } from "@podcast/core";
 import { YoutubeSearchStrategy } from "@podcast/youtube_search";
 import { YTDLPStreamStrategy } from "@podcast/ytdlp";
 
@@ -34,6 +34,7 @@ export function createDIContainer(): Container {
 		stream_strategies,
 	);
 	container.bind<SearchService>(INJECT_TYPES.SearchService).to(SearchService);
+	container.bind<StreamService>(INJECT_TYPES.StreamService).to(StreamService);
 	// TODO other services
 	return container;
 }

@@ -1,7 +1,10 @@
-import type { IStreamStrategy } from "../output_ports/i_stream_strategy.ts";
+import type {
+	IPodcastStream,
+	IStreamStrategy,
+} from "../output_ports/i_stream_strategy.ts";
 import type { StreamToolName } from "../types.ts";
 import { inject, injectable } from "npm:inversify";
-import { INJECT_TYPES, type PodcastStream } from "../types.ts";
+import { INJECT_TYPES } from "../types.ts";
 
 export class UnsupportableURLError extends Error {
 	constructor() {
@@ -37,7 +40,7 @@ export class StreamService {
 	 *
 	 * throw PodcastStreamError if can't stream podcast
 	 */
-	public async streamPodcast(url: URL): Promise<PodcastStream> {
+	public async streamPodcast(url: URL): Promise<IPodcastStream> {
 		const tool_name = await this.getToolNameByURL(url);
 		if (tool_name === null) {
 			throw new UnsupportableURLError();
