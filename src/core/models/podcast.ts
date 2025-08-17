@@ -32,4 +32,13 @@ export class Podcast {
 	public static compareByRelevance(p1: Podcast, p2: Podcast): number {
 		return p2.relevance - p1.relevance;
 	}
+	public toJSON() {
+		return {
+			title: this._title,
+			platform: this._platform,
+			duration_s: this._duration_seconds,
+			relevance: this._relevance,
+			url: this._url,
+		};
+	}
 }

@@ -286,7 +286,7 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 	 * Return true if can work with given url
 	 */
 	public isCorrectURL(url: URL): boolean {
-		return this.isCorrectVideoURL(url) && this.isCorrectChannelURL(url);
+		return this.isCorrectVideoURL(url) || this.isCorrectChannelURL(url);
 	}
 
 	private isCorrectVideoURL(url: URL): boolean {
