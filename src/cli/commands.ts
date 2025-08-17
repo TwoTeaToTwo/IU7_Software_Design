@@ -15,6 +15,7 @@ const container = createDIContainer();
 const CLIName = "podcast";
 const searchCommandName = "search";
 const streamCommandName = "play";
+const subscribeCommandName = "subscribe";
 
 const createSearchCommand = () => {
 	return new Command().option("-u, --url <url:string>", "url").option(
@@ -91,6 +92,17 @@ const createSubscribeCommand = () => {
 		const user_repo = container.get<IUserRepository>(
 			INJECT_TYPES.UserRepository,
 		);
+		const user = await user_repo.findByLogin(login);
+		if (!user) {
+			console.log("ERROR: user not found");
+		} else {
+			if (user.password.password != password) {
+				console.log("ERROR: wrong password");
+			} else {
+				console.log("ERROR: hello world");
+				//TODO subscribe
+			}
+		}
 	});
 };
 
@@ -98,5 +110,6 @@ export const createCLI = () => {
 	const main_command = new Command().name(CLIName);
 	main_command.command(searchCommandName, createSearchCommand());
 	main_command.command(streamCommandName, createPlayCommand());
+	main_command.command(subscribeCommandName, createSubscribeCommand());
 	return main_command;
 };

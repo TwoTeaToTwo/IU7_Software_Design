@@ -36,4 +36,7 @@ export class User {
 	get password() {
 		return this._password;
 	}
+	public toJSON() {
+		return { id: this._id, login: this._login };
+	}
 }

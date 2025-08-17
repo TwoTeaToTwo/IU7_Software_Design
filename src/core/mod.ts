@@ -3,7 +3,6 @@ export { Feed } from "./models/feed.ts";
 export { Podcast } from "./models/podcast.ts";
 export { Password, User } from "./models/user.ts";
 export { Subscribe } from "./models/subscribe.ts";
-export { Session } from "./models/session.ts";
 
 // Output ports
 export type { ISearchStrategy } from "./output_ports/i_search_strategy.ts";
@@ -31,10 +30,6 @@ export {
 	SearchService,
 	UnknownPlatformError,
 } from "./services/search_service.ts";
-export {
-	IncorrectPasswordError,
-	SessionsService,
-} from "./services/sessions_service.ts";
 export {
 	GetStreamerError,
 	PodcastStreamError,
