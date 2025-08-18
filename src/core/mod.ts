@@ -34,9 +34,12 @@ export {
 	GetStreamerError,
 	PodcastStreamError,
 	StreamService,
-	UnsupportableURLError,
 } from "./services/stream_service.ts";
-export { UserFindError } from "./services/errors.ts";
+export {
+	ChannelService,
+	SubscribeFindError,
+} from "./services/channel_service.ts";
+export { UnsupportableURLError, UserFindError } from "./services/errors.ts";
 
 // Types
 export type { Id, SearchPlatform, StreamToolName, UInt } from "./types.ts";

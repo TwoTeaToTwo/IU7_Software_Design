@@ -100,7 +100,7 @@ const createSubscribeCommand = () => {
 				console.log("ERROR: wrong password");
 			} else {
 				console.log("ERROR: hello world");
-				//TODO subscribe
+				//TODO
 			}
 		}
 	});

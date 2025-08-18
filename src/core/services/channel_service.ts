@@ -4,14 +4,7 @@ import type { ISubscribeManageRepository } from "../output_ports/i_subscribe_man
 import type { IUserRepository } from "../output_ports/i_user_repository.ts";
 import type { ISubscribeRepository } from "../output_ports/i_subscribe_repository.ts";
 import { INJECT_TYPES, type UInt } from "../types.ts";
-import { UserFindError } from "./errors.ts";
-
-export class UnsupportableURLError extends Error {
-	constructor() {
-		super("ERROR: Unknown platform of url");
-		Object.setPrototypeOf(this, UnsupportableURLError.prototype);
-	}
-}
+import { UnsupportableURLError, UserFindError } from "./errors.ts";
 
 export class SubscribeFindError extends Error {
 	constructor() {
@@ -59,7 +52,7 @@ export class ChannelService {
 		if (!is_channel_exist) {
 			throw new UnsupportableURLError();
 		}
-		const platform = await this._searcher.getPlatformByURL(channel_url)!; // already check that channel exists
+		const platform = this._searcher.getPlatformByURL(channel_url)!; // already check that channel exists
 		const subscribe = await this._subscribe_repo.create(
 			channel_url,
 			channel_title,
@@ -78,9 +71,8 @@ export class ChannelService {
 	}
 
 	/**
-	 * @param user_id user to subscribe
-	 * @param channel_url url of channel
-	 * @param channel_title user custom title for channel
+	 * @param user_id user for unsubscribe
+	 * @param subscribe_id user's subscription
 	 *
 	 * throw UserFindError if can't find user
 	 * throw SubscribeFindError if can't find subscribe
