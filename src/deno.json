@@ -23,7 +23,8 @@
 		"./database/*",
 		"./searchers/*",
 		"./streamers/*",
-		"./infrastructure"
+		"./infrastructure",
+		"./cli"
 	],
 	"compilerOptions": {
 		"experimentalDecorators": true,
