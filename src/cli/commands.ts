@@ -195,30 +195,36 @@ const createShowFeedCommand = () => {
 	return new Command().arguments("<login:string> <password:string>").option(
 		"-l, --list-subscribes",
 		"show user subscribes",
-	).action(async (options, login: string, password: string) => {
-		const user = await logIn(login, password);
-		if (user) {
-			if (options.listSubscribes) {
-				const subscribe_manage_repo = container.get<
-					ISubscribeManageRepository
-				>(INJECT_TYPES.SubscribeMangeRepository);
-				const subscribes = await subscribe_manage_repo
-					.findSubscribesByUserId(user.id);
-				for (let i = 0; i < subscribes!.length; i++) {
-					console.log(`${i + 1} ${JSON.stringify(subscribes![i])}`);
-				}
-			} else {
-				const feed_service = container.get<FeedService>(
-					INJECT_TYPES.FeedService,
-				);
-				const feed = feed_service.createFeed(user.id);
-				await feed_service.updateFeed(feed);
-				for (let i = 0; i < feed.contents.length; i++) {
-					console.log(`${i + 1} ${JSON.stringify(feed.contents[i])}`);
+	).option("-s, --show-content <feed_size:number>", "show feed contents")
+		.action(async (options, login: string, password: string) => {
+			const user = await logIn(login, password);
+			if (user) {
+				if (options.listSubscribes) {
+					const subscribe_manage_repo = container.get<
+						ISubscribeManageRepository
+					>(INJECT_TYPES.SubscribeMangeRepository);
+					const subscribes = await subscribe_manage_repo
+						.findSubscribesByUserId(user.id);
+					for (let i = 0; i < subscribes!.length; i++) {
+						console.log(
+							`${i + 1} ${JSON.stringify(subscribes![i])}`,
+						);
+					}
+				} else if (options.showContent) {
+					const feed_size = options.showContent;
+					const feed_service = container.get<FeedService>(
+						INJECT_TYPES.FeedService,
+					);
+					const feed = feed_service.createFeed(user.id, feed_size);
+					await feed_service.updateFeed(feed);
+					for (let i = 0; i < feed.contents.length; i++) {
+						console.log(
+							`${i + 1} ${JSON.stringify(feed.contents[i])}`,
+						);
+					}
 				}
 			}
-		}
-	});
+		});
 };
 
 export const createCLI = () => {

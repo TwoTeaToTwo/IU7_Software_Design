@@ -106,7 +106,7 @@ Deno.test("FeedService: updateFeed: positive test", async () => {
 	);
 
 	//test
-	const feed = new Feed(createUInt(1));
+	const feed = new Feed(createUInt(1), 4);
 	await feed_service.updateFeed(feed);
 	assertEquals(feed.contents, [...podcasts1, ...podcasts2]);
 });

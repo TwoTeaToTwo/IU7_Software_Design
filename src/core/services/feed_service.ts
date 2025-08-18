@@ -31,19 +31,37 @@ export class FeedService {
 		if (subscribes === null) {
 			throw new UserFindError();
 		} else {
-			for (const subscribe of subscribes) {
-				const podcasts = await this._searcher.getLastPodcastsByChannel(
-					subscribe.url,
-					createUInt(feed.search_depth),
-				);
-				for (const content of podcasts) {
-					feed.addContent(content);
+			let search_depth = 1;
+			while (feed.contents.length < feed.max_size) {
+				for (
+					let i = 0;
+					i < subscribes.length && feed.current_size < feed.max_size;
+					i++
+				) {
+					const podcasts = await this._searcher
+						.getLastPodcastsByChannel(
+							subscribes[i].url,
+							createUInt(search_depth),
+						);
+					for (
+						let j = 0;
+						j < podcasts.length &&
+						feed.current_size < feed.max_size;
+						j++
+					) {
+						const content = podcasts[j];
+						feed.addNewContent(content);
+					}
 				}
+				search_depth++;
 			}
 		}
 	}
 
-	public createFeed(user_id: UInt): Feed {
-		return new Feed(user_id);
+	public createFeed(
+		user_id: UInt,
+		start_feed_size = Feed.DEFAULT_FEED_SIZE,
+	): Feed {
+		return new Feed(user_id, start_feed_size);
 	}
 }

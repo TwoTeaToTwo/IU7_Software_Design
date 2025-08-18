@@ -90,6 +90,18 @@ export class ChannelService {
 		if (!subscribe) {
 			throw new SubscribeFindError();
 		}
-		return this._subscribe_manage_repo.unsubscribe(user_id, subscribe.id);
+		const is_unsubscribed = await this._subscribe_manage_repo.unsubscribe(
+			user_id,
+			subscribe.id,
+		);
+		if (is_unsubscribed) {
+			const is_deleted = await this._subscribe_repo.delete(subscribe);
+			if (!is_deleted) {
+				throw Error(
+					"ERROR: ChannelService: subscribe: can't delete subscribe",
+				);
+			}
+		}
+		return is_unsubscribed;
 	}
 }
