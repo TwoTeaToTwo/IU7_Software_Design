@@ -1,6 +1,7 @@
 import { Command } from "@cliffy/command";
 import { createDIContainer } from "@podcast/infrastructure";
 import {
+	ChannelService,
 	GetPodcastError,
 	GetSearcherError,
 	INJECT_TYPES,
@@ -29,7 +30,7 @@ const createSearchCommand = () => {
 					INJECT_TYPES.SearchService,
 				);
 				const podcasts = await search_service.searchPodcast(query);
-				console.log(`По запросу ${query} найдено:`);
+				console.log(`Found on request ${query}:`);
 				for (let i = 0; i < podcasts.length; i++) {
 					const podcast = podcasts[i];
 					const output = `${i + 1}. ${JSON.stringify(podcast)}`;
@@ -87,23 +88,47 @@ const createPlayCommand = () => {
 
 const createSubscribeCommand = () => {
 	return new Command().arguments(
-		"<login:string> <password:string> <url:string>",
-	).action(async (_, login: string, password: string, url: string) => {
-		const user_repo = container.get<IUserRepository>(
-			INJECT_TYPES.UserRepository,
-		);
-		const user = await user_repo.findByLogin(login);
-		if (!user) {
-			console.log("ERROR: user not found");
-		} else {
-			if (user.password.password != password) {
-				console.log("ERROR: wrong password");
+		"<login:string> <password:string> <channel:string> <url:string>",
+	).action(
+		async (
+			_,
+			login: string,
+			password: string,
+			channel: string,
+			url: string,
+		) => {
+			const user_repo = container.get<IUserRepository>(
+				INJECT_TYPES.UserRepository,
+			);
+			const user = await user_repo.findByLogin(login);
+			if (!user) {
+				console.log("ERROR: user not found");
 			} else {
-				console.log("ERROR: hello world");
-				//TODO
+				if (user.password.password != password) {
+					console.log("ERROR: wrong password");
+				} else {
+					const channel_service = container.get<ChannelService>(
+						INJECT_TYPES.ChannelService,
+					);
+					const channel_url = new URL(url);
+					try {
+						const result = await channel_service.subscribe(
+							user.id,
+							channel_url,
+							channel,
+						);
+						if (result) {
+							console.log("Success");
+						} else {
+							console.log("Error");
+						}
+					} catch (error) {
+						console.log(error);
+					}
+				}
 			}
-		}
-	});
+		},
+	);
 };
 
 export const createCLI = () => {

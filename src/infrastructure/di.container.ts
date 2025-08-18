@@ -8,7 +8,12 @@ import type {
 	SearchPlatform,
 	StreamToolName,
 } from "@podcast/core";
-import { INJECT_TYPES, SearchService, StreamService } from "@podcast/core";
+import {
+	ChannelService,
+	INJECT_TYPES,
+	SearchService,
+	StreamService,
+} from "@podcast/core";
 import { YoutubeSearchStrategy } from "@podcast/youtube_search";
 import { YTDLPStreamStrategy } from "@podcast/ytdlp";
 import {
@@ -45,7 +50,7 @@ export function createDIContainer(): Container {
 	);
 	container.bind<SearchService>(INJECT_TYPES.SearchService).to(SearchService);
 	container.bind<StreamService>(INJECT_TYPES.StreamService).to(StreamService);
-	// TODO other services
+
 	const db = createPostgresDB();
 	container.bind(DB_INJECT_TYPES.NodePgDatabase).toConstantValue(db);
 	container.bind<IUserRepository>(INJECT_TYPES.UserRepository).to(
@@ -58,6 +63,10 @@ export function createDIContainer(): Container {
 		INJECT_TYPES.SubscribeMangeRepository,
 	).to(
 		SubscribeManageRepository,
+	);
+
+	container.bind<ChannelService>(INJECT_TYPES.ChannelService).to(
+		ChannelService,
 	);
 	return container;
 }
