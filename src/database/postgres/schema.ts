@@ -8,7 +8,7 @@ export const users = pgTable("users", {
 
 export const subscriptions = pgTable("subscriptions", {
 	id: serial("id").primaryKey(),
-	url: text("url").notNull().unique(),
+	url: text("url").notNull(),
 	title: text("title").notNull(),
 	platform: text("platform").notNull(),
 });

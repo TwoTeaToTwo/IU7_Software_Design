@@ -10,6 +10,7 @@ import type {
 } from "@podcast/core";
 import {
 	ChannelService,
+	FeedService,
 	INJECT_TYPES,
 	SearchService,
 	StreamService,
@@ -68,5 +69,6 @@ export function createDIContainer(): Container {
 	container.bind<ChannelService>(INJECT_TYPES.ChannelService).to(
 		ChannelService,
 	);
+	container.bind<FeedService>(INJECT_TYPES.FeedService).to(FeedService);
 	return container;
 }

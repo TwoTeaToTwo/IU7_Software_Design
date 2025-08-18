@@ -2,21 +2,30 @@ import { Command } from "@cliffy/command";
 import { createDIContainer } from "@podcast/infrastructure";
 import {
 	ChannelService,
+	createUInt,
+	FeedService,
 	GetPodcastError,
 	GetSearcherError,
 	INJECT_TYPES,
 	SearchService,
 	StreamService,
+	SubscribeFindError,
 	UnknownPlatformError,
+	UnsupportableURLError,
 } from "@podcast/core";
-
-import type { IPodcastStream, IUserRepository } from "@podcast/core";
+import type {
+	IPodcastStream,
+	ISubscribeManageRepository,
+	IUserRepository,
+} from "@podcast/core";
 
 const container = createDIContainer();
 const CLIName = "podcast";
 const searchCommandName = "search";
 const streamCommandName = "play";
 const subscribeCommandName = "subscribe";
+const unsubscribeCommandName = "unsubscribe";
+const showFeedCommandName = "feed";
 
 const createSearchCommand = () => {
 	return new Command().option("-u, --url <url:string>", "url").option(
@@ -86,6 +95,25 @@ const createPlayCommand = () => {
 	);
 };
 
+/**
+ * @returns user on success else null
+ */
+const logIn = async (login: string, password: string) => {
+	const user_repo = container.get<IUserRepository>(
+		INJECT_TYPES.UserRepository,
+	);
+	let user = await user_repo.findByLogin(login);
+	if (!user) {
+		console.log("ERROR: user not found");
+	} else {
+		if (user.password.password != password) {
+			console.log("ERROR: wrong password");
+			user = null;
+		}
+	}
+	return user;
+};
+
 const createSubscribeCommand = () => {
 	return new Command().arguments(
 		"<login:string> <password:string> <channel:string> <url:string>",
@@ -97,32 +125,27 @@ const createSubscribeCommand = () => {
 			channel: string,
 			url: string,
 		) => {
-			const user_repo = container.get<IUserRepository>(
-				INJECT_TYPES.UserRepository,
-			);
-			const user = await user_repo.findByLogin(login);
-			if (!user) {
-				console.log("ERROR: user not found");
-			} else {
-				if (user.password.password != password) {
-					console.log("ERROR: wrong password");
-				} else {
-					const channel_service = container.get<ChannelService>(
-						INJECT_TYPES.ChannelService,
+			const user = await logIn(login, password);
+			if (user) {
+				const channel_service = container.get<ChannelService>(
+					INJECT_TYPES.ChannelService,
+				);
+				const channel_url = new URL(url);
+				try {
+					const result = await channel_service.subscribe(
+						user.id,
+						channel_url,
+						channel,
 					);
-					const channel_url = new URL(url);
-					try {
-						const result = await channel_service.subscribe(
-							user.id,
-							channel_url,
-							channel,
-						);
-						if (result) {
-							console.log("Success");
-						} else {
-							console.log("Error");
-						}
-					} catch (error) {
+					if (result) {
+						console.log("Success");
+					} else {
+						console.log("Error");
+					}
+				} catch (error) {
+					if (error instanceof UnsupportableURLError) {
+						console.log(error.message);
+					} else {
 						console.log(error);
 					}
 				}
@@ -131,10 +154,79 @@ const createSubscribeCommand = () => {
 	);
 };
 
+const createUnsubscribeCommand = () => {
+	return new Command().arguments(
+		"<login:string> <password:string> <subscribe_id:number>",
+	).action(
+		async (
+			_,
+			login: string,
+			password: string,
+			subscribe_id: number,
+		) => {
+			const user = await logIn(login, password);
+			if (user) {
+				const channel_service = container.get<ChannelService>(
+					INJECT_TYPES.ChannelService,
+				);
+				try {
+					const result = await channel_service.unsubscribe(
+						user.id,
+						createUInt(subscribe_id),
+					);
+					if (result) {
+						console.log("Success");
+					} else {
+						console.log("Error");
+					}
+				} catch (error) {
+					if (error instanceof SubscribeFindError) {
+						console.log(error.message);
+					} else {
+						console.log(error);
+					}
+				}
+			}
+		},
+	);
+};
+
+const createShowFeedCommand = () => {
+	return new Command().arguments("<login:string> <password:string>").option(
+		"-l, --list-subscribes",
+		"show user subscribes",
+	).action(async (options, login: string, password: string) => {
+		const user = await logIn(login, password);
+		if (user) {
+			if (options.listSubscribes) {
+				const subscribe_manage_repo = container.get<
+					ISubscribeManageRepository
+				>(INJECT_TYPES.SubscribeMangeRepository);
+				const subscribes = await subscribe_manage_repo
+					.findSubscribesByUserId(user.id);
+				for (let i = 0; i < subscribes!.length; i++) {
+					console.log(`${i + 1} ${JSON.stringify(subscribes![i])}`);
+				}
+			} else {
+				const feed_service = container.get<FeedService>(
+					INJECT_TYPES.FeedService,
+				);
+				const feed = feed_service.createFeed(user.id);
+				await feed_service.updateFeed(feed);
+				for (let i = 0; i < feed.contents.length; i++) {
+					console.log(`${i + 1} ${JSON.stringify(feed.contents[i])}`);
+				}
+			}
+		}
+	});
+};
+
 export const createCLI = () => {
 	const main_command = new Command().name(CLIName);
 	main_command.command(searchCommandName, createSearchCommand());
 	main_command.command(streamCommandName, createPlayCommand());
 	main_command.command(subscribeCommandName, createSubscribeCommand());
+	main_command.command(unsubscribeCommandName, createUnsubscribeCommand());
+	main_command.command(showFeedCommandName, createShowFeedCommand());
 	return main_command;
 };

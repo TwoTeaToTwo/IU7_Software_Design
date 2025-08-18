@@ -19,4 +19,12 @@ export class Subscribe {
 	get platform() {
 		return this._platform;
 	}
+	public toJSON() {
+		return {
+			id: this._id,
+			url: this._url,
+			title: this._title,
+			platform: this._platform,
+		};
+	}
 }
