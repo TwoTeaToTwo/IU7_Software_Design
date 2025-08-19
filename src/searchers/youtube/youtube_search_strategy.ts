@@ -1,12 +1,8 @@
-import {
-	createUInt,
-	Podcast,
-	SearchError,
-	SearchStrategyInitializationError,
-} from "@podcast/core";
+import { createUInt, Podcast, SearchError } from "@podcast/core";
 import type { ISearchStrategy, SearchPlatform, UInt } from "@podcast/core";
 import { parse, toSeconds } from "npm:iso8601-duration";
 import type { youtube_v3 } from "npm:googleapis";
+import { youtubeConfig } from "./config.ts";
 
 type ChannelId = { type: "channel" | "user" | "handle"; id: string };
 
@@ -16,14 +12,7 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 	private readonly youtube_api_url = "https://www.googleapis.com/youtube/v3";
 
 	constructor() {
-		const api_key = Deno.env.get("YOUTUBE_API_KEY");
-		if (api_key) {
-			this.api_key = api_key;
-		} else {
-			throw new SearchStrategyInitializationError(
-				"ERROR: YOUTUBE_API_KEY not found in env file",
-			);
-		}
+		this.api_key = youtubeConfig.api_key;
 	}
 
 	public async searchPodcast(

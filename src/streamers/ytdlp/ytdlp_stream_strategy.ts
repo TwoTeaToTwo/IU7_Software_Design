@@ -3,6 +3,7 @@ import type {
 	IStreamStrategy,
 	StreamToolName,
 } from "@podcast/core";
+import { ytdlpConfig } from "./config.ts";
 
 class YTDLPPodcastStream implements IPodcastStream {
 	constructor(private _stream_process: Deno.ChildProcess) {
@@ -23,14 +24,7 @@ export class YTDLPStreamStrategy implements IStreamStrategy {
 	private readonly strategy_name = "yt-dlp";
 
 	constructor() {
-		const cache_path = Deno.env.get("YTDLP_CACHE_DIR_PATH");
-		if (cache_path) {
-			this.cache_path = cache_path;
-		} else {
-			throw new Error(
-				"ERROR: YTDLP_CACHE_DIR_PATH not found in env file",
-			);
-		}
+		this.cache_path = ytdlpConfig.cache_path;
 	}
 
 	public streamPodcast(url: URL): IPodcastStream | null {
