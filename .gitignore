@@ -4,3 +4,4 @@
 *.key
 **/podcast_cache/
 **/podcast_log/
+**/out/
