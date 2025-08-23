@@ -4,6 +4,7 @@ import { inject, injectable } from "npm:inversify";
 import type { ISubscribeManageRepository } from "../output_ports/i_subscribe_manage_repository.ts";
 import { createUInt, INJECT_TYPES, type UInt } from "../types.ts";
 import { UserFindError } from "./errors.ts";
+import { coreConfig } from "../config.ts";
 
 export class UnsupportableURLError extends Error {
 	constructor() {
@@ -14,12 +15,16 @@ export class UnsupportableURLError extends Error {
 
 @injectable()
 export class FeedService {
+	private readonly startSearchDepth;
+
 	constructor(
 		@inject(INJECT_TYPES.SearchService) private _searcher: SearchService,
 		@inject(
 			INJECT_TYPES.SubscribeMangeRepository,
 		) private _subscribe_manage_repo: ISubscribeManageRepository,
-	) {}
+	) {
+		this.startSearchDepth = coreConfig.feedService.searchDepth;
+	}
 	/**
 	 * throw UserFindError if can't find user
 	 */
@@ -31,7 +36,7 @@ export class FeedService {
 		if (subscribes === null) {
 			throw new UserFindError();
 		} else {
-			let search_depth = 1;
+			let search_depth = this.startSearchDepth;
 			while (feed.contents.length < feed.max_size) {
 				for (
 					let i = 0;
