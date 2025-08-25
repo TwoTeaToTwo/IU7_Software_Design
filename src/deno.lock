@@ -35,10 +35,8 @@
     "npm:drizzle-orm@~0.44.5": "0.44.5_@types+pg@8.15.5_pg@8.16.3",
     "npm:googleapis@^150.0.1": "150.0.1",
     "npm:inversify@^7.9.0": "7.9.0_reflect-metadata@0.2.2",
-    "npm:iso8601-duration@*": "2.1.2",
     "npm:iso8601-duration@^2.1.2": "2.1.2",
     "npm:pg@^8.16.3": "8.16.3",
-    "npm:ts-mockito@*": "2.6.1",
     "npm:ts-mockito@^2.6.1": "2.6.1",
     "npm:zod@^3.25.76": "3.25.76"
   },
