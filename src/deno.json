@@ -5,20 +5,21 @@
 		"indentWidth": 4
 	},
 	"imports": {
-		"@cliffy/command": "jsr:@cliffy/command@^1.0.0-rc.7",
+		"@cliffy/command": "jsr:@cliffy/command@^1.0.0-rc.8",
+		"@deno/dnt": "jsr:@deno/dnt@^0.42.3",
 		"@std/log": "jsr:@std/log@^0.224.14",
 		"@std/path": "jsr:@std/path@^1.1.2",
-		"@std/testing": "jsr:@std/testing@^1.0.14",
+		"@std/testing": "jsr:@std/testing@^1.0.15",
 		"googleapis": "npm:googleapis@^150.0.1",
-		"inversify": "npm:inversify@^7.5.0",
+		"inversify": "npm:inversify@^7.9.0",
 		"iso8601-duration": "npm:iso8601-duration@^2.1.2",
 		"ts-mockito": "npm:ts-mockito@^2.6.1",
-		"zod": "npm:zod@^3.24.2",
-		"@types/pg": "npm:@types/pg@^8.15.4",
-		"drizzle-kit": "npm:drizzle-kit@^0.31.1",
-		"drizzle-orm": "npm:drizzle-orm@^0.44.2",
-		"drizzle-orm/pg-core": "npm:drizzle-orm@^0.44.2/pg-core",
-		"pg": "npm:pg@^8.16.0"
+		"zod": "npm:zod@^3.25.76",
+		"@types/pg": "npm:@types/pg@^8.15.5",
+		"drizzle-kit": "npm:drizzle-kit@^0.31.4",
+		"drizzle-orm": "npm:drizzle-orm@^0.44.5",
+		"drizzle-orm/pg-core": "npm:drizzle-orm@^0.44.5/pg-core",
+		"pg": "npm:pg@^8.16.3"
 	},
 	"workspace": [
 		"./core",
@@ -31,5 +32,8 @@
 	"compilerOptions": {
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
+	},
+	"tasks": {
+		"build": "deno compile -o ../out/podcast --target x86_64-unknown-linux-gnu --allow-env --env-file --allow-net --allow-read --allow-write --allow-run=yt-dlp,mpv main.ts"
 	}
 }

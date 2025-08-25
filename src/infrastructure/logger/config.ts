@@ -2,7 +2,7 @@ import { z } from "zod";
 import { parse } from "jsr:@std/toml";
 
 const loggerConfigSchema = z.object({
-	log_dir_path: z.string(),
+	logDirPath: z.string(),
 	maxBytes: z.number().positive(),
 	maxBackupCount: z.number().positive(),
 });
@@ -18,7 +18,7 @@ interface TomlConfig {
 }
 
 const loadLoggerConfig = async () => {
-	const log_dir_path = Deno.env.get("LOG_DIR_PATH");
+	const logDirPath = Deno.env.get("LOG_DIR_PATH");
 	const configFile = Deno.env.get("CONFIG_FILE");
 	if (!configFile) {
 		throw Error("ERROR: loadLoggerConfig: no CONFIG_FILE in env file");
@@ -27,7 +27,7 @@ const loadLoggerConfig = async () => {
 		await Deno.readTextFile(configFile),
 	) as TomlConfig;
 	const config = {
-		log_dir_path,
+		logDirPath,
 		maxBytes: toml_config.logger.maxBytes,
 		maxBackupCount: toml_config.logger.maxBackupCount,
 	};
