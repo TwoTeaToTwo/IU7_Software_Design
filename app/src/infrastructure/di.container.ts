@@ -72,3 +72,5 @@ export function createDIContainer(): Container {
 	container.bind<FeedService>(INJECT_TYPES.FeedService).to(FeedService);
 	return container;
 }
+
+export const container = createDIContainer();

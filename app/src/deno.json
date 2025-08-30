@@ -7,9 +7,14 @@
 	"imports": {
 		"@cliffy/command": "jsr:@cliffy/command@^1.0.0-rc.8",
 		"@deno/dnt": "jsr:@deno/dnt@^0.42.3",
+		"@fastify/cookie": "npm:@fastify/cookie@^11.0.2",
+		"@fastify/jwt": "npm:@fastify/jwt@^10.0.0",
+		"@fastify/type-provider-typebox": "npm:@fastify/type-provider-typebox@^5.2.0",
+		"@sinclair/typebox": "npm:@sinclair/typebox@^0.34.41",
 		"@std/log": "jsr:@std/log@^0.224.14",
 		"@std/path": "jsr:@std/path@^1.1.2",
 		"@std/testing": "jsr:@std/testing@^1.0.15",
+		"fastify": "npm:fastify@^5.5.0",
 		"googleapis": "npm:googleapis@^150.0.1",
 		"inversify": "npm:inversify@^7.9.0",
 		"iso8601-duration": "npm:iso8601-duration@^2.1.2",
@@ -27,13 +32,14 @@
 		"./searchers/*",
 		"./streamers/*",
 		"./infrastructure",
-		"./cli"
+		"./delivery/*"
 	],
 	"compilerOptions": {
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
 	},
 	"tasks": {
-		"build": "deno compile -o ../out/podcast --target x86_64-unknown-linux-gnu --allow-env --env-file --allow-net --allow-read --allow-write --allow-run=yt-dlp,mpv main.ts"
+		"build": "deno compile -o ../out/podcast --target x86_64-unknown-linux-gnu --allow-env --env-file --allow-net --allow-read --allow-write --allow-run=yt-dlp,mpv main.ts",
+		"run": "deno run --allow-env --env-file --allow-net --allow-read --allow-write --allow-run=yt-dlp,mpv main.ts"
 	}
 }

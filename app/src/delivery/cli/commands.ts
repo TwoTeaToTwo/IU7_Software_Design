@@ -1,5 +1,5 @@
 import { Command } from "@cliffy/command";
-import { createDIContainer, globalLogger } from "@podcast/infrastructure";
+import { container, globalLogger } from "@podcast/infrastructure";
 import {
 	createUInt,
 	GetPodcastError,
@@ -19,7 +19,6 @@ import type {
 	StreamService,
 } from "@podcast/core";
 
-const container = createDIContainer();
 const CLIName = "podcast";
 const searchCommandName = "search";
 const streamCommandName = "play";
