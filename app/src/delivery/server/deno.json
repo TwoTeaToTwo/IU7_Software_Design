@@ -1,5 +1,5 @@
 {
-	"name": "@podcast/http",
+	"name": "@podcast/server",
 	"exports": "./mod.ts",
 	"fmt": {
 		"useTabs": true,
