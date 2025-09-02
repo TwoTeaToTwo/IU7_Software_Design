@@ -7,6 +7,7 @@ const HTTPConfigSchema = z.object({
 	secretCookie: z.string(),
 	accessTokenExpiresIn: z.string(),
 	refreshTokenExpiresIn: z.string(),
+	frontendPath: z.string(),
 });
 
 const loadHTTPConfig = () => {
@@ -16,6 +17,7 @@ const loadHTTPConfig = () => {
 	const secretCookie = Deno.env.get("SECRET_COOKIE");
 	const accessTokenExpiresIn = "10m";
 	const refreshTokenExpiresIn = "30d";
+	const frontendPath = Deno.env.get("FRONTEND_PATH");
 	const config = {
 		host,
 		port,
@@ -23,6 +25,7 @@ const loadHTTPConfig = () => {
 		secretCookie,
 		accessTokenExpiresIn,
 		refreshTokenExpiresIn,
+		frontendPath,
 	};
 	return HTTPConfigSchema.parse(config);
 };

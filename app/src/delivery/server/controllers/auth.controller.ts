@@ -49,8 +49,7 @@ export class AuthenticationController {
 				httpOnly: true,
 				secure: true,
 			});
-			// TODO redirect 303
-			return {};
+			return reply.code(303).redirect("/");
 		}
 	}
 

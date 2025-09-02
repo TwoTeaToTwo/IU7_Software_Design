@@ -5,7 +5,10 @@ import fjwt from "@fastify/jwt";
 import type { FastifyJWT } from "@fastify/jwt";
 import fCookie from "@fastify/cookie";
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
+import fastifyStatic from "@fastify/static";
+import * as path from "@std/path";
 import { authenticateRoutes } from "./routes/auth.routes.ts";
+import { SPARoutes } from "./routes/spa.routes.ts";
 
 const createServer = () => {
 	const app = fastify({ logger: true }).withTypeProvider<
@@ -36,8 +39,14 @@ const createServer = () => {
 		secret: httpConfig.secretCookie,
 		hook: "preHandler",
 	});
-	//routes
+	// static
+	app.register(fastifyStatic, {
+		root: path.resolve(httpConfig.frontendPath),
+		prefix: "/",
+	});
+	// routes
 	app.register(authenticateRoutes);
+	app.register(SPARoutes);
 	return app;
 };
 

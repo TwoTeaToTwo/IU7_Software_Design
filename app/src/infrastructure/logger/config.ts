@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { parse } from "jsr:@std/toml";
+import { resolve } from "jsr:@std/path";
 
 const loggerConfigSchema = z.object({
 	logDirPath: z.string(),
@@ -24,7 +25,7 @@ const loadLoggerConfig = async () => {
 		throw Error("ERROR: loadLoggerConfig: no CONFIG_FILE in env file");
 	}
 	const toml_config = parse(
-		await Deno.readTextFile(configFile),
+		await Deno.readTextFile(resolve(configFile)),
 	) as TomlConfig;
 	const config = {
 		logDirPath,
