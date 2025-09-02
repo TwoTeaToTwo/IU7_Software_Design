@@ -8,7 +8,7 @@ import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import { authenticateRoutes } from "./routes/auth.routes.ts";
 
 const createServer = () => {
-	const app = fastify({ logger: false }).withTypeProvider<
+	const app = fastify({ logger: true }).withTypeProvider<
 		TypeBoxTypeProvider
 	>();
 	// jwt
@@ -41,7 +41,7 @@ const createServer = () => {
 	return app;
 };
 
-export class Server {
+class Server {
 	private readonly app: FastifyInstance;
 	constructor() {
 		this.app = createServer();
@@ -53,3 +53,5 @@ export class Server {
 		});
 	}
 }
+
+export const server = new Server();

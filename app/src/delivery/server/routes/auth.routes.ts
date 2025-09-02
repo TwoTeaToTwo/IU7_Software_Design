@@ -10,6 +10,7 @@ export const authenticateRoutes: FastifyPluginAsync = async (app) => {
 	app.post("/login", {
 		schema: {
 			body: loginSchema,
+			response: { 201: {} },
 		},
 	}, AuthenticationController.login);
 	app.post("/get_access_token", {

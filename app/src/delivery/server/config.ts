@@ -11,7 +11,7 @@ const HTTPConfigSchema = z.object({
 
 const loadHTTPConfig = () => {
 	const host = Deno.env.get("HOST");
-	const port = Deno.env.get("PORT");
+	const port = Number(Deno.env.get("PORT"));
 	const secretJWT = Deno.env.get("SECRET_JWT");
 	const secretCookie = Deno.env.get("SECRET_COOKIE");
 	const accessTokenExpiresIn = "10m";

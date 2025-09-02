@@ -1,4 +1,3 @@
-import { createCLI } from "@podcast/cli";
+import { server } from "@podcast/server";
 
-const cli_command = createCLI();
-await cli_command.parse(Deno.args);
+await server.runServer();
