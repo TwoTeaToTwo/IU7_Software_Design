@@ -65,6 +65,30 @@ export class AuthenticationController {
 		}
 	}
 
+	public static verifyAccessToken(
+		token: string,
+		request: FastifyRequest,
+	) {
+		try {
+			const payload = request.jwt.verify<FastifyJWT["user"]>(token);
+			return payload;
+		} catch {
+			return null;
+		}
+	}
+
+	public static extractAccessTokenFromHeader(request: FastifyRequest)
+	{
+		const authHeader = request.headers.authorization;
+		if (!authHeader) {
+			return null;
+		}
+		if (authHeader.startsWith('Bearer ')) {
+			return authHeader.substring(7);
+		}
+		return authHeader;
+	}
+
 	public static getAccessToken(
 		request: FastifyRequest,
 		reply: FastifyReply,
