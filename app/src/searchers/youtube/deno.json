@@ -1,14 +1,14 @@
 {
-    "name": "@podcast/youtube_search",
-    "exports": "./mod.ts",
-    "fmt": {
-        "useTabs": true,
-        "lineWidth": 80,
-        "indentWidth": 4
-    },
-    "compilerOptions": {
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "noImplicitAny": true
-    }
+	"name": "@podcast/youtube_search",
+	"exports": "./mod.ts",
+	"fmt": {
+		"useTabs": true,
+		"lineWidth": 80,
+		"indentWidth": 4
+	},
+	"compilerOptions": {
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"noImplicitAny": true
+	}
 }

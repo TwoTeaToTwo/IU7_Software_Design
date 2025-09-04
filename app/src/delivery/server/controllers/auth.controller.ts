@@ -77,13 +77,12 @@ export class AuthenticationController {
 		}
 	}
 
-	public static extractAccessTokenFromHeader(request: FastifyRequest)
-	{
+	public static extractAccessTokenFromHeader(request: FastifyRequest) {
 		const authHeader = request.headers.authorization;
 		if (!authHeader) {
 			return null;
 		}
-		if (authHeader.startsWith('Bearer ')) {
+		if (authHeader.startsWith("Bearer ")) {
 			return authHeader.substring(7);
 		}
 		return authHeader;

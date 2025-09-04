@@ -9,6 +9,7 @@ import * as path from "@std/path";
 import { authenticateRoutes } from "./routes/auth.routes.ts";
 import { SPARoutes } from "./routes/spa.routes.ts";
 import { AuthenticationController } from "./controllers/auth.controller.ts";
+import { searchRoutes } from "./routes/search.routes.ts";
 
 const createServer = () => {
 	const app = fastify({ logger: true }).withTypeProvider<
@@ -23,15 +24,19 @@ const createServer = () => {
 	app.decorate(
 		"authenticate",
 		(request: FastifyRequest, reply: FastifyReply) => {
-			const token = AuthenticationController.extractAccessTokenFromHeader(request);
+			const token = AuthenticationController.extractAccessTokenFromHeader(
+				request,
+			);
 			if (!token) {
 				return reply.status(401).send({
 					message: "Authentication required",
 				});
 			}
-			const decoded = AuthenticationController.verifyAccessToken(token, request);
-			if (!decoded)
-			{
+			const decoded = AuthenticationController.verifyAccessToken(
+				token,
+				request,
+			);
+			if (!decoded) {
 				return reply.status(401).send({
 					message: "Invalid access token",
 				});
@@ -52,6 +57,7 @@ const createServer = () => {
 	// routes
 	app.register(authenticateRoutes);
 	app.register(SPARoutes);
+	app.register(searchRoutes, { prefix: "/api/search" });
 	return app;
 };
 
