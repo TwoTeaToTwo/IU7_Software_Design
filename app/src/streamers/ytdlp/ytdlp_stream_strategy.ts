@@ -12,9 +12,7 @@ class YTDLPPodcastStream implements IPodcastStream {
 		return this._stream_process.stdout;
 	}
 	public async close(): Promise<void> {
-		this._stream_process.kill();
-		await this._stream_process.stderr.cancel();
-		await this._stream_process.stdout.cancel();
+		await this._stream_process.status;
 	}
 }
 

@@ -109,4 +109,9 @@ export class AuthenticationController {
 		);
 		return { accessToken };
 	}
+
+	public static logout(_request: FastifyRequest, reply: FastifyReply) {
+		reply.clearCookie("refresh_token");
+		return reply.code(303).redirect("/login");
+	}
 }

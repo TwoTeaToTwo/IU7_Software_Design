@@ -16,6 +16,7 @@ import { SPARoutes } from "./routes/spa.routes.ts";
 import { AuthenticationController } from "./controllers/auth.controller.ts";
 import { searchRoutes } from "./routes/search.routes.ts";
 import { userRoutes } from "./routes/user.routes.ts";
+import { streamRoutes } from "./routes/stream.routes.ts";
 
 const createServer = () => {
 	const app = fastify({ logger: true }).withTypeProvider<
@@ -70,6 +71,7 @@ const createServer = () => {
 	app.register(SPARoutes);
 	app.register(searchRoutes, { prefix: "/api/search" });
 	app.register(userRoutes, { prefix: "/api/user" });
+	app.register(streamRoutes, { prefix: "/api/stream" });
 	return app;
 };
 

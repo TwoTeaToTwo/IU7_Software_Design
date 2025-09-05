@@ -16,4 +16,7 @@ export const authenticateRoutes: FastifyPluginAsync = async (app) => {
 	app.post("/get_access_token", {
 		schema: { response: { 201: getAccessTokenResponseSchema } },
 	}, AuthenticationController.getAccessToken);
+	app.delete("/logout", {
+		preHandler: [app.authenticate],
+	}, AuthenticationController.logout);
 };
