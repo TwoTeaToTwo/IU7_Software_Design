@@ -61,7 +61,7 @@ export function createDIContainer(): Container {
 		SubscribeRepository,
 	);
 	container.bind<ISubscribeManageRepository>(
-		INJECT_TYPES.SubscribeMangeRepository,
+		INJECT_TYPES.SubscribeManageRepository,
 	).to(
 		SubscribeManageRepository,
 	);

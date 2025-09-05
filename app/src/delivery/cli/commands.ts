@@ -247,7 +247,7 @@ const createShowFeedCommand = () => {
 					);
 					const subscribe_manage_repo = container.get<
 						ISubscribeManageRepository
-					>(INJECT_TYPES.SubscribeMangeRepository);
+					>(INJECT_TYPES.SubscribeManageRepository);
 					const subscribes = await subscribe_manage_repo
 						.findSubscribesByUserId(user.id);
 					globalLogger.info(

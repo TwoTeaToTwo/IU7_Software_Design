@@ -5,6 +5,6 @@ export const subscribeSchema = Type.Object({
 	channel_url: Type.String(),
 });
 
-export type subscribeType = Static<
+export type SubscribeType = Static<
 	typeof subscribeSchema
 >;

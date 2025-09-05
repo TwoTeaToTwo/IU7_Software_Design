@@ -3,7 +3,7 @@ import type { FastifyJWT } from "@fastify/jwt";
 import type { IUserRepository } from "@podcast/core";
 import { container } from "@podcast/infrastructure";
 import { INJECT_TYPES } from "@podcast/core";
-import type { loginType } from "../schemas/auth.schemas.ts";
+import type { Login } from "../schemas/auth.schemas.ts";
 import { httpConfig } from "../config.ts";
 import type { UserPayload } from "../types.ts";
 
@@ -27,7 +27,7 @@ export class AuthenticationController {
 	}
 
 	public static async login(
-		request: FastifyRequest<{ Body: loginType }>,
+		request: FastifyRequest<{ Body: Login }>,
 		reply: FastifyReply,
 	) {
 		const userRepo = container.get<IUserRepository>(

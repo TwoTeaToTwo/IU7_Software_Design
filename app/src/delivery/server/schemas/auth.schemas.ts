@@ -5,7 +5,7 @@ export const loginSchema = Type.Object({
 	password: Type.String({ minLength: 1 }),
 });
 
-export type loginType = Static<typeof loginSchema>;
+export type Login = Static<typeof loginSchema>;
 
 export const getAccessTokenResponseSchema = Type.Object({
 	accessToken: Type.String(),

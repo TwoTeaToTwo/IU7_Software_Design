@@ -9,8 +9,8 @@ import {
 	UnknownPlatformError,
 } from "@podcast/core";
 import type {
-	searchPodcastByQueryType,
-	searchPodcastByURLType,
+	SearchPodcastByQuery,
+	SearchPodcastByURL,
 } from "../schemas/search.schemas.ts";
 
 export class SearchController {
@@ -21,7 +21,7 @@ export class SearchController {
 		const searchService = container.get<SearchService>(
 			INJECT_TYPES.SearchService,
 		);
-		const requestQuery = request.query as searchPodcastByQueryType;
+		const requestQuery = request.query as SearchPodcastByQuery;
 		const query = requestQuery.query;
 		const max_results = requestQuery.max_results;
 		const podcasts = await searchService.searchPodcast(
@@ -38,7 +38,7 @@ export class SearchController {
 		const searchService = container.get<SearchService>(
 			INJECT_TYPES.SearchService,
 		);
-		const requestQuery = request.query as searchPodcastByURLType;
+		const requestQuery = request.query as SearchPodcastByURL;
 		const url = requestQuery.url;
 		let podcast: Podcast | undefined;
 		try {
