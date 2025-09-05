@@ -15,7 +15,6 @@ import { authenticateRoutes } from "./routes/auth.routes.ts";
 import { SPARoutes } from "./routes/spa.routes.ts";
 import { AuthenticationController } from "./controllers/auth.controller.ts";
 import { searchRoutes } from "./routes/search.routes.ts";
-import { channelRoutes } from "./routes/channel.routes.ts";
 import { userRoutes } from "./routes/user.routes.ts";
 
 const createServer = () => {
@@ -70,7 +69,6 @@ const createServer = () => {
 	app.register(authenticateRoutes);
 	app.register(SPARoutes);
 	app.register(searchRoutes, { prefix: "/api/search" });
-	app.register(channelRoutes, { prefix: "/api/channel" });
 	app.register(userRoutes, { prefix: "/api/user" });
 	return app;
 };

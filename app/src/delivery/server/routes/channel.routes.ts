@@ -5,7 +5,7 @@ import {
 } from "../schemas/channel.schemas.ts";
 import { ChannelController } from "../controllers/channel.controller.ts";
 
-export const channelRoutes: FastifyPluginAsync = async (app) => {
+export const userChannelRoutes: FastifyPluginAsync = async (app) => {
 	await Promise.resolve();
 	app.get("/subscribe", {
 		preHandler: [app.authenticate],
