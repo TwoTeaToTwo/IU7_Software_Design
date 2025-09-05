@@ -20,7 +20,7 @@ export class FeedService {
 	constructor(
 		@inject(INJECT_TYPES.SearchService) private _searcher: SearchService,
 		@inject(
-			INJECT_TYPES.SubscribeMangeRepository,
+			INJECT_TYPES.SubscribeManageRepository,
 		) private _subscribe_manage_repo: ISubscribeManageRepository,
 	) {
 		this.startSearchDepth = coreConfig.feedService.searchDepth;

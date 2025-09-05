@@ -1,15 +1,22 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { ChannelService } from "@podcast/core";
 import { container } from "@podcast/infrastructure";
-import { INJECT_TYPES, UserFindError } from "@podcast/core";
-import type { SubscribeType } from "../schemas/channel.schemas.ts";
+import {
+	createUInt,
+	INJECT_TYPES,
+	SubscribeFindError,
+	UserFindError,
+} from "@podcast/core";
+import type {
+	SubscribeType,
+	UnsubscribeType,
+} from "../schemas/channel.schemas.ts";
 
 export class ChannelController {
 	public static async subscribe(
 		request: FastifyRequest,
 		reply: FastifyReply,
 	) {
-		console.log("1");
 		const channelService = container.get<ChannelService>(
 			INJECT_TYPES.ChannelService,
 		);
@@ -27,6 +34,35 @@ export class ChannelController {
 		} catch (error) {
 			if (error instanceof UserFindError) {
 				return reply.status(404).send("User not found");
+			}
+		}
+		if (!result) {
+			return reply.status(500).send("Subscribe error");
+		}
+		return reply.status(200).send(result);
+	}
+
+	public static async unsubscribe(
+		request: FastifyRequest,
+		reply: FastifyReply,
+	) {
+		const channelService = container.get<ChannelService>(
+			INJECT_TYPES.ChannelService,
+		);
+		const query = request.query as UnsubscribeType;
+		const channelID = query.channel_id;
+		const userID = request.user.id;
+		let result = false;
+		try {
+			result = await channelService.unsubscribe(
+				userID,
+				createUInt(channelID),
+			);
+		} catch (error) {
+			if (error instanceof UserFindError) {
+				return reply.status(404).send("User not found");
+			} else if (error instanceof SubscribeFindError) {
+				return reply.status(404).send("Subscription not found");
 			}
 		}
 		if (!result) {

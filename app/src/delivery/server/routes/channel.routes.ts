@@ -1,5 +1,8 @@
 import type { FastifyPluginAsync } from "fastify";
-import { subscribeSchema } from "../schemas/channel.schemas.ts";
+import {
+	subscribeSchema,
+	unsubscribeSchema,
+} from "../schemas/channel.schemas.ts";
 import { ChannelController } from "../controllers/channel.controller.ts";
 
 export const channelRoutes: FastifyPluginAsync = async (app) => {
@@ -8,4 +11,8 @@ export const channelRoutes: FastifyPluginAsync = async (app) => {
 		preHandler: [app.authenticate],
 		schema: { querystring: subscribeSchema },
 	}, ChannelController.subscribe);
+	app.get("/unsubscribe", {
+		preHandler: [app.authenticate],
+		schema: { querystring: unsubscribeSchema },
+	}, ChannelController.unsubscribe);
 };
