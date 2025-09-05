@@ -1,5 +1,10 @@
 import fastify from "fastify";
-import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import type {
+	FastifyInstance,
+	FastifyReply,
+	FastifyRequest,
+	HookHandlerDoneFunction,
+} from "fastify";
 import { httpConfig } from "./config.ts";
 import fjwt from "@fastify/jwt";
 import fCookie from "@fastify/cookie";
@@ -23,7 +28,11 @@ const createServer = () => {
 	});
 	app.decorate(
 		"authenticate",
-		(request: FastifyRequest, reply: FastifyReply) => {
+		(
+			request: FastifyRequest,
+			reply: FastifyReply,
+			done: HookHandlerDoneFunction,
+		) => {
 			const token = AuthenticationController.extractAccessTokenFromHeader(
 				request,
 			);
@@ -42,6 +51,7 @@ const createServer = () => {
 				});
 			}
 			request.user = decoded;
+			done();
 		},
 	);
 	// cookie

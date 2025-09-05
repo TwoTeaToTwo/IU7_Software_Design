@@ -15,14 +15,15 @@ import type {
 
 export class SearchController {
 	public static async searchPodcastByQuery(
-		request: FastifyRequest<{ Querystring: searchPodcastByQueryType }>,
+		request: FastifyRequest,
 		reply: FastifyReply,
 	) {
 		const searchService = container.get<SearchService>(
 			INJECT_TYPES.SearchService,
 		);
-		const query = request.query.query;
-		const max_results = request.query.max_results;
+		const requestQuery = request.query as searchPodcastByQueryType;
+		const query = requestQuery.query;
+		const max_results = requestQuery.max_results;
 		const podcasts = await searchService.searchPodcast(
 			query,
 			createUInt(max_results),
@@ -31,13 +32,14 @@ export class SearchController {
 	}
 
 	public static async searchPodcastByURL(
-		request: FastifyRequest<{ Querystring: searchPodcastByURLType }>,
+		request: FastifyRequest,
 		reply: FastifyReply,
 	) {
 		const searchService = container.get<SearchService>(
 			INJECT_TYPES.SearchService,
 		);
-		const url = request.query.url;
+		const requestQuery = request.query as searchPodcastByURLType;
+		const url = requestQuery.url;
 		let podcast: Podcast | undefined;
 		try {
 			podcast = await searchService.searchByURL(new URL(url));
