@@ -49,7 +49,7 @@ export class AuthenticationController {
 				httpOnly: true,
 				secure: true,
 			});
-			return reply.code(303).redirect("/");
+			return reply.code(200).send(true);
 		}
 	}
 
@@ -112,6 +112,6 @@ export class AuthenticationController {
 
 	public static logout(_request: FastifyRequest, reply: FastifyReply) {
 		reply.clearCookie("refresh_token");
-		return reply.code(303).redirect("/login");
+		return reply.code(303).redirect("/");
 	}
 }

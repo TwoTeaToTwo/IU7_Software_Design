@@ -1,0 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wdth,wght@1,6..12,75,900&display=swap");
+
+body {
+	margin: 0;
+
+	font-size: 20px;
+	font-synthesis: style;
+	scroll-behavior: smooth;
+
+	overflow-x: hidden;
+
+	/* TODO: Customize this! */
+	scrollbar-width: none;
+
+	background: linear-gradient(to bottom, #f0f0f0 80%, #00ccfe 100%);
+	transition: 0.3s;
+}
+
+body.half {
+	background: linear-gradient(to bottom, #00ccfe 0%, #030bbf 100%);
+}
