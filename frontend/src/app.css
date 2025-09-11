@@ -1,6 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wdth,wght@1,6..12,75,900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wdth,wght@1,6..12,75,900&display=swap');
 
 body {
+	--first-percent: 80%;
+	--second-percent: 100%;
+	--first-color: #f0f0f0;
+	--second-color: #00ccfe;
 	margin: 0;
 
 	font-size: 20px;
@@ -12,10 +16,17 @@ body {
 	/* TODO: Customize this! */
 	scrollbar-width: none;
 
-	background: linear-gradient(to bottom, #f0f0f0 80%, #00ccfe 100%);
+	background: linear-gradient(
+		to bottom,
+		var(--first-color) var(--first-percent),
+		var(--second-color) var(--second-percent)
+	);
 	transition: 0.3s;
 }
 
-body.half {
-	background: linear-gradient(to bottom, #00ccfe 0%, #030bbf 100%);
+body.bottom {
+	--first-percent: 0%;
+	--second-percent: 100%;
+	--first-color: #00ccfe;
+	--second-color: #0103b0;
 }

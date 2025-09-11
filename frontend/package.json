@@ -15,6 +15,7 @@
 	},
 	"dependencies": {
 		"@sveltejs/adapter-static": "^3.0.9",
+		"svelte-range-slider-pips": "^4.0.7",
 		"sveltejs": "^0.0.1-security",
 		"zod": "^4.1.5"
 	},

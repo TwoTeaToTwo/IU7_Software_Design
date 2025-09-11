@@ -1,0 +1,26 @@
+import { domain } from '../Config.ts';
+
+export const getPodcastStream = async (
+	accessToken: string,
+	url: string
+): Promise<string | undefined> => {
+	const responseURL = `${domain}/api/stream/play?url=${url}`;
+	const response = await fetch(responseURL, {
+		method: 'GET',
+		headers: {
+			Authorization: accessToken,
+			'Content-Type': 'audio/mpeg'
+		}
+	});
+	if (!response.ok) {
+		console.log('[user] audio play error');
+		return undefined;
+		// TODO
+	} else {
+		const buffer = await response.clone().arrayBuffer();
+		const contentType = response.headers.get('Content-Type') || 'audio/mpeg';
+		const blob = new Blob([buffer], { type: contentType });
+		const audioUrl = URL.createObjectURL(blob);
+		return audioUrl;
+	}
+};

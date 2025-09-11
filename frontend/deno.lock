@@ -14,6 +14,7 @@
     "npm:prettier-plugin-svelte@^3.3.3": "3.4.0_prettier@3.6.2_svelte@5.38.7__acorn@8.15.0",
     "npm:prettier@^3.4.2": "3.6.2",
     "npm:svelte-check@4": "4.3.1_svelte@5.38.7__acorn@8.15.0_typescript@5.9.2",
+    "npm:svelte-range-slider-pips@^4.0.7": "4.0.7_svelte@5.38.7__acorn@8.15.0",
     "npm:svelte@5": "5.38.7_acorn@8.15.0",
     "npm:sveltejs@^0.0.1-security": "0.0.1-security",
     "npm:typescript-eslint@^8.20.0": "8.42.0_eslint@9.35.0_typescript@5.9.2_@typescript-eslint+parser@8.42.0__eslint@9.35.0__typescript@5.9.2",
@@ -1266,6 +1267,12 @@
         "svelte"
       ]
     },
+    "svelte-range-slider-pips@4.0.7_svelte@5.38.7__acorn@8.15.0": {
+      "integrity": "sha512-d4MJsuoGDkzfiTU/bk5jjZgbKe/dtAB1gTewF28+3g2GzUpUgSpA0Lox6JB0GNQVnPB46bepiXK8sO26iHvTZA==",
+      "dependencies": [
+        "svelte"
+      ]
+    },
     "svelte@5.38.7_acorn@8.15.0": {
       "integrity": "sha512-1ld9TPZSdUS3EtYGQzisU2nhwXoIzNQcZ71IOU9fEmltaUofQnVfW5CQuhgM/zFsZ43arZXS1BRKi0MYgUV91w==",
       "dependencies": [
@@ -1403,6 +1410,7 @@
         "npm:prettier-plugin-svelte@^3.3.3",
         "npm:prettier@^3.4.2",
         "npm:svelte-check@4",
+        "npm:svelte-range-slider-pips@^4.0.7",
         "npm:svelte@5",
         "npm:sveltejs@^0.0.1-security",
         "npm:typescript-eslint@^8.20.0",

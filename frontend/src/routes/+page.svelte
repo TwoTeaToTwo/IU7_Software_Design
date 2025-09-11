@@ -1,5 +1,16 @@
 <script>
-	import Login from "$lib/components/login/Login.svelte";
+	import Login from '$lib/components/login/Login.svelte';
+	import Feed from '$lib/components/feed/Feed.svelte';
+	import { authController, isLogged } from '$lib/stores/Authentication';
 </script>
 
-<Login/>
+{#await authController.responseAccessToken()}
+	<!-- TODO -->
+	<span>Loading</span>
+{:then}
+	{#if $isLogged === false}
+		<Login />
+	{:else}
+		<Feed />
+	{/if}
+{/await}
