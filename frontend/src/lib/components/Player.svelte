@@ -67,11 +67,20 @@
 				<div class="slider-container">
 					<RangeSlider
 						bind:value={sliderTime}
+						min={0}
 						max={duration}
 						on:change={(e) => {
 							const { value } = e.detail;
 							time = value;
 						}}
+						style="--range-slider: #000000;
+							--range-range-limit: #000000;
+							--range-range-inactive: #0103b0;
+							--range-range: #0103b0;
+						    --range-range-hover: #0103b0;
+							--range-handle-focus: #0103b0;
+							--range-handle-inactive: #0103b0;
+							"
 					></RangeSlider>
 				</div>
 				<div class="information-text text-color-theme">{duration ? format(duration) : '--:--'}</div>
