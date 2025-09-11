@@ -1,13 +1,21 @@
 <script lang="ts">
 	let { title, channel, platform, relevance, duration, isSelected, clickHandler } = $props();
+	let titleContainer: HTMLDivElement | null = null;
+  	let titleElement: HTMLDivElement | null = null;
+  	let isOverflowing = $state(false);
+	$effect(() => {
+    if (titleContainer && titleElement) {
+      isOverflowing = titleElement.scrollWidth > titleContainer.offsetWidth;
+    }
+  });
 </script>
 
 <button class="button" class:selected={isSelected} onclick={clickHandler}>
 	<div class="content">
 		<div class="thumbnail"></div>
 		<div class="text-block">
-			<div class="marquee-container">
-				<div class="title text-color-theme scrolling-text" class:selected={isSelected}>{title}</div>
+			<div class:marquee-container={isOverflowing} bind:this={titleContainer}>
+				<div class="title text-color-theme" class:scrolling-text={isOverflowing} class:selected={isSelected} bind:this={titleElement}>{title}</div>
 			</div>
 			<div class="marquee-container">
 				<div class="information-text text-color-theme scrolling-text" class:selected={isSelected}>
@@ -96,10 +104,10 @@
 
 	@keyframes scroll-text {
 		0% {
-			transform: translateX(100%);
+			transform: translateX(-100%);
 		}
 		100% {
-			transform: translateX(-100%);
+			transform: translateX(100%);
 		}
 	}
 </style>

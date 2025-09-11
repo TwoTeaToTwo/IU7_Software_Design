@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import {
 	getAccessTokenResponseSchema,
+	loginResponseSchema,
 	loginSchema,
 } from "../schemas/auth.schemas.ts";
 import { AuthenticationController } from "../controllers/auth.controller.ts";
@@ -10,7 +11,7 @@ export const authenticateRoutes: FastifyPluginAsync = async (app) => {
 	app.post("/login", {
 		schema: {
 			body: loginSchema,
-			response: { 201: {} },
+			response: { 201: loginResponseSchema },
 		},
 	}, AuthenticationController.login);
 	app.post("/get_access_token", {

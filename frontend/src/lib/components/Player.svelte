@@ -3,12 +3,13 @@
 	import { playingPodcast } from '$lib/stores/Store';
 	import { getPodcastStream } from '$lib/viewmodels/PlayerViewModel';
 	import { authController } from '$lib/stores/Authentication';
+	import { SyncLoader } from 'svelte-loading-spinners';
 	import RangeSlider from 'svelte-range-slider-pips';
-	import { sl } from 'zod/locales';
 	let time = $state(0);
 	let duration = $state(0);
 	let paused = $state(true);
 	let sliderTime = $state(0);
+	let volume = $state(0);
 	let audioSrc: string | undefined = $state(undefined);
 	const format = (timeInSeconds: number): string => {
 		if (isNaN(timeInSeconds)) return '...';
@@ -56,6 +57,7 @@
 				bind:currentTime={time}
 				bind:duration
 				bind:paused
+				bind:volume
 				onended={() => {
 					time = 0;
 				}}
@@ -79,21 +81,40 @@
 							--range-range: #0103b0;
 						    --range-range-hover: #0103b0;
 							--range-handle-focus: #0103b0;
-							--range-handle-inactive: #0103b0;
+							--range-handle-inactive: #000000;
 							"
 					></RangeSlider>
 				</div>
 				<div class="information-text text-color-theme">{duration ? format(duration) : '--:--'}</div>
+				<enhanced:img width="45px" height="45px" src="$lib/assets/player/speaker.svg" alt="volume"/>
+				<div class="volume-container">
+					<RangeSlider
+						bind:value={volume}
+						min={0}
+						max={1}
+						style="--range-slider: #000000;
+							--range-range-limit: #000000;
+							--range-range-inactive: #0103b0;
+							--range-range: #0103b0;
+						    --range-range-hover: #0103b0;
+							--range-handle-focus: #0103b0;
+							--range-handle-inactive: #000000;
+							"
+						step={0.01}
+					></RangeSlider>
+				</div>
 			</div>
 		{:else}
-			<p>NOT LOADED</p>
+			<div class="loading-container">
+				<SyncLoader size="100" color="#000000"></SyncLoader>
+			</div>
 		{/if}
 	</div>
 </div>
 
 <style>
 	.rectangle {
-		width: 1300px;
+		width: 1400px;
 		height: 100px;
 		padding: 10px;
 		border-radius: 20px;
@@ -202,5 +223,14 @@
 
 	.slider-container {
 		width: 650px;
+	}
+
+	.loading-container {
+		margin-left: 350px;
+		margin-right: auto;
+	}
+
+	.volume-container {
+		width: 150px;
 	}
 </style>

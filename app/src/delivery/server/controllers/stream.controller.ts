@@ -13,6 +13,7 @@ export class StreamController {
 		request: FastifyRequest,
 		reply: FastifyReply,
 	) {
+		console.log("getting audio");
 		const streamService = container.get<StreamService>(
 			INJECT_TYPES.StreamService,
 		);
@@ -21,6 +22,7 @@ export class StreamController {
 		let stream: IPodcastStream | undefined;
 		try {
 			stream = await streamService.streamPodcast(url);
+			console.log("audio gotten");
 		} catch (error) {
 			if (error instanceof GetStreamerError) {
 				return reply.status(400).send(
