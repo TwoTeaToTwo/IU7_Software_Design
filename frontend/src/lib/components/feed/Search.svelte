@@ -8,7 +8,7 @@
 	.input_component {
 		color: #000000;
 		font-family: 'Inter', sans-serif;
-		font-size: 28pt;
+		font-size: 20px;
 		font-weight: bold;
 		border-radius: 20px;
 		border: 2px solid #ffffff;
@@ -17,5 +17,6 @@
 		padding-bottom: 12px;
 		padding-left: 20px;
 		width: 950px;
+		height: 26px;
 	}
 </style>

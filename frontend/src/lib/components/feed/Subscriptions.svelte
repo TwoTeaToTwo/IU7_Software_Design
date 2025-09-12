@@ -9,15 +9,9 @@
 	let duration = $state(0);
 	let paused = $state(true);
 	let sliderTime = $state(0);
-	let volume = $state(0.5);
+	let volume = $state(0);
 	let audioSrc: string | undefined = $state(undefined);
 	let restartPlayerKey = $state({});
-	let restartInfoKey = $state({});
-	let titleContainer: HTMLDivElement | null = $state(null);
-	let titleElement: HTMLDivElement | null = $state(null);
-	let isOverflowing = $state(false);
-	const titleContainerWidth = $state(200);
-
 	const format = (timeInSeconds: number): string => {
 		if (isNaN(timeInSeconds)) return '...';
 		const hours = Math.floor(timeInSeconds / 3600);
@@ -28,18 +22,10 @@
 	const restartPlayer = (): void => {
 		restartPlayerKey = {};
 	};
-	const restartInfo = (): void => {
-		restartInfoKey = {};
-	};
-	const changeTime = () => {
-		sliderTime = time;
-	};
-
 	playingPodcast.subscribe((value) => {
 		if (!value) {
 			audioSrc = undefined;
 		} else {
-			restartInfo();
 			audioSrc = undefined;
 			const podcast = value as PodcastViewModel;
 			authController.getAccessToken().then((token) => {
@@ -50,34 +36,26 @@
 			});
 		}
 	});
-
 	$effect(() => {
 		changeTime();
 	});
-	$effect(() => {
-		if (titleContainer && titleElement) {
-			console.log(titleElement.getBoundingClientRect().width, '>', titleContainerWidth);
-			isOverflowing = titleElement.getBoundingClientRect().width > titleContainerWidth;
-		}
-	});
+	const changeTime = () => {
+		sliderTime = time;
+	};
 </script>
 
 <div class="rectangle">
-	{#key restartInfoKey}
-		<div class="podcast">
-			<div class="thumbnail"></div>
-			<div class="text-block">
-				<div class:marquee-container={isOverflowing} bind:this={titleContainer}>
-					<div class="title text-color-theme"
-						class:scrolling-text={isOverflowing}
-						bind:this={titleElement}>{$playingPodcast?.title}</div>
-				</div>
-				<div class="marquee-container">
-					<div class="information-text text-color-theme scrolling-text"></div>
-				</div>
+	<div class="podcast">
+		<div class="thumbnail"></div>
+		<div class="text-block">
+			<div class="marquee-container">
+				<div class="title text-color-theme scrolling-text">{$playingPodcast?.title}</div>
+			</div>
+			<div class="marquee-container">
+				<div class="information-text text-color-theme scrolling-text"></div>
 			</div>
 		</div>
-	{/key}
+	</div>
 	<div class={['player', { paused }]}>
 		{#if audioSrc !== undefined}
 			{#key restartPlayerKey}
@@ -214,10 +192,10 @@
 
 	@keyframes scroll-text {
 		0% {
-			transform: translateX(-100%);
+			transform: translateX(100%);
 		}
 		100% {
-			transform: translateX(100%);
+			transform: translateX(-100%);
 		}
 	}
 

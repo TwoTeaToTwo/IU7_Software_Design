@@ -7,7 +7,7 @@
 	import { playingPodcast } from '../../stores/Store';
 	import Player from '../Player.svelte';
 
-	// const feedContent = $state(new Array<PodcastViewModel>());
+	const feedContent = $state(new Array<PodcastViewModel>());
 	// const feedSize = 10;
 	// $effect(() => {
 	// 	authController.getAccessToken().then((accessToken) => {
@@ -16,15 +16,26 @@
 	// 		});
 	// 	});
 	// });
-	const podcast: PodcastViewModel = {
-		title: 'Persona 3 - Burn My Dread',
+	const podcast1: PodcastViewModel = {
+		title: 'Meow meow meow meow meow meow meow meow meow meow meow meow meow meow',
 		platform: 'youtube',
-		duration_s: 278,
+		duration_s: 94,
 		relevance: 'test',
-		url: 'https://youtu.be/GpIq-YDGP5U?si=4RhCNRmOzdVgDmib',
-		durationText: '4:38',
+		url: 'https://youtu.be/AtPrjYp75uA?si=K2VGXcbtTGhTXdjc',
+		durationText: '1:34',
 		relevanceText: '4 Feb, 2024'
 	};
+	const podcast2: PodcastViewModel = {
+		title: 'Wow',
+		platform: 'youtube',
+		duration_s: 4,
+		relevance: 'test',
+		url: 'https://youtu.be/BnTdfA5aTpY?si=Z7JWNB43D6g13NZC',
+		durationText: '0:04',
+		relevanceText: '15 Feb, 2023'
+	};
+	feedContent.push(podcast1);
+	feedContent.push(podcast2);
 </script>
 
 <div class="container">
@@ -32,7 +43,7 @@
 		<Search />
 	</div>
 	<div class="feed-content">
-		<!-- {#each feedContent as podcast}
+		{#each feedContent as podcast}
 			<Podcast
 				title={podcast.title}
 				channel=""
@@ -44,18 +55,7 @@
 					$playingPodcast = podcast;
 				}}
 			></Podcast>
-		{/each} -->
-		<Podcast
-			title={podcast.title}
-			channel=""
-			platform={podcast.platform}
-			relevance={podcast.relevanceText}
-			duration={podcast.durationText}
-			isSelected={$playingPodcast?.url === podcast.url}
-			clickHandler={() => {
-				$playingPodcast = podcast;
-			}}
-		></Podcast>
+		{/each}
 	</div>
 	{#if $playingPodcast !== undefined}
 		<div class="player">

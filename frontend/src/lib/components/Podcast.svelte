@@ -1,13 +1,14 @@
 <script lang="ts">
 	let { title, channel, platform, relevance, duration, isSelected, clickHandler } = $props();
 	let titleContainer: HTMLDivElement | null = null;
-  	let titleElement: HTMLDivElement | null = null;
-  	let isOverflowing = $state(false);
+	let titleElement: HTMLDivElement | null = null;
+	let isOverflowing = $state(false);
+	const titleContainerWidth = $state(500);
 	$effect(() => {
-    if (titleContainer && titleElement) {
-      isOverflowing = titleElement.scrollWidth > titleContainer.offsetWidth;
-    }
-  });
+		if (titleContainer && titleElement) {
+			isOverflowing = titleElement.getBoundingClientRect().width > titleContainerWidth;
+		}
+	});
 </script>
 
 <button class="button" class:selected={isSelected} onclick={clickHandler}>
@@ -15,7 +16,14 @@
 		<div class="thumbnail"></div>
 		<div class="text-block">
 			<div class:marquee-container={isOverflowing} bind:this={titleContainer}>
-				<div class="title text-color-theme" class:scrolling-text={isOverflowing} class:selected={isSelected} bind:this={titleElement}>{title}</div>
+				<div
+					class="title text-color-theme"
+					class:scrolling-text={isOverflowing}
+					class:selected={isSelected}
+					bind:this={titleElement}
+				>
+					{title}
+				</div>
 			</div>
 			<div class="marquee-container">
 				<div class="information-text text-color-theme scrolling-text" class:selected={isSelected}>
@@ -68,6 +76,7 @@
 	.title {
 		font-weight: bold;
 		font-size: 20px;
+		font-family: 'Inter', sans-serif;
 	}
 
 	.information {
