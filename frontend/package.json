@@ -16,6 +16,7 @@
 	"dependencies": {
 		"@sveltejs/adapter-static": "^3.0.9",
 		"@sveltejs/enhanced-img": "^0.8.1",
+		"@types/dom-mediacapture-record": "^1.0.22",
 		"svelte-loading-spinners": "^0.3.6",
 		"svelte-range-slider-pips": "^4.0.7",
 		"sveltejs": "^0.0.1-security",

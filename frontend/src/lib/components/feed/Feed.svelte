@@ -6,9 +6,11 @@
 	import Podcast from '../Podcast.svelte';
 	import { playingPodcast } from '../../stores/Store';
 	import Player from '../Player.svelte';
+	import SubscriptionsPanel from './SubscriptionsPanel.svelte';
 
 	const feedContent = $state(new Array<PodcastViewModel>());
 	// const feedSize = 10;
+	// Добавить кнопку получить и убрать код снизу
 	// $effect(() => {
 	// 	authController.getAccessToken().then((accessToken) => {
 	// 		FeedViewModel.getFeedContent(feedSize, accessToken!, feedContent).then(() => {
@@ -38,6 +40,7 @@
 	feedContent.push(podcast2);
 </script>
 
+<SubscriptionsPanel />
 <div class="container">
 	<div class="search">
 		<Search />

@@ -8,6 +8,7 @@
     "npm:@sveltejs/enhanced-img@~0.8.1": "0.8.1_@sveltejs+vite-plugin-svelte@6.1.4__svelte@5.38.7___acorn@8.15.0__vite@7.1.4___picomatch@4.0.3_svelte@5.38.7__acorn@8.15.0_vite@7.1.4__picomatch@4.0.3",
     "npm:@sveltejs/kit@^2.22.0": "2.37.1_@sveltejs+vite-plugin-svelte@6.1.4__svelte@5.38.7___acorn@8.15.0__vite@7.1.4___picomatch@4.0.3_svelte@5.38.7__acorn@8.15.0_vite@7.1.4__picomatch@4.0.3_acorn@8.15.0",
     "npm:@sveltejs/vite-plugin-svelte@6": "6.1.4_svelte@5.38.7__acorn@8.15.0_vite@7.1.4__picomatch@4.0.3",
+    "npm:@types/dom-mediacapture-record@^1.0.22": "1.0.22",
     "npm:eslint-config-prettier@^10.0.1": "10.1.8_eslint@9.35.0",
     "npm:eslint-plugin-svelte@3": "3.12.1_eslint@9.35.0_svelte@5.38.7__acorn@8.15.0_postcss@8.5.6",
     "npm:eslint@^9.18.0": "9.35.0",
@@ -618,6 +619,9 @@
     },
     "@types/cookie@0.6.0": {
       "integrity": "sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA=="
+    },
+    "@types/dom-mediacapture-record@1.0.22": {
+      "integrity": "sha512-mUMZLK3NvwRLcAAT9qmcK+9p7tpU2FHdDsntR3YI4+GY88XrgG4XiE7u1Q2LAN2/FZOz/tdMDC3GQCR4T8nFuw=="
     },
     "@types/estree@1.0.8": {
       "integrity": "sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w=="
@@ -1657,6 +1661,7 @@
         "npm:@sveltejs/enhanced-img@~0.8.1",
         "npm:@sveltejs/kit@^2.22.0",
         "npm:@sveltejs/vite-plugin-svelte@6",
+        "npm:@types/dom-mediacapture-record@^1.0.22",
         "npm:eslint-config-prettier@^10.0.1",
         "npm:eslint-plugin-svelte@3",
         "npm:eslint@^9.18.0",

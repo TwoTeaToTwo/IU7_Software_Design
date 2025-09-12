@@ -56,7 +56,6 @@
 	});
 	$effect(() => {
 		if (titleContainer && titleElement) {
-			console.log(titleElement.getBoundingClientRect().width, '>', titleContainerWidth);
 			isOverflowing = titleElement.getBoundingClientRect().width > titleContainerWidth;
 		}
 	});
@@ -68,9 +67,13 @@
 			<div class="thumbnail"></div>
 			<div class="text-block">
 				<div class:marquee-container={isOverflowing} bind:this={titleContainer}>
-					<div class="title text-color-theme"
+					<div
+						class="title text-color-theme"
 						class:scrolling-text={isOverflowing}
-						bind:this={titleElement}>{$playingPodcast?.title}</div>
+						bind:this={titleElement}
+					>
+						{$playingPodcast?.title}
+					</div>
 				</div>
 				<div class="marquee-container">
 					<div class="information-text text-color-theme scrolling-text"></div>
@@ -214,10 +217,10 @@
 
 	@keyframes scroll-text {
 		0% {
-			transform: translateX(-100%);
+			transform: translateX(100%);
 		}
 		100% {
-			transform: translateX(100%);
+			transform: translateX(-100%);
 		}
 	}
 
