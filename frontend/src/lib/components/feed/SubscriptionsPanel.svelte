@@ -14,14 +14,16 @@
 	let isOpenSubscribePanel = $state(false);
 
 	let showMessage = $state(false);
-	let popUpMessage = $state("");
-	let messageTitle = $state("");
+	let popUpMessage = $state('');
+	let messageTitle = $state('');
 	const errorHandler = (msg: string) => {
-		messageTitle = "ERROR";
+		messageTitle = 'ERROR';
 		popUpMessage = msg;
 		showMessage = true;
-		setTimeout(() => {showMessage = false;}, 3000);
-	}
+		setTimeout(() => {
+			showMessage = false;
+		}, 3000);
+	};
 
 	const getSubscriptionsHandler = () => {
 		authController.getAccessToken().then((accessToken) => {
@@ -44,9 +46,10 @@
 	};
 </script>
 
-<PopUp isOpen={showMessage} message={popUpMessage} title={messageTitle}/>
-<SubscribePanel bind:isOpen={isOpenSubscribePanel} bind:subscriptions={subscriptions}/>
+<PopUp isOpen={showMessage} message={popUpMessage} title={messageTitle} />
+<SubscribePanel bind:isOpen={isOpenSubscribePanel} bind:subscriptions />
 <div class="filter" class:open={isOpen}></div>
+<div class="component-title" class:open={isOpen}>Subscriptions</div>
 <div class="rectangle" class:open={isOpen}>
 	<button
 		class="tab-button"
@@ -78,7 +81,7 @@
 		class="tab-button subscribe-button"
 		class:open={isOpen}
 		aria-label="tab-button"
-		onclick={() => isOpenSubscribePanel = !isOpenSubscribePanel}
+		onclick={() => (isOpenSubscribePanel = !isOpenSubscribePanel)}
 	>
 		<div class="img-background">
 			<enhanced:img
@@ -199,5 +202,22 @@
 	.subscribe-button.open {
 		pointer-events: auto;
 		opacity: 1;
+	}
+
+	.component-title {
+		color: #d9d9d9;
+		font-family: 'Nunito Sans', sans-serif;
+		font-size: 72pt;
+		font-weight: bold;
+		position: absolute;
+		display: flex;
+		right: -100%;
+		top: 150px;
+		transition: right 0.3s ease-in-out;
+		z-index: 3;
+	}
+
+	.component-title.open {
+		right: 200px;
 	}
 </style>

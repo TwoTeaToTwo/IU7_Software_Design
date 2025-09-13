@@ -4,45 +4,45 @@
 	import Input from '../Input.svelte';
 	import TextButton from '../TextButton.svelte';
 	import PopUp from '../PopUp.svelte';
-	let { isOpen=$bindable(), subscriptions=$bindable() }: {isOpen: boolean, subscriptions: Array<SubscribeViewModel>} = $props();
-	let title = $state("");
-	let url = $state("");
-	
+	let {
+		isOpen = $bindable(),
+		subscriptions = $bindable()
+	}: { isOpen: boolean; subscriptions: Array<SubscribeViewModel> } = $props();
+	let title = $state('');
+	let url = $state('');
+
 	let showMessage = $state(false);
-	let popUpMessage = $state("");
-	let messageTitle = $state("");
+	let popUpMessage = $state('');
+	let messageTitle = $state('');
 	const errorHandler = (msg: string) => {
-		messageTitle = "ERROR";
+		messageTitle = 'ERROR';
 		popUpMessage = msg;
 		showMessage = true;
-		setTimeout(() => {showMessage = false;}, 3000);
-	}
+		setTimeout(() => {
+			showMessage = false;
+		}, 3000);
+	};
 
 	const subscribeHandler = () => {
 		authController.getAccessToken().then((accessToken) => {
 			subscribe(accessToken!, title, url, errorHandler).then((subscribe) => {
-				if (subscribe)
-				{
+				if (subscribe) {
 					isOpen = false;
-					title = "";
-					url = "";
+					title = '';
+					url = '';
 					subscriptions = [...subscriptions, subscribe];
 				}
 			});
 		});
-	}
+	};
 </script>
 
-<PopUp isOpen={showMessage} message={popUpMessage} title={messageTitle}/>
+<PopUp isOpen={showMessage} message={popUpMessage} title={messageTitle} />
 <div class="filter" class:open={isOpen}></div>
 <div class="rectangle" class:open={isOpen}>
-	<button
-					class="close"
-					aria-label="close"
-					onclick={() => isOpen = !isOpen}
-				></button>
-	<Input placeholder="TITLE" bind:value={title} fontSize={"20pt"} width={"500px"}/>
-	<Input placeholder="URL" bind:value={url} fontSize={"20pt"} width={"500px"}/>
+	<button class="close" aria-label="close" onclick={() => (isOpen = !isOpen)}></button>
+	<Input placeholder="TITLE" bind:value={title} fontSize={'20pt'} width={'500px'} />
+	<Input placeholder="URL" bind:value={url} fontSize={'20pt'} width={'500px'} />
 	<TextButton
 		text="Subscribe"
 		handleClick={() => {

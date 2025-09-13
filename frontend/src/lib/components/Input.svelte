@@ -1,8 +1,21 @@
 <script lang="ts">
-	let { value = $bindable(), type = 'text', placeholder = '', disabled = false, fontSize ='28pt', width = 'auto' } = $props();
+	let {
+		value = $bindable(),
+		type = 'text',
+		placeholder = '',
+		disabled = false,
+		fontSize = '28pt',
+		width = 'auto'
+	} = $props();
 </script>
 
-<input class="input_component" style="--font-size: {fontSize}; --width: {width};" {placeholder} {disabled} bind:value />
+<input
+	class="input_component"
+	style="--font-size: {fontSize}; --width: {width};"
+	{placeholder}
+	{disabled}
+	bind:value
+/>
 
 <style>
 	.input_component {

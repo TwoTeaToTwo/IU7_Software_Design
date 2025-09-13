@@ -1,10 +1,10 @@
 <script lang="ts">
-	let { isOpen, message, title}: {isOpen: boolean, message: string, title: string} = $props();
+	let { isOpen, message, title }: { isOpen: boolean; message: string; title: string } = $props();
 </script>
 
 <div class="rectangle" class:open={isOpen}>
-    <div class="title text-color-theme">{title}</div>
-    <div class="information-text text-color-theme">{message}</div>
+	<div class="title text-color-theme">{title}</div>
+	<div class="information-text text-color-theme">{message}</div>
 </div>
 
 <style>
@@ -34,15 +34,15 @@
 		right: 0;
 	}
 
-    .title {
+	.title {
 		font-weight: bold;
 		font-size: 24px;
 		font-family: 'Inter', sans-serif;
 	}
 
-    .information-text {
+	.information-text {
 		font-size: 20px;
-        font-family: 'Inter', sans-serif;
+		font-family: 'Inter', sans-serif;
 	}
 
 	.text-color-theme {

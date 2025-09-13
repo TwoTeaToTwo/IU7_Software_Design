@@ -1,5 +1,5 @@
-import { domain } from "../Config.ts";
-import { errorHandler } from "../types.ts";
+import { domain } from '../Config.ts';
+import { errorHandler } from '../types.ts';
 
 export interface SubscribeViewModel {
 	id: number;
@@ -10,15 +10,15 @@ export interface SubscribeViewModel {
 
 export const getSubscriptions = async (
 	accessToken: string,
-	errorHandler: errorHandler,
+	errorHandler: errorHandler
 ): Promise<Array<SubscribeViewModel> | undefined> => {
 	const responseURL = `${domain}/api/user/subscriptions`;
 	const response = await fetch(responseURL, {
-		method: "GET",
+		method: 'GET',
 		headers: {
 			Authorization: accessToken,
-			"Content-Type": "application/json",
-		},
+			'Content-Type': 'application/json'
+		}
 	});
 	if (!response.ok) {
 		errorHandler("Can't get subscriptions");
@@ -32,17 +32,16 @@ export const getSubscriptions = async (
 export const unsubscribe = async (
 	accessToken: string,
 	channelId: number,
-	errorHandler: errorHandler,
+	errorHandler: errorHandler
 ): Promise<boolean | undefined> => {
-	const responseURL =
-		`${domain}/api/user/channel/unsubscribe?channel_id=${channelId}`;
+	const responseURL = `${domain}/api/user/channel/unsubscribe?channel_id=${channelId}`;
 	try {
 		const response = await fetch(responseURL, {
-			method: "GET",
+			method: 'GET',
 			headers: {
 				Authorization: accessToken,
-				"Content-Type": "application/json",
-			},
+				'Content-Type': 'application/json'
+			}
 		});
 		if (!response.ok) {
 			errorHandler("Can't unsubscribe");
@@ -61,23 +60,22 @@ export const subscribe = async (
 	accessToken: string,
 	title: string,
 	url: string,
-	errorHandler: errorHandler,
+	errorHandler: errorHandler
 ): Promise<SubscribeViewModel | undefined> => {
-	const responseURL =
-		`${domain}/api/user/channel/subscribe?channel_title=${title}&channel_url=${url}`;
+	const responseURL = `${domain}/api/user/channel/subscribe?channel_title=${title}&channel_url=${url}`;
 	try {
 		const response = await fetch(responseURL, {
-			method: "GET",
+			method: 'GET',
 			headers: {
 				Authorization: accessToken,
-				"Content-Type": "application/json",
-			},
+				'Content-Type': 'application/json'
+			}
 		});
 		if (!response.ok) {
 			errorHandler("Can't subscribe!");
 			return undefined;
 		} else {
-			const content = await response.json() as SubscribeViewModel;
+			const content = (await response.json()) as SubscribeViewModel;
 			return content;
 		}
 	} catch {
