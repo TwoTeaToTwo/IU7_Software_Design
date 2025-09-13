@@ -1,5 +1,5 @@
-import { Writable, writable } from 'svelte/store';
-import { domain } from '../Config.ts';
+import { Writable, writable } from "svelte/store";
+import { domain } from "../Config.ts";
 
 export const isLogged = writable(false);
 
@@ -10,9 +10,9 @@ class AuthenticationController {
 
 	private isAccessTokenExpired(token: string): boolean {
 		try {
-			const parts = token.split('.');
+			const parts = token.split(".");
 			if (parts.length !== 3) {
-				throw new Error('Invalid JWT format');
+				throw new Error("Invalid JWT format");
 			}
 			const payload = JSON.parse(atob(parts[1]));
 			if (payload.exp) {
@@ -21,7 +21,7 @@ class AuthenticationController {
 			}
 			return true;
 		} catch (error) {
-			console.error('Error decoding token:', error);
+			console.error("Error decoding token:", error);
 			return true;
 		}
 	}
@@ -39,12 +39,12 @@ class AuthenticationController {
 	public async responseAccessToken(): Promise<string | undefined> {
 		try {
 			const response = await fetch(`${domain}/get_access_token`, {
-				method: 'POST',
-				credentials: 'include'
+				method: "POST",
+				credentials: "include",
 			});
 			const { accessToken } = await response.json();
 			if (!accessToken) {
-				throw new Error('accessToken is undefined');
+				throw new Error("accessToken is undefined");
 			}
 			this.accessToken = accessToken;
 			this._isLogged.set(true);

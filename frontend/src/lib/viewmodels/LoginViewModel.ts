@@ -1,8 +1,13 @@
 import { authController } from "../stores/Authentication.ts";
 import { domain } from "../Config.ts";
+import { messageHandler } from "../types.ts";
 
 export class LoginViewModel {
-	public static login(login: string, password: string) {
+	public static login(
+		login: string,
+		password: string,
+		messageHandler: messageHandler,
+	) {
 		fetch(`${domain}/login`, {
 			method: "POST",
 			headers: {
@@ -14,12 +19,10 @@ export class LoginViewModel {
 			}),
 		})
 			.then(() => {
-				console.log("[user]: logged");
 				authController.responseAccessToken().then(() => {
-					console.log("[user]: accessToken gotten");
+					messageHandler("Logged in successfully", "Message");
 				});
 			})
-			.catch //TODO
-			();
+			.catch(() => messageHandler("Can't log in", "ERROR"));
 	}
 }

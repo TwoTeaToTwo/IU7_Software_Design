@@ -8,12 +8,24 @@
 	} from '$lib/viewmodels/SubscribeViewModel';
 	import Subscription from './Subscription.svelte';
 	import SubscribePanel from './SubscribePanel.svelte';
+	import PopUp from '../PopUp.svelte';
 	let isOpen = $state(false);
 	let subscriptions = $state(new Array<SubscribeViewModel>());
 	let isOpenSubscribePanel = $state(false);
+
+	let showMessage = $state(false);
+	let popUpMessage = $state("");
+	let messageTitle = $state("");
+	const errorHandler = (msg: string) => {
+		messageTitle = "ERROR";
+		popUpMessage = msg;
+		showMessage = true;
+		setTimeout(() => {showMessage = false;}, 3000);
+	}
+
 	const getSubscriptionsHandler = () => {
 		authController.getAccessToken().then((accessToken) => {
-			getSubscriptions(accessToken!).then((_subscriptions) => {
+			getSubscriptions(accessToken!, errorHandler).then((_subscriptions) => {
 				if (_subscriptions) {
 					subscriptions = _subscriptions;
 				}
@@ -25,13 +37,14 @@
 	});
 	const unsubscribeHandler = (subscribeId: number) => {
 		authController.getAccessToken().then((accessToken) => {
-			unsubscribe(accessToken!, subscribeId).then(() => {
+			unsubscribe(accessToken!, subscribeId, errorHandler).then(() => {
 				subscriptions = subscriptions.filter((sub) => sub.id !== subscribeId);
 			});
 		});
 	};
 </script>
 
+<PopUp isOpen={showMessage} message={popUpMessage} title={messageTitle}/>
 <SubscribePanel bind:isOpen={isOpenSubscribePanel} bind:subscriptions={subscriptions}/>
 <div class="filter" class:open={isOpen}></div>
 <div class="rectangle" class:open={isOpen}>

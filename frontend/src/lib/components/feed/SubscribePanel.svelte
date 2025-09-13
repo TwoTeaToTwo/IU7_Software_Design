@@ -3,12 +3,24 @@
 	import { subscribe, type SubscribeViewModel } from '$lib/viewmodels/SubscribeViewModel';
 	import Input from '../Input.svelte';
 	import TextButton from '../TextButton.svelte';
+	import PopUp from '../PopUp.svelte';
 	let { isOpen=$bindable(), subscriptions=$bindable() }: {isOpen: boolean, subscriptions: Array<SubscribeViewModel>} = $props();
 	let title = $state("");
 	let url = $state("");
+	
+	let showMessage = $state(false);
+	let popUpMessage = $state("");
+	let messageTitle = $state("");
+	const errorHandler = (msg: string) => {
+		messageTitle = "ERROR";
+		popUpMessage = msg;
+		showMessage = true;
+		setTimeout(() => {showMessage = false;}, 3000);
+	}
+
 	const subscribeHandler = () => {
 		authController.getAccessToken().then((accessToken) => {
-			subscribe(accessToken!, title, url).then((subscribe) => {
+			subscribe(accessToken!, title, url, errorHandler).then((subscribe) => {
 				if (subscribe)
 				{
 					isOpen = false;
@@ -21,6 +33,7 @@
 	}
 </script>
 
+<PopUp isOpen={showMessage} message={popUpMessage} title={messageTitle}/>
 <div class="filter" class:open={isOpen}></div>
 <div class="rectangle" class:open={isOpen}>
 	<button
