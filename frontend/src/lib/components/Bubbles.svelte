@@ -12,7 +12,7 @@
 <div class="bubble bubble--12"></div>
 
 <style>
-    .bubble {
+	.bubble {
 		width: 30px;
 		height: 30px;
 		border-radius: 100%;

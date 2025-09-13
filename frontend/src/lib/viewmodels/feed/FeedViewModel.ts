@@ -1,12 +1,13 @@
 import { durationSecondsToText, PodcastViewModel, relevanceToText } from '../PodcastViewModel.ts';
 import { domain } from '../../Config.ts';
+import { errorHandler } from '../../types.ts';
 
-export class FeedViewModel {
-	public static async getFeedContent(
-		feed_size: number,
-		access_token: string,
-		podcasts: Array<PodcastViewModel>
-	): Promise<void> {
+export const getFeedContent = async (
+	feed_size: number,
+	access_token: string,
+	errorHandler: errorHandler
+): Promise<Array<PodcastViewModel> | undefined> => {
+	try {
 		const response = await fetch(`${domain}/api/user/feed/content?feed_size=${feed_size}`, {
 			method: 'GET',
 			headers: {
@@ -14,12 +15,18 @@ export class FeedViewModel {
 				'Content-Type': 'application/json'
 			}
 		});
-		const content = (await response.json()) as Array<PodcastViewModel>;
-		podcasts.length = 0;
-		for (const podcast of content) {
-			podcast.durationText = durationSecondsToText(podcast.duration_s);
-			podcast.relevanceText = relevanceToText(new Date(podcast.relevance));
-			podcasts.push(podcast);
+		if (!response.ok) {
+			errorHandler("Can't update feed");
+		} else {
+			const content = (await response.json()) as Array<PodcastViewModel>;
+			for (const podcast of content) {
+				podcast.durationText = durationSecondsToText(podcast.duration_s);
+				podcast.relevanceText = relevanceToText(new Date(podcast.relevance));
+			}
+			return content;
 		}
+	} catch {
+		errorHandler("Can't update feed");
 	}
-}
+	return undefined;
+};

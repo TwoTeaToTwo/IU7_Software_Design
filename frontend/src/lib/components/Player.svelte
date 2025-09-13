@@ -3,7 +3,6 @@
 	import { playingPodcast } from '$lib/stores/Store';
 	import { getPodcastStream } from '$lib/viewmodels/PlayerViewModel';
 	import { authController } from '$lib/stores/Authentication';
-	import { SyncLoader } from 'svelte-loading-spinners';
 	import RangeSlider from 'svelte-range-slider-pips';
 	let time = $state(0);
 	let duration = $state(0);
@@ -149,7 +148,7 @@
 			{/key}
 		{:else}
 			<div class="loading-container">
-				<SyncLoader size="100" color="#000000"></SyncLoader>
+				<div class="loading-text">Loading</div>
 			</div>
 		{/if}
 	</div>
@@ -277,5 +276,55 @@
 
 	.volume-container {
 		width: 150px;
+	}
+
+	.loading-text {
+		font-family: 'Nunito Sans', sans-serif;
+		color: #fff;
+		font-size: 60px;
+		position: relative;
+		color: transparent;
+		-webkit-text-stroke: 2px #000000;
+	}
+
+	.loading-text::after {
+		content: 'Loading';
+		position: absolute;
+		top: 0;
+		left: 0;
+		color: #0103b0;
+		animation: animate 4s ease-in-out infinite;
+		z-index: 2;
+	}
+
+	@keyframes animate {
+		0%,
+		100% {
+			clip-path: polygon(
+				0% 45%,
+				16% 44%,
+				33% 50%,
+				54% 60%,
+				70% 61%,
+				84% 59%,
+				100% 52%,
+				100% 100%,
+				0% 100%
+			);
+		}
+
+		50% {
+			clip-path: polygon(
+				0% 60%,
+				15% 65%,
+				34% 66%,
+				51% 62%,
+				67% 50%,
+				84% 45%,
+				100% 46%,
+				100% 100%,
+				0% 100%
+			);
+		}
 	}
 </style>

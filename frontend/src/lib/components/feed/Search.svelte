@@ -1,5 +1,10 @@
 <script lang="ts">
-	let { value = $bindable(), type = 'text', placeholder = '', disabled = false } = $props();
+	let {
+		value = $bindable(),
+		type = 'text',
+		placeholder = 'Search',
+		disabled = false
+	}: { value?: string; type?: string; placeholder?: string; disabled?: boolean } = $props();
 </script>
 
 <input class="input_component" {type} {placeholder} {disabled} bind:value />
