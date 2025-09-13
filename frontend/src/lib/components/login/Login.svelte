@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Input from '$lib/components/Input.svelte';
 	import TextButton from '$lib/components/TextButton.svelte';
-	import { LoginViewModel } from '$lib/viewmodels/LoginViewModel';
+	import { login as loginCallback } from '$lib/viewmodels/LoginViewModel';
 	import PopUp from '../PopUp.svelte';
 
 	let login = $state('');
@@ -28,7 +28,7 @@
 		<TextButton
 			text="Login"
 			handleClick={() => {
-				LoginViewModel.login(login, password, messageHandler);
+				loginCallback(login, password, messageHandler);
 			}}
 		/>
 	</div>

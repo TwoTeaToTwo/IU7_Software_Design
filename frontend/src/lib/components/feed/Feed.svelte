@@ -2,7 +2,7 @@
 	import Search from './Search.svelte';
 	import { getFeedContent } from '$lib/viewmodels/feed/FeedViewModel';
 	import type { PodcastViewModel } from '$lib/viewmodels/PodcastViewModel';
-	import { authController } from '$lib/stores/Authentication';
+	import { authController, isLogged } from '$lib/stores/Authentication';
 	import Podcast from '../Podcast.svelte';
 	import { playingPodcast } from '../../stores/Store';
 	import Player from '../Player.svelte';
@@ -10,6 +10,7 @@
 	import Bubbles from '../Bubbles.svelte';
 	import PopUp from '../PopUp.svelte';
 	import { searchPodcast } from '$lib/viewmodels/SearchViewModel';
+	import { logout } from '$lib/viewmodels/LoginViewModel';
 	// Pop up messages
 	let showMessage = $state(false);
 	let popUpMessage = $state('');
@@ -69,15 +70,23 @@
 		}
 		return contentTitle;
 	};
+	const logoutCallback = (): void => {
+		authController.getAccessToken().then((accessToken) => {
+			logout(accessToken!, errorHandler).then(() => {
+				isLogged.set(false);
+			});
+		});
+	};
 </script>
 
 <PopUp isOpen={showMessage} message={popUpMessage} title={messageTitle} />
 <Bubbles />
 <SubscriptionsPanel />
+<button class="button-logout" aria-label="logout" onclick={() => logoutCallback()}></button>
 <div class="container">
 	<div class="search">
 		<Search bind:value={searchQuery} />
-		<button class="button-search" aria-label="close" onclick={() => searchHandler()}></button>
+		<button class="button-search" aria-label="search" onclick={() => searchHandler()}></button>
 	</div>
 	<button
 		class="button_component"
@@ -235,6 +244,47 @@
 	}
 
 	.button-search:hover {
-		filter: invert(0);
+		animation: tilt-shaking 1s infinite;
+	}
+
+	.button-logout {
+		height: 70px;
+		width: 70px;
+		aspect-ratio: 1;
+		background-repeat: no-repeat;
+		background-size: 70px 70px;
+		border: none;
+		background-color: transparent;
+		outline: none;
+		background-image: url('$lib/assets/logout.svg');
+		position: absolute;
+		top: 20px;
+		right: 40px;
+		filter: invert(1);
+	}
+
+	.button-logout:hover {
+		height: 80px;
+		width: 80px;
+		background-size: 80px 80px;
+		animation: tilt-shaking 0.25s infinite;
+	}
+
+	@keyframes tilt-shaking {
+		0% {
+			transform: rotate(0deg);
+		}
+		25% {
+			transform: rotate(5deg);
+		}
+		50% {
+			transform: rotate(0deg);
+		}
+		75% {
+			transform: rotate(-5deg);
+		}
+		100% {
+			transform: rotate(0deg);
+		}
 	}
 </style>
