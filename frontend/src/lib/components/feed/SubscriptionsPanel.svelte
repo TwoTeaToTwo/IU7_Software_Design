@@ -7,8 +7,10 @@
 		unsubscribe
 	} from '$lib/viewmodels/SubscribeViewModel';
 	import Subscription from './Subscription.svelte';
+	import SubscribePanel from './SubscribePanel.svelte';
 	let isOpen = $state(false);
 	let subscriptions = $state(new Array<SubscribeViewModel>());
+	let isOpenSubscribePanel = $state(false);
 	const getSubscriptionsHandler = () => {
 		authController.getAccessToken().then((accessToken) => {
 			getSubscriptions(accessToken!).then((_subscriptions) => {
@@ -30,6 +32,7 @@
 	};
 </script>
 
+<SubscribePanel bind:isOpen={isOpenSubscribePanel} bind:subscriptions={subscriptions}/>
 <div class="filter" class:open={isOpen}></div>
 <div class="rectangle" class:open={isOpen}>
 	<button
@@ -58,6 +61,23 @@
 			}}
 		/>
 	{/each}
+	<button
+		class="tab-button subscribe-button"
+		class:open={isOpen}
+		aria-label="tab-button"
+		onclick={() => isOpenSubscribePanel = !isOpenSubscribePanel}
+	>
+		<div class="img-background">
+			<enhanced:img
+				class="inv-img"
+				width="70px"
+				height="70px"
+				src="$lib/assets/subscribe.svg"
+				alt="tab"
+			/>
+		</div>
+		<div class="information-text text-color-theme tab-text">Subscribe</div>
+	</button>
 </div>
 
 <style>
@@ -76,7 +96,6 @@
 		transition: width 0.3s ease-in-out;
 		z-index: 3;
 		position: absolute;
-		display: flex;
 		justify-content: flex-start;
 		overflow-y: auto;
 		overflow-x: hidden;
@@ -92,13 +111,14 @@
 		width: 100%;
 		height: 100%;
 		background-color: #00000000;
-		z-index: -2;
+		z-index: 2;
 		transition: background-color 0.3s ease-in-out;
 		position: absolute;
+		pointer-events: none;
 	}
 
 	.filter.open {
-		z-index: 2;
+		pointer-events: auto;
 		background-color: #000000a0;
 	}
 
@@ -155,5 +175,16 @@
 		align-items: center;
 		height: 70px;
 		flex: 1;
+	}
+
+	.subscribe-button {
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 0.3s ease-in-out;
+	}
+
+	.subscribe-button.open {
+		pointer-events: auto;
+		opacity: 1;
 	}
 </style>

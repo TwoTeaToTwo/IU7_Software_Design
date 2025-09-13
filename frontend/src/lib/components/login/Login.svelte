@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Input from '$lib/components/login/Input.svelte';
-	import TextButton from '$lib/components/login/TextButton.svelte';
+	import Input from '$lib/components/Input.svelte';
+	import TextButton from '$lib/components/TextButton.svelte';
 	import { LoginViewModel } from '$lib/viewmodels/LoginViewModel';
 
 	let login = $state('');
