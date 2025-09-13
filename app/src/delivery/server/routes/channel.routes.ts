@@ -9,7 +9,9 @@ export const userChannelRoutes: FastifyPluginAsync = async (app) => {
 	await Promise.resolve();
 	app.get("/subscribe", {
 		preHandler: [app.authenticate],
-		schema: { querystring: subscribeSchema },
+		schema: {
+			querystring: subscribeSchema,
+		},
 	}, ChannelController.subscribe);
 	app.get("/unsubscribe", {
 		preHandler: [app.authenticate],
