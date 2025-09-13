@@ -25,10 +25,9 @@ export const logout = async (accessToken: string, errorHandler: errorHandler): P
 	try {
 		const responseURL = `${domain}/logout`;
 		const response = await fetch(responseURL, {
-			method: 'GET',
+			method: 'DELETE',
 			headers: {
-				Authorization: accessToken,
-				'Content-Type': 'application/json'
+				Authorization: accessToken
 			}
 		});
 		if (!response.ok) {
