@@ -1,0 +1,4 @@
+{
+	"name": "@podcast/infrastructure",
+	"exports": "./mod.ts"
+}

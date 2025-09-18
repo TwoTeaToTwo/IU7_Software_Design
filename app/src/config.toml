@@ -1,0 +1,6 @@
+[logger]
+maxBytes = 1_000_000
+maxBackupCount = 10
+
+[feedService]
+searchDepth = 1

@@ -1,4 +1,7 @@
 .vscode
 *.env
-**/drizzle/
 **/node_modules/
+*.key
+**/podcast_cache/
+**/podcast_log/
+**/out/
