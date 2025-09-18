@@ -39,3 +39,6 @@ Web-приложение с возможностью слушать все ви�
 
 # UML диаграммы классов компонентов доступа к данным и бизнес-логики
 ![UML диаграммы классов компонентов доступа к данным и бизнес-логики](img/UML.svg)
+
+# Экраны будущего web-приложения
+https://www.figma.com/design/RUGsfMmNQZkCmmQQlHkIwU/Podcast?node-id=5-335&t=NcPQqLXYSKVOtlra-1
