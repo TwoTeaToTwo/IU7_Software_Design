@@ -5,7 +5,7 @@
 		placeholder = '',
 		disabled = false,
 		fontSize = '28pt',
-		width = 'auto'
+		width = 'auto',
 	} = $props();
 </script>
 
@@ -14,6 +14,7 @@
 	style="--font-size: {fontSize}; --width: {width};"
 	{placeholder}
 	{disabled}
+	type={type}
 	bind:value
 />
 

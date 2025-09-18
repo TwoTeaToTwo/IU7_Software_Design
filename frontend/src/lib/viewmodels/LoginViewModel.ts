@@ -1,34 +1,41 @@
-import { authController } from '../stores/Authentication.ts';
-import { domain } from '../Config.ts';
-import { errorHandler, messageHandler } from '../types.ts';
+import { authController } from "../stores/Authentication.ts";
+import { domain } from "../Config.ts";
+import { errorHandler, messageHandler } from "../types.ts";
 
-export const login = (login: string, password: string, messageHandler: messageHandler): void => {
+export const login = (
+	login: string,
+	password: string,
+	messageHandler: messageHandler,
+): void => {
 	fetch(`${domain}/login`, {
-		method: 'POST',
+		method: "POST",
 		headers: {
-			'Content-Type': 'application/json'
+			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({
 			login: login,
-			password: password
-		})
+			password: password,
+		}),
 	})
 		.then(() => {
 			authController.responseAccessToken().then(() => {
-				messageHandler('Logged in successfully', 'Message');
+				messageHandler("Logged in successfully", "Message");
 			});
 		})
-		.catch(() => messageHandler("Can't log in", 'ERROR'));
+		.catch(() => messageHandler("Can't log in", "ERROR"));
 };
 
-export const logout = async (accessToken: string, errorHandler: errorHandler): Promise<void> => {
+export const logout = async (
+	accessToken: string,
+	errorHandler: errorHandler,
+): Promise<void> => {
 	try {
 		const responseURL = `${domain}/logout`;
 		const response = await fetch(responseURL, {
-			method: 'DELETE',
+			method: "DELETE",
 			headers: {
-				Authorization: accessToken
-			}
+				Authorization: accessToken,
+			},
 		});
 		if (!response.ok) {
 			errorHandler("Can't logout");
