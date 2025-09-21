@@ -8,7 +8,9 @@ import {
 } from "../mod.ts";
 import type {
 	Id,
+	IPodcastStream,
 	ISearchStrategy,
+	IStreamStrategy,
 	ISubscribeManageRepository,
 	SearchPlatform,
 	SearchService,
@@ -265,5 +267,54 @@ export class FeedMother {
 	public createFeed(startFeedSize?: UInt): Feed {
 		const user = this.userMother.createUser();
 		return new Feed(user.id, startFeedSize);
+	}
+}
+
+export class PodcastStreamMockMother {
+	public createPodcastStream(): IPodcastStream {
+		const mockPodcastStream = mock<IPodcastStream>();
+		const stream = new ReadableStream<Uint8Array<ArrayBuffer>>();
+		when(mockPodcastStream.getStream()).thenReturn(stream);
+		when(mockPodcastStream.close()).thenReturn();
+		const podcastStream = instance(mockPodcastStream);
+		return podcastStream;
+	}
+}
+
+interface createYtdlpStreamStrategyParameters {
+	_isSupportedUrl?: boolean;
+	_canStreamPodcast?: boolean;
+	_podcastStream?: IPodcastStream;
+}
+
+export class StreamStrategyMockMother {
+	private readonly podcastStreamMother: PodcastStreamMockMother;
+
+	constructor() {
+		this.podcastStreamMother = new PodcastStreamMockMother();
+	}
+
+	public createYtdlpStreamStrategy(
+		{ _isSupportedUrl, _canStreamPodcast, _podcastStream }:
+			createYtdlpStreamStrategyParameters,
+	): IStreamStrategy {
+		const mockStreamStrategy = mock<IStreamStrategy>();
+		let podcastStream = null;
+		const strategyName = "ytdlp";
+		const isSupportedURL = _isSupportedUrl ?? true;
+		const canStreamPodcast = _canStreamPodcast ?? true;
+		if (canStreamPodcast) {
+			podcastStream = _podcastStream ??
+				this.podcastStreamMother.createPodcastStream();
+		}
+		when(mockStreamStrategy.getStrategyName()).thenReturn(strategyName);
+		when(mockStreamStrategy.isSupportedURL(anyOfClass(URL))).thenResolve(
+			isSupportedURL,
+		);
+		when(mockStreamStrategy.streamPodcast(anyOfClass(URL))).thenReturn(
+			podcastStream,
+		);
+		const streamStrategy = instance(mockStreamStrategy);
+		return streamStrategy;
 	}
 }

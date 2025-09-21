@@ -102,7 +102,7 @@ Deno.test("SearchService: searchByURL: get non-existent podcast", async () => {
 	const searchService = new SearchService(searchStrategies);
 
 	await assertRejects(async () => {
-		const _result = await searchService.searchByURL(podcast.url);
+		await searchService.searchByURL(podcast.url);
 	}, GetPodcastError);
 });
 
@@ -162,7 +162,7 @@ Deno.test("SearchService: getLastPodcastsByChannel: channel doesn't exist", asyn
 	const searchService = new SearchService(searchStrategies);
 
 	await assertRejects(async () => {
-		const _result = await searchService.getLastPodcastsByChannel(
+		await searchService.getLastPodcastsByChannel(
 			subscribe.url,
 		);
 	}, NonExistentChannelError);
