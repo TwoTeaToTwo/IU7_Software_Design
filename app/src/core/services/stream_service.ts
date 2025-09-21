@@ -3,7 +3,7 @@ import type {
 	IStreamStrategy,
 } from "../output_ports/i_stream_strategy.ts";
 import type { StreamToolName } from "../types.ts";
-import { inject, injectable } from "npm:inversify";
+import { inject, injectable } from "inversify";
 import { INJECT_TYPES } from "../types.ts";
 
 export class UnsupportableURLError extends Error {

@@ -1,7 +1,7 @@
 import type { Podcast } from "../models/podcast.ts";
 import type { ISearchStrategy } from "../output_ports/i_search_strategy.ts";
 import type { SearchPlatform, UInt } from "../types.ts";
-import { inject, injectable } from "npm:inversify";
+import { inject, injectable } from "inversify";
 import { createUInt, INJECT_TYPES } from "../types.ts";
 
 export class UnknownPlatformError extends Error {
@@ -111,7 +111,7 @@ export class SearchService {
 	 */
 	public async getLastPodcastsByChannel(
 		channel_url: URL,
-		count: UInt,
+		count: UInt = createUInt(5),
 	): Promise<Array<Podcast>> {
 		const podcasts = new Array<Podcast>();
 		const platform = this.getPlatformByURL(channel_url);

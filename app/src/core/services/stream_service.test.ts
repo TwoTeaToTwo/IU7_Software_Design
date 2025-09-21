@@ -10,8 +10,8 @@ import type {
 	IStreamStrategy,
 	StreamToolName,
 } from "../mod.ts";
-import { anyOfClass, instance, mock, when } from "npm:ts-mockito";
-import { assertEquals, assertRejects } from "jsr:@std/assert";
+import { anyOfClass, instance, mock, when } from "ts-mockito";
+import { assertEquals, assertRejects } from "@std/assert";
 
 Deno.test("StreamService: getToolNameByURL: streamer exists", async () => {
 	const mock_streamer = mock<IStreamStrategy>();

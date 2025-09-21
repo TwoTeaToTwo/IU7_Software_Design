@@ -1,4 +1,11 @@
-import { ChannelService, Subscribe, User } from "../mod.ts";
+import {
+	ChannelService,
+	createUInt,
+	Id,
+	Password,
+	Subscribe,
+	User,
+} from "../mod.ts";
 import type {
 	ISubscribeManageRepository,
 	ISubscribeRepository,
@@ -12,10 +19,8 @@ import {
 	instance,
 	mock,
 	when,
-} from "npm:ts-mockito";
-import { assertEquals } from "jsr:@std/assert";
-import { createUInt } from "../types.ts";
-import { Password } from "../models/user.ts";
+} from "ts-mockito";
+import { assertEquals } from "@std/assert";
 
 Deno.test("ChannelService: subscribe: user exists, channel exists", async () => {
 	const mock_search = mock<SearchService>();

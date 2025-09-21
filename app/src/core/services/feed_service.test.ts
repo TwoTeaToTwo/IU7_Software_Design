@@ -8,9 +8,9 @@ import {
 	Subscribe,
 } from "../mod.ts";
 import type { ISearchStrategy } from "../mod.ts";
-import { anyNumber, anyOfClass, instance, mock, when } from "npm:ts-mockito";
+import { anyNumber, anyOfClass, instance, mock, when } from "ts-mockito";
 import { createUInt, INJECT_TYPES, type SearchPlatform } from "../types.ts";
-import { assertEquals } from "jsr:@std/assert";
+import { assertEquals } from "@std/assert";
 
 Deno.test("FeedService: updateFeed: positive test", async () => {
 	// Create Searcher
@@ -97,7 +97,7 @@ Deno.test("FeedService: updateFeed: positive test", async () => {
 
 	// Create Feed Service
 	test_container.bind<ISubscribeManageRepository>(
-		INJECT_TYPES.SubscribeMangeRepository,
+		INJECT_TYPES.SubscribeManageRepository,
 	)
 		.toConstantValue(mock_subscribe_repo);
 	test_container.bind<FeedService>(INJECT_TYPES.FeedService).to(FeedService);
