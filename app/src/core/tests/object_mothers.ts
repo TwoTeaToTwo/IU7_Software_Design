@@ -1,7 +1,15 @@
-import { createUInt, Password, Podcast, Subscribe, User } from "../mod.ts";
+import {
+	createUInt,
+	Feed,
+	Password,
+	Podcast,
+	Subscribe,
+	User,
+} from "../mod.ts";
 import type {
 	Id,
 	ISearchStrategy,
+	ISubscribeManageRepository,
 	SearchPlatform,
 	SearchService,
 	UInt,
@@ -24,12 +32,22 @@ export class UserMother {
 	}
 }
 
+interface createSubscribeParameters {
+	platform: SearchPlatform;
+	url: URL;
+	id?: Id;
+	title?: string;
+}
+
+interface createYoutubeSubscribeParameters {
+	url?: URL;
+	id?: Id;
+	title?: string;
+}
+
 export class SubscribeMother {
 	public createSubscribe(
-		platform: SearchPlatform,
-		url: URL,
-		id?: Id,
-		title?: string,
+		{ platform, url, id, title }: createSubscribeParameters,
 	): Subscribe {
 		const subscribeId = id ?? createUInt(1);
 		const subscribeTitle = title ?? "test";
@@ -42,24 +60,38 @@ export class SubscribeMother {
 	}
 
 	public createYoutubeSubscribe(
-		id?: Id,
-		url?: URL,
-		title?: string,
+		{ url, id, title }: createYoutubeSubscribeParameters,
 	): Subscribe {
 		const subscribeUrl = url ??
 			new URL("https://www.youtube.com/@MrVrschool");
 		const subscribePlatform = "youtube";
-		return this.createSubscribe(subscribePlatform, subscribeUrl, id, title);
+		return this.createSubscribe({
+			platform: subscribePlatform,
+			url: subscribeUrl,
+			id,
+			title,
+		});
 	}
+}
+
+interface createPodcastParameters {
+	url: URL;
+	platform: SearchPlatform;
+	title?: string;
+	durationInSeconds?: UInt;
+	relevance?: Date;
+}
+
+interface createYoutubePodcastParameters {
+	title?: string;
+	durationInSeconds?: UInt;
+	relevance?: Date;
 }
 
 export class PodcastMother {
 	public createPodcast(
-		url: URL,
-		platform: SearchPlatform,
-		title?: string,
-		durationInSeconds?: UInt,
-		relevance?: Date,
+		{ url, platform, title, durationInSeconds, relevance }:
+			createPodcastParameters,
 	): Podcast {
 		const podcastTitle = title ?? "test";
 		const podcastDurationInSeconds = durationInSeconds ??
@@ -75,22 +107,27 @@ export class PodcastMother {
 	}
 
 	public createYoutubePodcast(
-		title?: string,
-		durationInSeconds?: UInt,
-		relevance?: Date,
+		{ title, durationInSeconds, relevance }: createYoutubePodcastParameters,
 	): Podcast {
 		const podcastUrl = new URL(
 			"https://www.youtube.com/watch?v=4xST-Kz9pEI",
 		);
 		const podcastPlatform = "youtube";
 		return this.createPodcast(
-			podcastUrl,
-			podcastPlatform,
-			title,
-			durationInSeconds,
-			relevance,
+			{
+				url: podcastUrl,
+				platform: podcastPlatform,
+				title,
+				durationInSeconds,
+				relevance,
+			},
 		);
 	}
+}
+
+interface createYoutubeSearchServiceParameters {
+	_podcast?: Podcast;
+	_podcasts?: Array<Podcast>;
 }
 
 export class SearchServiceMockMother {
@@ -101,12 +138,11 @@ export class SearchServiceMockMother {
 	}
 
 	public createYoutubeSearchService(
-		_podcast?: Podcast,
-		_podcasts?: Array<Podcast>,
+		{ _podcast, _podcasts }: createYoutubeSearchServiceParameters,
 	): SearchService {
 		const mockSearch = mock<SearchService>();
 		const searchPlatform = "youtube";
-		const podcast = _podcast ?? this.podcastMother.createYoutubePodcast();
+		const podcast = _podcast ?? this.podcastMother.createYoutubePodcast({});
 		const podcasts = _podcasts ?? [podcast];
 		when(mockSearch.isChannelExist(anyOfClass(URL))).thenResolve(
 			true,
@@ -152,7 +188,7 @@ export class SearchStrategyMockMother {
 		let podcasts: Podcast[] | null = [];
 		if (_podcast !== null) {
 			podcast = _podcast ??
-				this.podcastMother.createYoutubePodcast();
+				this.podcastMother.createYoutubePodcast({});
 			podcasts = _podcasts ?? [podcast];
 		}
 		const isCorrectUrl = _isCorrectUrl ?? true;
@@ -177,5 +213,57 @@ export class SearchStrategyMockMother {
 		).thenResolve(isChannelExist ? podcasts : null);
 		const SearchStrategy = instance(mockSearchStrategy);
 		return SearchStrategy;
+	}
+}
+
+interface createSubscribeManageRepositoryParameters {
+	_isUserExist?: boolean;
+	_subscribes?: Subscribe[];
+}
+
+export class SubscribeManageRepositoryMockMother {
+	private readonly subscribeMother: SubscribeMother;
+
+	constructor() {
+		this.subscribeMother = new SubscribeMother();
+	}
+
+	public createSubscribeManageRepository(
+		{ _isUserExist, _subscribes }:
+			createSubscribeManageRepositoryParameters,
+	): ISubscribeManageRepository {
+		const mockSubscribeManageRepository = mock<
+			ISubscribeManageRepository
+		>();
+		let subscribes: Subscribe[] | null = null;
+		const subscribe = this.subscribeMother.createYoutubeSubscribe({});
+		const isUserExist = _isUserExist ?? true;
+		if (isUserExist) {
+			subscribes = _subscribes ?? [subscribe];
+		}
+		when(mockSubscribeManageRepository.findSubscribesByUserId(anyNumber()))
+			.thenResolve(subscribes);
+		when(mockSubscribeManageRepository.subscribe(anyNumber(), anyNumber()))
+			.thenResolve(true);
+		when(
+			mockSubscribeManageRepository.unsubscribe(anyNumber(), anyNumber()),
+		).thenResolve(true);
+		const subscribeManageRepository = instance(
+			mockSubscribeManageRepository,
+		);
+		return subscribeManageRepository;
+	}
+}
+
+export class FeedMother {
+	private readonly userMother: UserMother;
+
+	constructor() {
+		this.userMother = new UserMother();
+	}
+
+	public createFeed(startFeedSize?: UInt): Feed {
+		const user = this.userMother.createUser();
+		return new Feed(user.id, startFeedSize);
 	}
 }
