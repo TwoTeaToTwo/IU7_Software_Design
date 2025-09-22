@@ -1,7 +1,7 @@
 import { migrate } from "drizzle-orm/pglite/migrator";
 import type { PostgresLiteDB } from "../mod.ts";
 import { databaseConfig } from "../config.ts";
-import { users } from "../schema.ts";
+import { subscriptions, users } from "../schema.ts";
 import { max } from "drizzle-orm";
 
 export class MigrationHelper {
@@ -29,6 +29,27 @@ export class UserHelper {
 		const result = await this.db.select({ value: max(users.id) }).from(
 			users,
 		);
+		const record = result[0];
+		if (record !== null && record.value !== null) {
+			return record.value;
+		} else {
+			return 1;
+		}
+	}
+}
+
+export class SubscribeHelper {
+	private readonly db: PostgresLiteDB;
+
+	constructor(db: PostgresLiteDB) {
+		this.db = db;
+	}
+
+	public async getLastSubscribeId(): Promise<number> {
+		const result = await this.db.select({ value: max(subscriptions.id) })
+			.from(
+				subscriptions,
+			);
 		const record = result[0];
 		if (record !== null && record.value !== null) {
 			return record.value;

@@ -97,7 +97,7 @@ Deno.test("Database: UserRepository: save: user doesn't exist", async () => {
 });
 
 Deno.test("Database: UserRepository: delete: user exists", async () => {
-	const user = userMother.createUser({});
+	const user = userMother.createUser({ login: "new" });
 	const userRepository = new UserRepository(db);
 
 	const result = await userRepository.delete(user);
