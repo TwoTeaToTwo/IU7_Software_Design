@@ -3,13 +3,13 @@ import {
 	PodcastStreamError,
 	StreamService,
 	UnsupportableURLError,
-} from "../mod.ts";
-import type { IStreamStrategy, StreamToolName } from "../mod.ts";
+} from "../../../mod.ts";
+import type { IStreamStrategy, StreamToolName } from "../../../mod.ts";
 import {
 	PodcastMother,
 	PodcastStreamMockMother,
 	StreamStrategyMockMother,
-} from "../tests/object_mothers.ts";
+} from "../../object_mothers.ts";
 
 const streamStrategyMother = new StreamStrategyMockMother();
 const podcastMother = new PodcastMother();

@@ -1,5 +1,5 @@
 import { assertEquals, assertRejects } from "@std/assert";
-import { ChannelService, UserFindError } from "../mod.ts";
+import { ChannelService, UserFindError } from "../../../mod.ts";
 import {
 	SearchServiceMockMother,
 	SubscribeManageRepositoryMockMother,
@@ -7,7 +7,7 @@ import {
 	SubscribeRepositoryMockMother,
 	UserMother,
 	UserRepositoryMockMother,
-} from "../tests/object_mothers.ts";
+} from "../../object_mothers.ts";
 
 const searchServiceMother = new SearchServiceMockMother();
 const subscribeMother = new SubscribeMother();
@@ -20,7 +20,7 @@ const userMother = new UserMother();
 Deno.test("ChannelService: subscribe: user exists, channel exists", async () => {
 	const subscribe = subscribeMother.createYoutubeSubscribe({});
 	const subscribes = [subscribe];
-	const user = userMother.createUser();
+	const user = userMother.createUser({});
 	const searchService = searchServiceMother.createYoutubeSearchService({});
 	const subscribeManageRepository = subscribeManageRepositoryMother
 		.createSubscribeManageRepository({ _subscribes: subscribes });
@@ -48,7 +48,7 @@ Deno.test("ChannelService: subscribe: user exists, channel exists", async () => 
 Deno.test("ChannelService: subscribe: user doesn't exist, channel exists", async () => {
 	const subscribe = subscribeMother.createYoutubeSubscribe({});
 	const subscribes = [subscribe];
-	const user = userMother.createUser();
+	const user = userMother.createUser({});
 	const searchService = searchServiceMother.createYoutubeSearchService({});
 	const subscribeManageRepository = subscribeManageRepositoryMother
 		.createSubscribeManageRepository({ _subscribes: subscribes });
@@ -77,7 +77,7 @@ Deno.test("ChannelService: subscribe: user doesn't exist, channel exists", async
 Deno.test("ChannelService: unsubscribe: user exists, channel exists", async () => {
 	const subscribe = subscribeMother.createYoutubeSubscribe({});
 	const subscribes = [subscribe];
-	const user = userMother.createUser();
+	const user = userMother.createUser({});
 	const searchService = searchServiceMother.createYoutubeSearchService({});
 	const subscribeManageRepository = subscribeManageRepositoryMother
 		.createSubscribeManageRepository({ _subscribes: subscribes });
@@ -104,7 +104,7 @@ Deno.test("ChannelService: unsubscribe: user exists, channel exists", async () =
 Deno.test("ChannelService: unsubscribe: user doesn't exist, channel exists", async () => {
 	const subscribe = subscribeMother.createYoutubeSubscribe({});
 	const subscribes = [subscribe];
-	const user = userMother.createUser();
+	const user = userMother.createUser({});
 	const searchService = searchServiceMother.createYoutubeSearchService({});
 	const subscribeManageRepository = subscribeManageRepositoryMother
 		.createSubscribeManageRepository({ _subscribes: subscribes });

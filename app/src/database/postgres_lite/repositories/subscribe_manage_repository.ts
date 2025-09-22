@@ -1,6 +1,6 @@
 import { createUInt, Subscribe } from "@podcast/core";
 import type { Id, ISubscribeManageRepository } from "@podcast/core";
-import type { PostgresDB } from "../database.ts";
+import type { PostgresLiteDB } from "../database.ts";
 import { inject, injectable } from "inversify";
 import { INJECT_TYPES } from "../types.ts";
 import { subscriptions, users, usersHaveSubscriptions } from "../schema.ts";
@@ -9,7 +9,7 @@ import { and, eq } from "drizzle-orm";
 @injectable()
 export class SubscribeManageRepository implements ISubscribeManageRepository {
 	constructor(
-		@inject(INJECT_TYPES.NodePgDatabase) private _db: PostgresDB,
+		@inject(INJECT_TYPES.NodePgDatabase) private _db: PostgresLiteDB,
 	) {}
 	/**
 	 * Return null if user doesn't exist
@@ -65,7 +65,7 @@ export class SubscribeManageRepository implements ISubscribeManageRepository {
 					subscription_id: subscribe_id,
 				},
 			).onConflictDoNothing();
-			is_inserted = result.rowCount !== 0;
+			is_inserted = result.affectedRows !== 0;
 		}
 		return is_inserted;
 	}
@@ -80,6 +80,6 @@ export class SubscribeManageRepository implements ISubscribeManageRepository {
 				eq(usersHaveSubscriptions.subscription_id, subscribe_id),
 			),
 		);
-		return result.rowCount !== 0;
+		return result.affectedRows !== 0;
 	}
 }

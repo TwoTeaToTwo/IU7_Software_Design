@@ -4,13 +4,13 @@ import {
 	GetPodcastError,
 	NonExistentChannelError,
 	SearchService,
-} from "../mod.ts";
-import type { ISearchStrategy, Podcast, SearchPlatform } from "../mod.ts";
+} from "../../../mod.ts";
+import type { ISearchStrategy, Podcast, SearchPlatform } from "../../../mod.ts";
 import {
 	PodcastMother,
 	SearchStrategyMockMother,
 	SubscribeMother,
-} from "../tests/object_mothers.ts";
+} from "../../object_mothers.ts";
 
 const podcastMother = new PodcastMother();
 const searchStrategyMother = new SearchStrategyMockMother();

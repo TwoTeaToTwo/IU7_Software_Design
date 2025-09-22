@@ -1,6 +1,6 @@
 import { createUInt, Password, User } from "@podcast/core";
 import type { Id, IUserRepository } from "@podcast/core";
-import type { PostgresDB } from "../database.ts";
+import type { PostgresLiteDB } from "../database.ts";
 import { inject, injectable } from "inversify";
 import { INJECT_TYPES } from "../types.ts";
 import { users } from "../schema.ts";
@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 @injectable()
 export class UserRepository implements IUserRepository {
 	constructor(
-		@inject(INJECT_TYPES.NodePgDatabase) private _db: PostgresDB,
+		@inject(INJECT_TYPES.NodePgDatabase) private _db: PostgresLiteDB,
 	) {}
 	/**
 	 * Return true on success
@@ -18,7 +18,7 @@ export class UserRepository implements IUserRepository {
 		const result = await this._db.delete(users).where(
 			eq(users.id, user.id),
 		);
-		return result.rowCount !== 0;
+		return result.affectedRows !== 0;
 	}
 	/**
 	 * Return User if can find, else null
@@ -48,7 +48,7 @@ export class UserRepository implements IUserRepository {
 			login: user.login,
 			password: user.password.password,
 		}).where(eq(users.id, user.id));
-		return result.rowCount !== 0;
+		return result.affectedRows !== 0;
 	}
 	/**
 	 * Return User if can find, else null

@@ -1,12 +1,12 @@
 import { assertEquals, assertRejects } from "@std/assert";
-import { createUInt, FeedService, UserFindError } from "../mod.ts";
+import { createUInt, FeedService, UserFindError } from "../../../mod.ts";
 import {
 	FeedMother,
 	PodcastMother,
 	SearchServiceMockMother,
 	SubscribeManageRepositoryMockMother,
 	SubscribeMother,
-} from "../tests/object_mothers.ts";
+} from "../../object_mothers.ts";
 
 const podcastMother = new PodcastMother();
 const searchServiceMother = new SearchServiceMockMother();

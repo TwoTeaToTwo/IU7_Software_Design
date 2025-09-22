@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { parse } from "jsr:@std/toml";
+import { parse } from "@std/toml";
 
 const coreConfigSchema = z.object({
 	feedService: z.object({ searchDepth: z.number().positive() }),

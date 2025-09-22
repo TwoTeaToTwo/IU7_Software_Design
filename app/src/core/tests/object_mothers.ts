@@ -27,8 +27,14 @@ import {
 	when,
 } from "ts-mockito";
 
+interface createUserParameters {
+	id?: Id;
+	login?: string;
+	password?: Password;
+}
+
 export class UserMother {
-	public createUser(id?: Id, login?: string, password?: Password): User {
+	public createUser({ id, login, password }: createUserParameters): User {
 		const userId = id ?? createUInt(1);
 		const userLogin = login ?? "test";
 		const userPassword = password ?? new Password("test");
@@ -267,7 +273,7 @@ export class FeedMother {
 	}
 
 	public createFeed(startFeedSize?: UInt): Feed {
-		const user = this.userMother.createUser();
+		const user = this.userMother.createUser({});
 		return new Feed(user.id, startFeedSize);
 	}
 }
@@ -348,7 +354,7 @@ export class UserRepositoryMockMother {
 		const mockUserRepository = mock<IUserRepository>();
 		let user: User | null = null;
 		if (canCreateUser && canFindUser) {
-			user = _user ?? this.userMother.createUser();
+			user = _user ?? this.userMother.createUser({});
 		}
 		when(mockUserRepository.create(anyString(), anyOfClass(Password)))
 			.thenResolve(user);
