@@ -1,73 +1,130 @@
+import { assertEquals, assertRejects } from "@std/assert";
+import { ChannelService, UserFindError } from "../mod.ts";
 import {
-	ChannelService,
-	createUInt,
-	Id,
-	Password,
-	Subscribe,
-	User,
-} from "../mod.ts";
-import type {
-	ISubscribeManageRepository,
-	ISubscribeRepository,
-	IUserRepository,
-	SearchService,
-} from "../mod.ts";
-import {
-	anyNumber,
-	anyOfClass,
-	anyString,
-	instance,
-	mock,
-	when,
-} from "ts-mockito";
-import { assertEquals } from "@std/assert";
+	SearchServiceMockMother,
+	SubscribeManageRepositoryMockMother,
+	SubscribeMother,
+	SubscribeRepositoryMockMother,
+	UserMother,
+	UserRepositoryMockMother,
+} from "../tests/object_mothers.ts";
+
+const searchServiceMother = new SearchServiceMockMother();
+const subscribeMother = new SubscribeMother();
+const subscribeManageRepositoryMother =
+	new SubscribeManageRepositoryMockMother();
+const subscribeRepositoryMother = new SubscribeRepositoryMockMother();
+const userRepositoryMother = new UserRepositoryMockMother();
+const userMother = new UserMother();
 
 Deno.test("ChannelService: subscribe: user exists, channel exists", async () => {
-	const mock_search = mock<SearchService>();
-	const y_platform = "youtube";
-	when(mock_search.isChannelExist(anyOfClass(URL))).thenResolve(true);
-	when(mock_search.getPlatformByURL(anyOfClass(URL))).thenReturn(y_platform);
-	const searcher = instance(mock_search);
-
-	const mock_user_repo = mock<IUserRepository>();
-	const user_id = createUInt(1);
-	const user = new User(user_id, "test", new Password("1234"));
-	when(mock_user_repo.findById(user_id)).thenResolve(user);
-	const user_repo = instance(mock_user_repo);
-
-	const mock_subscribe_repo = mock<ISubscribeRepository>();
-	const channel_url = new URL("https://www.youtube.com/@MrVrschool");
-	const channel_name = "Red 21";
-	const subscribe = new Subscribe(
-		createUInt(1),
-		channel_url,
-		channel_name,
-		y_platform,
+	const subscribe = subscribeMother.createYoutubeSubscribe({});
+	const subscribes = [subscribe];
+	const user = userMother.createUser();
+	const searchService = searchServiceMother.createYoutubeSearchService({});
+	const subscribeManageRepository = subscribeManageRepositoryMother
+		.createSubscribeManageRepository({ _subscribes: subscribes });
+	const subscribeRepository = subscribeRepositoryMother
+		.createSubscribeRepository({ _subscribe: subscribe });
+	const userRepository = userRepositoryMother.createUserRepository({
+		_user: user,
+	});
+	const channelService = new ChannelService(
+		searchService,
+		subscribeManageRepository,
+		userRepository,
+		subscribeRepository,
 	);
-	when(mock_subscribe_repo.create(anyOfClass(URL), anyString(), anyString()))
-		.thenResolve(subscribe);
-	const subscribe_repo = instance(mock_subscribe_repo);
 
-	const mock_subscribe_manage_repo = mock<ISubscribeManageRepository>();
-	when(
-		mock_subscribe_manage_repo.subscribe(
-			anyNumber(),
-			anyNumber(),
-		),
-	)
-		.thenResolve(true);
-	const subscribe_manage_repo = instance(mock_subscribe_manage_repo);
+	const result = await channelService.subscribe(
+		user.id,
+		subscribe.url,
+		subscribe.title,
+	);
 
-	const channel_service = new ChannelService(
-		searcher,
-		subscribe_manage_repo,
-		user_repo,
-		subscribe_repo,
-	);
-	const result = await channel_service.subscribe(
-		user_id,
-		channel_url,
-		channel_name,
-	);
 	assertEquals(result, true);
+});
+
+Deno.test("ChannelService: subscribe: user doesn't exist, channel exists", async () => {
+	const subscribe = subscribeMother.createYoutubeSubscribe({});
+	const subscribes = [subscribe];
+	const user = userMother.createUser();
+	const searchService = searchServiceMother.createYoutubeSearchService({});
+	const subscribeManageRepository = subscribeManageRepositoryMother
+		.createSubscribeManageRepository({ _subscribes: subscribes });
+	const subscribeRepository = subscribeRepositoryMother
+		.createSubscribeRepository({ _subscribe: subscribe });
+	const userRepository = userRepositoryMother.createUserRepository({
+		_user: user,
+		canFindUser: false,
+	});
+	const channelService = new ChannelService(
+		searchService,
+		subscribeManageRepository,
+		userRepository,
+		subscribeRepository,
+	);
+
+	await assertRejects(async () => {
+		await channelService.subscribe(
+			user.id,
+			subscribe.url,
+			subscribe.title,
+		);
+	}, UserFindError);
+});
+
+Deno.test("ChannelService: unsubscribe: user exists, channel exists", async () => {
+	const subscribe = subscribeMother.createYoutubeSubscribe({});
+	const subscribes = [subscribe];
+	const user = userMother.createUser();
+	const searchService = searchServiceMother.createYoutubeSearchService({});
+	const subscribeManageRepository = subscribeManageRepositoryMother
+		.createSubscribeManageRepository({ _subscribes: subscribes });
+	const subscribeRepository = subscribeRepositoryMother
+		.createSubscribeRepository({ _subscribe: subscribe });
+	const userRepository = userRepositoryMother.createUserRepository({
+		_user: user,
+	});
+	const channelService = new ChannelService(
+		searchService,
+		subscribeManageRepository,
+		userRepository,
+		subscribeRepository,
+	);
+
+	const result = await channelService.unsubscribe(
+		user.id,
+		subscribe.id,
+	);
+
+	assertEquals(result, true);
+});
+
+Deno.test("ChannelService: unsubscribe: user doesn't exist, channel exists", async () => {
+	const subscribe = subscribeMother.createYoutubeSubscribe({});
+	const subscribes = [subscribe];
+	const user = userMother.createUser();
+	const searchService = searchServiceMother.createYoutubeSearchService({});
+	const subscribeManageRepository = subscribeManageRepositoryMother
+		.createSubscribeManageRepository({ _subscribes: subscribes });
+	const subscribeRepository = subscribeRepositoryMother
+		.createSubscribeRepository({ _subscribe: subscribe });
+	const userRepository = userRepositoryMother.createUserRepository({
+		_user: user,
+		canFindUser: false,
+	});
+	const channelService = new ChannelService(
+		searchService,
+		subscribeManageRepository,
+		userRepository,
+		subscribeRepository,
+	);
+
+	await assertRejects(async () => {
+		await channelService.unsubscribe(
+			user.id,
+			subscribe.id,
+		);
+	}, UserFindError);
 });

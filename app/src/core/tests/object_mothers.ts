@@ -12,6 +12,8 @@ import type {
 	ISearchStrategy,
 	IStreamStrategy,
 	ISubscribeManageRepository,
+	ISubscribeRepository,
+	IUserRepository,
 	SearchPlatform,
 	SearchService,
 	UInt,
@@ -316,5 +318,99 @@ export class StreamStrategyMockMother {
 		);
 		const streamStrategy = instance(mockStreamStrategy);
 		return streamStrategy;
+	}
+}
+
+interface createUserRepositoryParameters {
+	canCreateUser?: boolean;
+	_user?: User;
+	canDeleteUser?: boolean;
+	canFindUser?: boolean;
+	canSaveUser?: boolean;
+}
+
+export class UserRepositoryMockMother {
+	private readonly userMother: UserMother;
+
+	constructor() {
+		this.userMother = new UserMother();
+	}
+
+	public createUserRepository(
+		{
+			canCreateUser = true,
+			_user,
+			canDeleteUser = true,
+			canFindUser = true,
+			canSaveUser = true,
+		}: createUserRepositoryParameters,
+	): IUserRepository {
+		const mockUserRepository = mock<IUserRepository>();
+		let user: User | null = null;
+		if (canCreateUser && canFindUser) {
+			user = _user ?? this.userMother.createUser();
+		}
+		when(mockUserRepository.create(anyString(), anyOfClass(Password)))
+			.thenResolve(user);
+		when(mockUserRepository.delete(anyOfClass(User))).thenResolve(
+			canDeleteUser,
+		);
+		when(mockUserRepository.findById(anyNumber())).thenResolve(user);
+		when(mockUserRepository.findByLogin(anyString())).thenResolve(user);
+		when(mockUserRepository.save(anyOfClass(User))).thenResolve(
+			canSaveUser,
+		);
+		const userRepository = instance(mockUserRepository);
+		return userRepository;
+	}
+}
+
+interface createSubscribeRepositoryParameters {
+	canCreateSubscribe?: boolean;
+	_subscribe?: Subscribe;
+	canDeleteSubscribe?: boolean;
+	canFindSubscribe?: boolean;
+	canSaveSubscribe?: boolean;
+}
+
+export class SubscribeRepositoryMockMother {
+	private readonly subscribeMother: SubscribeMother;
+
+	constructor() {
+		this.subscribeMother = new SubscribeMother();
+	}
+
+	public createSubscribeRepository(
+		{
+			canCreateSubscribe = true,
+			_subscribe,
+			canDeleteSubscribe = true,
+			canFindSubscribe = true,
+			canSaveSubscribe = true,
+		}: createSubscribeRepositoryParameters,
+	): ISubscribeRepository {
+		const mockSubscribeRepository = mock<ISubscribeRepository>();
+		let subscribe: Subscribe | null = null;
+		if (canCreateSubscribe && canFindSubscribe) {
+			subscribe = _subscribe ??
+				this.subscribeMother.createYoutubeSubscribe({});
+		}
+		when(
+			mockSubscribeRepository.create(
+				anyOfClass(URL),
+				anyString(),
+				anyString(),
+			),
+		).thenResolve(subscribe);
+		when(mockSubscribeRepository.delete(anyOfClass(Subscribe)))
+			.thenResolve(canDeleteSubscribe);
+		when(mockSubscribeRepository.findById(anyNumber())).thenResolve(
+			subscribe,
+		);
+		when(mockSubscribeRepository.save(anyOfClass(Subscribe))).thenResolve(
+			canSaveSubscribe,
+		);
+		const subscribeRepository = instance(mockSubscribeRepository);
+		return subscribeRepository;
 	}
 }
