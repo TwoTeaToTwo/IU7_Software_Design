@@ -98,7 +98,7 @@ interface createYoutubePodcastParameters {
 	relevance?: Date;
 }
 
-export class PodcastMother {
+export class PodcastFabric {
 	public createPodcast(
 		{ url, platform, title, durationInSeconds, relevance }:
 			createPodcastParameters,
@@ -127,6 +127,30 @@ export class PodcastMother {
 			{
 				url: podcastUrl,
 				platform: podcastPlatform,
+				title,
+				durationInSeconds,
+				relevance,
+			},
+		);
+	}
+}
+
+export class PodcastMother {
+	constructor(private readonly podcastFabric: PodcastFabric) {
+	}
+
+	public createYoutubePodcast(): Podcast {
+		const url = new URL(
+			"https://www.youtube.com/watch?v=4xST-Kz9pEI",
+		);
+		const platform = "youtube";
+		const title = "test";
+		const durationInSeconds = createUInt(10 * 60 + 3);
+		const relevance = new Date("2019-11-23");
+		return this.podcastFabric.createPodcast(
+			{
+				url,
+				platform,
 				title,
 				durationInSeconds,
 				relevance,

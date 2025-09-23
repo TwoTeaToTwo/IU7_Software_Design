@@ -1,8 +1,9 @@
 import { migrate } from "drizzle-orm/pglite/migrator";
 import type { PostgresLiteDB } from "../mod.ts";
 import { databaseConfig } from "../config.ts";
-import { subscriptions, users } from "../schema.ts";
-import { max } from "drizzle-orm";
+import { subscriptions, users, usersHaveSubscriptions } from "../schema.ts";
+import { eq, max } from "drizzle-orm";
+import type { Subscribe, User } from "@podcast/core";
 
 export class MigrationHelper {
 	private readonly db: PostgresLiteDB;
@@ -55,6 +56,34 @@ export class SubscribeHelper {
 			return record.value;
 		} else {
 			return 1;
+		}
+	}
+}
+
+export class SubscribeManageHelper {
+	private readonly db: PostgresLiteDB;
+
+	constructor(db: PostgresLiteDB) {
+		this.db = db;
+	}
+
+	public async initSubscribe(
+		user: User,
+		subscribe: Subscribe,
+	): Promise<void> {
+		const userExists = await this.db.select().from(users).where(
+			eq(users.id, user.id),
+		);
+		const subExists = await this.db.select().from(subscriptions).where(
+			eq(subscriptions.id, subscribe.id),
+		);
+		if (userExists.length !== 0 && subExists.length !== 0) {
+			await this.db.insert(usersHaveSubscriptions).values(
+				{
+					user_id: user.id,
+					subscription_id: subscribe.id,
+				},
+			).onConflictDoNothing();
 		}
 	}
 }
