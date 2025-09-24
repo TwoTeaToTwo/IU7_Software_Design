@@ -1,0 +1,174 @@
+openapi: 3.1.1
+info:
+  version: 9.5.1
+  title: "@fastify/swagger"
+components:
+  schemas: {}
+paths:
+  /login:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  type: string
+                password:
+                  minLength: 1
+                  type: string
+              required:
+                - login
+                - password
+        required: true
+      responses:
+        "201":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                required:
+                  - result
+  /get_access_token:
+    post:
+      responses:
+        "201":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                required:
+                  - accessToken
+  /logout:
+    delete:
+      responses:
+        "200":
+          description: Default Response
+  /:
+    get:
+      responses:
+        "200":
+          description: Default Response
+  /api/search/by-query:
+    get:
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: query
+          required: true
+        - schema:
+            minimum: 1
+            type: integer
+          in: query
+          name: max_results
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/search/by-url:
+    get:
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: url
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/user/subscriptions:
+    get:
+      summary: get array of user subscriptions
+      tags:
+        - user
+      responses:
+        "200":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      minimum: 1
+                      type: integer
+                    url:
+                      type: string
+                    title:
+                      type: string
+                    platform:
+                      type: string
+                  required:
+                    - id
+                    - url
+                    - title
+                    - platform
+        "404":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: string
+  /api/user/feed/content:
+    get:
+      parameters:
+        - schema:
+            minimum: 1
+            type: integer
+          in: query
+          name: feed_size
+          required: false
+      responses:
+        "200":
+          description: Default Response
+  /api/user/channel/subscribe:
+    get:
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: channel_title
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: channel_url
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/user/channel/unsubscribe:
+    get:
+      parameters:
+        - schema:
+            minimum: 1
+            type: integer
+          in: query
+          name: channel_id
+          required: true
+      responses:
+        "200":
+          description: Default Response
+  /api/stream/play:
+    get:
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: url
+          required: true
+      responses:
+        "200":
+          description: Default Response

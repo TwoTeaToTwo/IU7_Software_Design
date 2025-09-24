@@ -1,5 +1,12 @@
 import { type Static, Type } from "@sinclair/typebox";
 
+export const subscribeObjectSchema = Type.Object({
+	id: Type.Integer({ minimum: 1 }),
+	url: Type.String(),
+	title: Type.String(),
+	platform: Type.String(),
+});
+
 export const subscribeSchema = Type.Object({
 	channel_title: Type.String(),
 	channel_url: Type.String(),

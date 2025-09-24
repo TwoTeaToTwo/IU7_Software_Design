@@ -5,12 +5,14 @@ import type {
 	FastifyRequest,
 	HookHandlerDoneFunction,
 } from "fastify";
-import { httpConfig } from "./config.ts";
 import fjwt from "@fastify/jwt";
 import fCookie from "@fastify/cookie";
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import fastifyStatic from "@fastify/static";
+import fastifySwagger from "@fastify/swagger";
 import * as path from "@std/path";
+
+import { httpConfig } from "./config.ts";
 import { authenticateRoutes } from "./routes/auth.routes.ts";
 import { SPARoutes } from "./routes/spa.routes.ts";
 import { AuthenticationController } from "./controllers/auth.controller.ts";
@@ -66,6 +68,12 @@ const createServer = () => {
 		root: path.resolve(httpConfig.frontendPath),
 		prefix: "/",
 	});
+	// swagger
+	app.register(fastifySwagger, {
+		openapi: {
+			openapi: "3.1.1",
+		},
+	});
 	// routes
 	app.register(authenticateRoutes);
 	app.register(SPARoutes);
@@ -80,7 +88,13 @@ class Server {
 	constructor() {
 		this.app = createServer();
 	}
+	private async initServer() {
+		await this.app.ready();
+		const yaml = this.app.swagger({ yaml: true });
+		await Deno.writeTextFile("./routes.yaml", yaml);
+	}
 	public async runServer() {
+		await this.initServer();
 		await this.app.listen({
 			port: httpConfig.port,
 			host: httpConfig.host,
