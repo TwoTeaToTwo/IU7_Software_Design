@@ -72,6 +72,10 @@ const createServer = () => {
 	app.register(fastifySwagger, {
 		openapi: {
 			openapi: "3.1.1",
+			info: {
+				title: "Podcast stream service",
+				version: "0.0.0",
+			},
 		},
 	});
 	// routes

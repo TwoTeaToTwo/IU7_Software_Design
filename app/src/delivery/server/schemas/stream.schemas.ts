@@ -6,3 +6,4 @@ export const streamPodcastSchema = Type.Object({
 export type StreamPodcastType = Static<
 	typeof streamPodcastSchema
 >;
+export const streamPodcastErrorSchema = Type.String();
