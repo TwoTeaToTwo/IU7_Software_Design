@@ -71,8 +71,11 @@ paths:
               schema:
                 type: string
                 format: binary
-  /api/search/by-query:
+  /api/podcast/results:
     get:
+      summary: search podcasts by query
+      tags:
+        - podcast
       parameters:
         - schema:
             type: string
@@ -85,20 +88,85 @@ paths:
           in: query
           name: max_results
           required: true
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Default Response
-  /api/search/by-url:
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    platform:
+                      type: string
+                    duration_s:
+                      minimum: 1
+                      type: integer
+                    relevance:
+                      type: string
+                    url:
+                      type: string
+                  required:
+                    - title
+                    - platform
+                    - duration_s
+                    - relevance
+                    - url
+  /api/podcast/result:
     get:
+      summary: search podcast by url
+      tags:
+        - podcast
       parameters:
         - schema:
             type: string
           in: query
           name: url
           required: true
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  platform:
+                    type: string
+                  duration_s:
+                    minimum: 1
+                    type: integer
+                  relevance:
+                    type: string
+                  url:
+                    type: string
+                required:
+                  - title
+                  - platform
+                  - duration_s
+                  - relevance
+                  - url
+        "404":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: string
   /api/user/subscriptions:
     get:
       summary: get array of user subscriptions
@@ -176,9 +244,9 @@ paths:
       responses:
         "200":
           description: Default Response
-  /api/stream/stream:
+  /api/stream:
     get:
-      summary: stream podcast audio
+      summary: get podcast audio
       tags:
         - stream
       parameters:

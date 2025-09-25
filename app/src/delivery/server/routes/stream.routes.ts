@@ -7,14 +7,14 @@ import { StreamController } from "../controllers/stream.controller.ts";
 
 export const streamRoutes: FastifyPluginAsync = async (app) => {
 	await Promise.resolve();
-	app.get("/stream", {
+	app.get("", {
 		preHandler: [app.authenticate],
 		schema: {
 			querystring: streamPodcastSchema,
 			tags: [
 				"stream",
 			],
-			summary: "stream podcast audio",
+			summary: "get podcast audio",
 			security: [{ bearerAuth: [] }],
 			response: {
 				200: {
