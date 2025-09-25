@@ -76,6 +76,15 @@ const createServer = () => {
 				title: "Podcast stream service",
 				version: "0.0.0",
 			},
+			components: {
+				securitySchemes: {
+					bearerAuth: {
+						type: "http",
+						scheme: "bearer",
+						bearerFormat: "JWT",
+					},
+				},
+			},
 		},
 	});
 	// routes

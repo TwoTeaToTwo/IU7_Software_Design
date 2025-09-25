@@ -16,6 +16,7 @@ export const userRoutes: FastifyPluginAsync = async (app) => {
 				"user",
 			],
 			summary: "get array of user subscriptions",
+			security: [{ bearerAuth: [] }],
 			response: {
 				200: showUserSubscriptionsOkSchema,
 				404: showUserSubscriptionsUserNotFoundSchema,

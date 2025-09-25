@@ -3,6 +3,11 @@ info:
   title: Podcast stream service
   version: 0.0.0
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas: {}
 paths:
   /login:
@@ -55,9 +60,17 @@ paths:
           description: Default Response
   /:
     get:
+      summary: home page
+      tags:
+        - static
       responses:
         "200":
-          description: Default Response
+          description: File content
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
   /api/search/by-query:
     get:
       parameters:
@@ -91,6 +104,8 @@ paths:
       summary: get array of user subscriptions
       tags:
         - user
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Default Response
@@ -172,6 +187,8 @@ paths:
           in: query
           name: url
           required: true
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: Default Response
