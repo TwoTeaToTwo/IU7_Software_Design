@@ -27,118 +27,31 @@ import {
 	when,
 } from "ts-mockito";
 
-interface createUserParameters {
-	id?: Id;
-	login?: string;
-	password?: Password;
-}
-
 export class UserMother {
-	public createUser({ id, login, password }: createUserParameters): User {
-		const userId = id ?? createUInt(1);
-		const userLogin = login ?? "test";
-		const userPassword = password ?? new Password("test");
+	public createUser(): User {
+		const userId = createUInt(1);
+		const userLogin = "test";
+		const userPassword = new Password("test");
 		return new User(userId, userLogin, userPassword);
 	}
 }
 
-interface createSubscribeParameters {
-	platform: SearchPlatform;
-	url: URL;
-	id?: Id;
-	title?: string;
-}
-
-interface createYoutubeSubscribeParameters {
-	url?: URL;
-	id?: Id;
-	title?: string;
-}
-
 export class SubscribeMother {
-	public createSubscribe(
-		{ platform, url, id, title }: createSubscribeParameters,
-	): Subscribe {
-		const subscribeId = id ?? createUInt(1);
-		const subscribeTitle = title ?? "test";
+	public createYoutubeSubscribe(): Subscribe {
+		const subscribeId = createUInt(1);
+		const subscribeTitle = "test";
+		const subscribeUrl = new URL("https://www.youtube.com/@MrVrschool");
+		const subscribePlatform = "youtube";
 		return new Subscribe(
 			subscribeId,
-			url,
+			subscribeUrl,
 			subscribeTitle,
-			platform,
-		);
-	}
-
-	public createYoutubeSubscribe(
-		{ url, id, title }: createYoutubeSubscribeParameters,
-	): Subscribe {
-		const subscribeUrl = url ??
-			new URL("https://www.youtube.com/@MrVrschool");
-		const subscribePlatform = "youtube";
-		return this.createSubscribe({
-			platform: subscribePlatform,
-			url: subscribeUrl,
-			id,
-			title,
-		});
-	}
-}
-
-interface createPodcastParameters {
-	url: URL;
-	platform: SearchPlatform;
-	title?: string;
-	durationInSeconds?: UInt;
-	relevance?: Date;
-}
-
-interface createYoutubePodcastParameters {
-	title?: string;
-	durationInSeconds?: UInt;
-	relevance?: Date;
-}
-
-export class PodcastFabric {
-	public createPodcast(
-		{ url, platform, title, durationInSeconds, relevance }:
-			createPodcastParameters,
-	): Podcast {
-		const podcastTitle = title ?? "test";
-		const podcastDurationInSeconds = durationInSeconds ??
-			createUInt(10 * 60 + 3);
-		const podcastRelevance = relevance ?? new Date("2019-11-23");
-		return new Podcast(
-			url,
-			podcastTitle,
-			platform,
-			podcastDurationInSeconds,
-			podcastRelevance,
-		);
-	}
-
-	public createYoutubePodcast(
-		{ title, durationInSeconds, relevance }: createYoutubePodcastParameters,
-	): Podcast {
-		const podcastUrl = new URL(
-			"https://www.youtube.com/watch?v=4xST-Kz9pEI",
-		);
-		const podcastPlatform = "youtube";
-		return this.createPodcast(
-			{
-				url: podcastUrl,
-				platform: podcastPlatform,
-				title,
-				durationInSeconds,
-				relevance,
-			},
+			subscribePlatform,
 		);
 	}
 }
 
 export class PodcastMother {
-	constructor(private readonly podcastFabric: PodcastFabric) {
-	}
-
 	public createYoutubePodcast(): Podcast {
 		const url = new URL(
 			"https://www.youtube.com/watch?v=4xST-Kz9pEI",
@@ -147,143 +60,146 @@ export class PodcastMother {
 		const title = "test";
 		const durationInSeconds = createUInt(10 * 60 + 3);
 		const relevance = new Date("2019-11-23");
-		return this.podcastFabric.createPodcast(
-			{
-				url,
-				platform,
-				title,
-				durationInSeconds,
-				relevance,
-			},
-		);
+		return new Podcast(url, title, platform, durationInSeconds, relevance);
 	}
 }
 
-interface createYoutubeSearchServiceParameters {
-	_podcast?: Podcast;
-	_podcasts?: Array<Podcast>;
-}
-
-export class SearchServiceMockMother {
-	private readonly podcastMother: PodcastMother;
+export class SearchServiceMockBuilder {
+	private readonly mockSearch;
 
 	constructor() {
-		this.podcastMother = new PodcastMother();
+		this.mockSearch = mock<SearchService>();
 	}
 
-	public createYoutubeSearchService(
-		{ _podcast, _podcasts }: createYoutubeSearchServiceParameters,
-	): SearchService {
-		const mockSearch = mock<SearchService>();
-		const searchPlatform = "youtube";
-		const podcast = _podcast ?? this.podcastMother.createYoutubePodcast({});
-		const podcasts = _podcasts ?? [podcast];
-		when(mockSearch.isChannelExist(anyOfClass(URL))).thenResolve(
+	public produceIsChannelExist(): void {
+		when(this.mockSearch.isChannelExist(anyOfClass(URL))).thenResolve(
 			true,
 		);
-		when(mockSearch.getPlatformByURL(anyOfClass(URL))).thenReturn(
+	}
+
+	public produceGetPlatformByURL(searchPlatform: SearchPlatform): void {
+		when(this.mockSearch.getPlatformByURL(anyOfClass(URL))).thenReturn(
 			searchPlatform,
 		);
+	}
+
+	public produceSearchPodcast(podcasts: Podcast[]): void {
 		when(
-			mockSearch.searchPodcast(
+			this.mockSearch.searchPodcast(
 				anyString(),
 				anyNumber(),
 			),
 		).thenResolve(podcasts);
-		when(mockSearch.searchByURL(anyOfClass(URL))).thenResolve(podcast);
-		when(mockSearch.getLastPodcastsByChannel(anyOfClass(URL), anyNumber()))
+	}
+
+	public produceSearchByURL(podcast: Podcast): void {
+		when(this.mockSearch.searchByURL(anyOfClass(URL))).thenResolve(
+			podcast,
+		);
+	}
+
+	public produceGetLastPodcastsByChannel(podcasts: Podcast[]): void {
+		when(
+			this.mockSearch.getLastPodcastsByChannel(
+				anyOfClass(URL),
+				anyNumber(),
+			),
+		)
 			.thenResolve(podcasts);
-		const searcher = instance(mockSearch);
+	}
+
+	public createSearchService(): SearchService {
+		const searcher = instance(this.mockSearch);
 		return searcher;
 	}
 }
 
-interface createYoutubeSearchStrategyParameters {
-	_podcast?: Podcast | null;
-	_podcasts?: Array<Podcast>;
-	_isCorrectUrl?: boolean;
-	_isChannelExist?: boolean;
-}
-
-export class SearchStrategyMockMother {
-	private readonly podcastMother: PodcastMother;
+export class SearchStrategyMockBuilder {
+	private readonly mockSearchStrategy;
 
 	constructor() {
-		this.podcastMother = new PodcastMother();
+		this.mockSearchStrategy = mock<ISearchStrategy>();
 	}
 
-	public createYoutubeSearchStrategy(
-		{ _podcast, _podcasts, _isCorrectUrl, _isChannelExist }:
-			createYoutubeSearchStrategyParameters,
-	): ISearchStrategy {
-		const mockSearchStrategy = mock<ISearchStrategy>();
-		const searchPlatform = "youtube";
-		let podcast: Podcast | null = null;
-		let podcasts: Podcast[] | null = [];
-		if (_podcast !== null) {
-			podcast = _podcast ??
-				this.podcastMother.createYoutubePodcast({});
-			podcasts = _podcasts ?? [podcast];
-		}
-		const isCorrectUrl = _isCorrectUrl ?? true;
-		const isChannelExist = _isChannelExist ?? true;
-		when(mockSearchStrategy.searchPodcast(anyString(), anyNumber()))
+	public produceSearchPodcast(podcasts: Podcast[]): void {
+		when(this.mockSearchStrategy.searchPodcast(anyString(), anyNumber()))
 			.thenResolve(podcasts);
-		when(mockSearchStrategy.searchByURL(anyOfClass(URL))).thenResolve(
+	}
+
+	public produceSearchByURL(podcast: Podcast): void {
+		when(this.mockSearchStrategy.searchByURL(anyOfClass(URL))).thenResolve(
 			podcast,
 		);
-		when(mockSearchStrategy.isCorrectURL(anyOfClass(URL))).thenReturn(
+	}
+
+	public produceIsCorrectURL(isCorrectUrl: boolean): void {
+		when(this.mockSearchStrategy.isCorrectURL(anyOfClass(URL))).thenReturn(
 			isCorrectUrl,
 		);
-		when(mockSearchStrategy.isChannelExist(anyOfClass(URL))).thenResolve(
-			isChannelExist,
-		);
-		when(mockSearchStrategy.getPlatform()).thenReturn(searchPlatform);
+	}
+
+	public produceIsChannelExist(isChannelExist: boolean): void {
+		when(this.mockSearchStrategy.isChannelExist(anyOfClass(URL)))
+			.thenResolve(
+				isChannelExist,
+			);
+	}
+
+	public produceGetPlatform(searchPlatform: SearchPlatform): void {
+		when(this.mockSearchStrategy.getPlatform()).thenReturn(searchPlatform);
+	}
+
+	public produceGetLastPodcastsByChannel(podcasts: Podcast[] | null): void {
 		when(
-			mockSearchStrategy.getLastPodcastsByChannel(
+			this.mockSearchStrategy.getLastPodcastsByChannel(
 				anyOfClass(URL),
 				anyNumber(),
 			),
-		).thenResolve(isChannelExist ? podcasts : null);
-		const SearchStrategy = instance(mockSearchStrategy);
+		).thenResolve(podcasts);
+	}
+
+	public createSearchStrategy(): ISearchStrategy {
+		const SearchStrategy = instance(this.mockSearchStrategy);
 		return SearchStrategy;
 	}
 }
 
-interface createSubscribeManageRepositoryParameters {
-	_isUserExist?: boolean;
-	_subscribes?: Subscribe[];
-}
-
-export class SubscribeManageRepositoryMockMother {
-	private readonly subscribeMother: SubscribeMother;
+export class SubscribeManageRepositoryMockBuilder {
+	private readonly mockSubscribeManageRepository: ISubscribeManageRepository;
 
 	constructor() {
-		this.subscribeMother = new SubscribeMother();
+		this.mockSubscribeManageRepository = mock<ISubscribeManageRepository>();
 	}
 
-	public createSubscribeManageRepository(
-		{ _isUserExist, _subscribes }:
-			createSubscribeManageRepositoryParameters,
-	): ISubscribeManageRepository {
-		const mockSubscribeManageRepository = mock<
-			ISubscribeManageRepository
-		>();
-		let subscribes: Subscribe[] | null = null;
-		const subscribe = this.subscribeMother.createYoutubeSubscribe({});
-		const isUserExist = _isUserExist ?? true;
-		if (isUserExist) {
-			subscribes = _subscribes ?? [subscribe];
-		}
-		when(mockSubscribeManageRepository.findSubscribesByUserId(anyNumber()))
-			.thenResolve(subscribes);
-		when(mockSubscribeManageRepository.subscribe(anyNumber(), anyNumber()))
-			.thenResolve(true);
+	public produceFindSubscribesByUserId(subscribes: Subscribe[] | null): void {
 		when(
-			mockSubscribeManageRepository.unsubscribe(anyNumber(), anyNumber()),
-		).thenResolve(true);
+			this.mockSubscribeManageRepository.findSubscribesByUserId(
+				anyNumber(),
+			),
+		).thenResolve(subscribes);
+	}
+
+	public produceSubscribe(success: boolean): void {
+		when(
+			this.mockSubscribeManageRepository.subscribe(
+				anyNumber(),
+				anyNumber(),
+			),
+		).thenResolve(success);
+	}
+
+	public produceUnsubscribe(success: boolean): void {
+		when(
+			this.mockSubscribeManageRepository.unsubscribe(
+				anyNumber(),
+				anyNumber(),
+			),
+		).thenResolve(success);
+	}
+
+	public createSubscribeManageRepository(): ISubscribeManageRepository {
 		const subscribeManageRepository = instance(
-			mockSubscribeManageRepository,
+			this.mockSubscribeManageRepository,
 		);
 		return subscribeManageRepository;
 	}
@@ -296,19 +212,37 @@ export class FeedMother {
 		this.userMother = new UserMother();
 	}
 
-	public createFeed(startFeedSize?: UInt): Feed {
-		const user = this.userMother.createUser({});
-		return new Feed(user.id, startFeedSize);
+	public createFeed(): Feed {
+		const user = this.userMother.createUser();
+		return new Feed(user.id);
 	}
 }
 
-export class PodcastStreamMockMother {
+export class PodcastStreamMockBuilder {
+	private readonly mockPodcastStream;
+
+	constructor() {
+		this.mockPodcastStream = mock<IPodcastStream>();
+	}
+
+	public produceGetStream(
+		stream: ReadableStream<Uint8Array<ArrayBuffer>> = new ReadableStream(),
+	): void {
+		when(this.mockPodcastStream.getStream()).thenReturn(stream);
+	}
+
+	public produceClose(): void {
+		when(this.mockPodcastStream.close()).thenReturn();
+	}
+
+	public produceDefaultStream(): void {
+		const defaultStream = new ReadableStream<Uint8Array<ArrayBuffer>>();
+		this.produceGetStream(defaultStream);
+		this.produceClose();
+	}
+
 	public createPodcastStream(): IPodcastStream {
-		const mockPodcastStream = mock<IPodcastStream>();
-		const stream = new ReadableStream<Uint8Array<ArrayBuffer>>();
-		when(mockPodcastStream.getStream()).thenReturn(stream);
-		when(mockPodcastStream.close()).thenReturn();
-		const podcastStream = instance(mockPodcastStream);
+		const podcastStream = instance(this.mockPodcastStream);
 		return podcastStream;
 	}
 }
