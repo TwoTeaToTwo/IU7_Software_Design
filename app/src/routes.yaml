@@ -10,8 +10,11 @@ components:
       bearerFormat: JWT
   schemas: {}
 paths:
-  /login:
+  /session:
     post:
+      summary: log in
+      tags:
+        - session
       requestBody:
         content:
           application/json:
@@ -39,8 +42,26 @@ paths:
                     type: boolean
                 required:
                   - result
-  /get_access_token:
+        "403":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      summary: log out
+      tags:
+        - session
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Default Response
+  /session/access_token:
     post:
+      summary: get access token
+      tags:
+        - session
       responses:
         "201":
           description: Default Response
@@ -53,11 +74,17 @@ paths:
                     type: string
                 required:
                   - accessToken
-  /logout:
-    delete:
-      responses:
-        "200":
+        "401":
           description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                required:
+                  - accessToken
   /:
     get:
       summary: home page

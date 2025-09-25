@@ -112,6 +112,6 @@ export class AuthenticationController {
 
 	public static logout(_request: FastifyRequest, reply: FastifyReply) {
 		reply.clearCookie("refresh_token");
-		return reply.send();
+		return reply.status(204).send();
 	}
 }
