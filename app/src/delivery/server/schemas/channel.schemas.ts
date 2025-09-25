@@ -14,6 +14,8 @@ export const subscribeSchema = Type.Object({
 export type SubscribeType = Static<
 	typeof subscribeSchema
 >;
+export const subscribeOkSchema = subscribeObjectSchema;
+export const subscribeErrorSchema = Type.String();
 
 export const unsubscribeSchema = Type.Object({
 	channel_id: Type.Integer({ minimum: 1 }),

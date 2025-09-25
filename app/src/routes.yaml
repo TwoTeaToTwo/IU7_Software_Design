@@ -252,8 +252,12 @@ paths:
             application/json:
               schema:
                 type: string
-  /api/user/channel/subscribe:
-    get:
+  /api/user/channel:
+    post:
+      summary: subscribe to channel
+      tags:
+        - user
+        - channel
       parameters:
         - schema:
             type: string
@@ -265,11 +269,47 @@ paths:
           in: query
           name: channel_url
           required: true
+      security:
+        - bearerAuth: []
       responses:
-        "200":
+        "201":
           description: Default Response
-  /api/user/channel/unsubscribe:
-    get:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    minimum: 1
+                    type: integer
+                  url:
+                    type: string
+                  title:
+                    type: string
+                  platform:
+                    type: string
+                required:
+                  - id
+                  - url
+                  - title
+                  - platform
+        "404":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      summary: unsubscribe from channel
+      tags:
+        - user
+        - channel
       parameters:
         - schema:
             minimum: 1
@@ -277,9 +317,23 @@ paths:
           in: query
           name: channel_id
           required: true
+      security:
+        - bearerAuth: []
       responses:
-        "200":
+        "204":
           description: Default Response
+        "404":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: string
   /api/stream:
     get:
       summary: get podcast audio
