@@ -255,9 +255,9 @@ export class SearchServiceMockBuilder {
 		this.mockSearch = mock<SearchService>();
 	}
 
-	public produceIsChannelExist(): void {
+	public produceIsChannelExist(isChannelExists: boolean): void {
 		when(this.mockSearch.isChannelExist(anyOfClass(URL))).thenResolve(
-			true,
+			isChannelExists,
 		);
 	}
 

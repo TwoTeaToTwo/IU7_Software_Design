@@ -1,34 +1,48 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { ChannelService, UserFindError } from "../../../mod.ts";
 import {
-	SearchServiceMockMother,
-	SubscribeManageRepositoryMockMother,
+	// SearchServiceMockMother,
+	// SubscribeManageRepositoryMockMother,
 	SubscribeMother,
-	SubscribeRepositoryMockMother,
+	// SubscribeRepositoryMockMother,
 	UserMother,
-	UserRepositoryMockMother,
+	// UserRepositoryMockMother,
 } from "../../object_mothers.ts";
+import {
+	SearchServiceMockBuilder,
+	SubscribeManageRepositoryMockBuilder,
+	SubscribeRepositoryMockBuilder,
+	UserRepositoryMockBuilder,
+} from "../../builders.ts";
 
-const searchServiceMother = new SearchServiceMockMother();
 const subscribeMother = new SubscribeMother();
-const subscribeManageRepositoryMother =
-	new SubscribeManageRepositoryMockMother();
-const subscribeRepositoryMother = new SubscribeRepositoryMockMother();
-const userRepositoryMother = new UserRepositoryMockMother();
 const userMother = new UserMother();
 
 Deno.test("ChannelService: subscribe: user exists, channel exists", async () => {
-	const subscribe = subscribeMother.createYoutubeSubscribe({});
-	const subscribes = [subscribe];
-	const user = userMother.createUser({});
-	const searchService = searchServiceMother.createYoutubeSearchService({});
-	const subscribeManageRepository = subscribeManageRepositoryMother
-		.createSubscribeManageRepository({ _subscribes: subscribes });
-	const subscribeRepository = subscribeRepositoryMother
-		.createSubscribeRepository({ _subscribe: subscribe });
-	const userRepository = userRepositoryMother.createUserRepository({
-		_user: user,
-	});
+	const subscribe = subscribeMother.createYoutubeSubscribe();
+	const user = userMother.createUser();
+
+	const searchServiceBuilder = new SearchServiceMockBuilder();
+	const searchPlatform = "youtube";
+	searchServiceBuilder.produceIsChannelExist(true);
+	searchServiceBuilder.produceGetPlatformByURL(searchPlatform);
+	const searchService = searchServiceBuilder.createSearchService();
+
+	const subscribeManageRepositoryBuilder =
+		new SubscribeManageRepositoryMockBuilder();
+	subscribeManageRepositoryBuilder.produceSubscribe(true);
+	const subscribeManageRepository = subscribeManageRepositoryBuilder
+		.createSubscribeManageRepository();
+
+	const subscribeRepositoryBuilder = new SubscribeRepositoryMockBuilder();
+	subscribeRepositoryBuilder.produceCreate(subscribe);
+	const subscribeRepository = subscribeRepositoryBuilder
+		.createSubscribeRepository();
+
+	const userRepositoryBuilder = new UserRepositoryMockBuilder();
+	userRepositoryBuilder.produceFindById(user);
+	const userRepository = userRepositoryBuilder.createUserRepository();
+
 	const channelService = new ChannelService(
 		searchService,
 		subscribeManageRepository,
@@ -46,18 +60,30 @@ Deno.test("ChannelService: subscribe: user exists, channel exists", async () => 
 });
 
 Deno.test("ChannelService: subscribe: user doesn't exist, channel exists", async () => {
-	const subscribe = subscribeMother.createYoutubeSubscribe({});
-	const subscribes = [subscribe];
-	const user = userMother.createUser({});
-	const searchService = searchServiceMother.createYoutubeSearchService({});
-	const subscribeManageRepository = subscribeManageRepositoryMother
-		.createSubscribeManageRepository({ _subscribes: subscribes });
-	const subscribeRepository = subscribeRepositoryMother
-		.createSubscribeRepository({ _subscribe: subscribe });
-	const userRepository = userRepositoryMother.createUserRepository({
-		_user: user,
-		canFindUser: false,
-	});
+	const subscribe = subscribeMother.createYoutubeSubscribe();
+	const user = userMother.createUser();
+
+	const searchServiceBuilder = new SearchServiceMockBuilder();
+	const searchPlatform = "youtube";
+	searchServiceBuilder.produceIsChannelExist(true);
+	searchServiceBuilder.produceGetPlatformByURL(searchPlatform);
+	const searchService = searchServiceBuilder.createSearchService();
+
+	const subscribeManageRepositoryBuilder =
+		new SubscribeManageRepositoryMockBuilder();
+	subscribeManageRepositoryBuilder.produceSubscribe(true);
+	const subscribeManageRepository = subscribeManageRepositoryBuilder
+		.createSubscribeManageRepository();
+
+	const subscribeRepositoryBuilder = new SubscribeRepositoryMockBuilder();
+	subscribeRepositoryBuilder.produceCreate(subscribe);
+	const subscribeRepository = subscribeRepositoryBuilder
+		.createSubscribeRepository();
+
+	const userRepositoryBuilder = new UserRepositoryMockBuilder();
+	userRepositoryBuilder.produceFindById(null);
+	const userRepository = userRepositoryBuilder.createUserRepository();
+
 	const channelService = new ChannelService(
 		searchService,
 		subscribeManageRepository,
@@ -75,17 +101,31 @@ Deno.test("ChannelService: subscribe: user doesn't exist, channel exists", async
 });
 
 Deno.test("ChannelService: unsubscribe: user exists, channel exists", async () => {
-	const subscribe = subscribeMother.createYoutubeSubscribe({});
-	const subscribes = [subscribe];
-	const user = userMother.createUser({});
-	const searchService = searchServiceMother.createYoutubeSearchService({});
-	const subscribeManageRepository = subscribeManageRepositoryMother
-		.createSubscribeManageRepository({ _subscribes: subscribes });
-	const subscribeRepository = subscribeRepositoryMother
-		.createSubscribeRepository({ _subscribe: subscribe });
-	const userRepository = userRepositoryMother.createUserRepository({
-		_user: user,
-	});
+	const subscribe = subscribeMother.createYoutubeSubscribe();
+	const user = userMother.createUser();
+
+	const searchServiceBuilder = new SearchServiceMockBuilder();
+	const searchPlatform = "youtube";
+	searchServiceBuilder.produceIsChannelExist(true);
+	searchServiceBuilder.produceGetPlatformByURL(searchPlatform);
+	const searchService = searchServiceBuilder.createSearchService();
+
+	const subscribeManageRepositoryBuilder =
+		new SubscribeManageRepositoryMockBuilder();
+	subscribeManageRepositoryBuilder.produceUnsubscribe(true);
+	const subscribeManageRepository = subscribeManageRepositoryBuilder
+		.createSubscribeManageRepository();
+
+	const subscribeRepositoryBuilder = new SubscribeRepositoryMockBuilder();
+	subscribeRepositoryBuilder.produceFindById(subscribe);
+	subscribeRepositoryBuilder.produceDelete(true);
+	const subscribeRepository = subscribeRepositoryBuilder
+		.createSubscribeRepository();
+
+	const userRepositoryBuilder = new UserRepositoryMockBuilder();
+	userRepositoryBuilder.produceFindById(user);
+	const userRepository = userRepositoryBuilder.createUserRepository();
+
 	const channelService = new ChannelService(
 		searchService,
 		subscribeManageRepository,
@@ -102,18 +142,31 @@ Deno.test("ChannelService: unsubscribe: user exists, channel exists", async () =
 });
 
 Deno.test("ChannelService: unsubscribe: user doesn't exist, channel exists", async () => {
-	const subscribe = subscribeMother.createYoutubeSubscribe({});
-	const subscribes = [subscribe];
-	const user = userMother.createUser({});
-	const searchService = searchServiceMother.createYoutubeSearchService({});
-	const subscribeManageRepository = subscribeManageRepositoryMother
-		.createSubscribeManageRepository({ _subscribes: subscribes });
-	const subscribeRepository = subscribeRepositoryMother
-		.createSubscribeRepository({ _subscribe: subscribe });
-	const userRepository = userRepositoryMother.createUserRepository({
-		_user: user,
-		canFindUser: false,
-	});
+	const subscribe = subscribeMother.createYoutubeSubscribe();
+	const user = userMother.createUser();
+
+	const searchServiceBuilder = new SearchServiceMockBuilder();
+	const searchPlatform = "youtube";
+	searchServiceBuilder.produceIsChannelExist(true);
+	searchServiceBuilder.produceGetPlatformByURL(searchPlatform);
+	const searchService = searchServiceBuilder.createSearchService();
+
+	const subscribeManageRepositoryBuilder =
+		new SubscribeManageRepositoryMockBuilder();
+	subscribeManageRepositoryBuilder.produceUnsubscribe(true);
+	const subscribeManageRepository = subscribeManageRepositoryBuilder
+		.createSubscribeManageRepository();
+
+	const subscribeRepositoryBuilder = new SubscribeRepositoryMockBuilder();
+	subscribeRepositoryBuilder.produceFindById(subscribe);
+	subscribeRepositoryBuilder.produceDelete(true);
+	const subscribeRepository = subscribeRepositoryBuilder
+		.createSubscribeRepository();
+
+	const userRepositoryBuilder = new UserRepositoryMockBuilder();
+	userRepositoryBuilder.produceFindById(null);
+	const userRepository = userRepositoryBuilder.createUserRepository();
+
 	const channelService = new ChannelService(
 		searchService,
 		subscribeManageRepository,
