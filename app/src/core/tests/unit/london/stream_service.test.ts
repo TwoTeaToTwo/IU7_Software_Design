@@ -1,45 +1,42 @@
-// import { assertEquals, assertRejects } from "@std/assert";
-// import {
-// 	PodcastStreamError,
-// 	StreamService,
-// 	UnsupportableURLError,
-// } from "../../../mod.ts";
-// import type { IStreamStrategy, StreamToolName } from "../../../mod.ts";
-// import {
-// 	PodcastMother,
-// 	PodcastStreamMockMother,
-// 	StreamStrategyMockMother,
-// } from "../../object_mothers.ts";
+import { assertEquals } from "@std/assert";
+import { StreamService } from "../../../mod.ts";
+import type { IStreamStrategy, StreamToolName } from "../../../mod.ts";
+import { PodcastMother } from "../../object_mothers.ts";
+import { StreamStrategyMockBuilder } from "../../builders.ts";
 
-// const streamStrategyMother = new StreamStrategyMockMother();
-// const podcastMother = new PodcastMother();
-// const podcastStreamMother = new PodcastStreamMockMother();
+const podcastMother = new PodcastMother();
 
-// Deno.test("StreamService: getToolNameByURL: streamer exists", async () => {
-// 	const podcast = podcastMother.createYoutubePodcast({});
-// 	const streamStrategy = streamStrategyMother.createYtdlpStreamStrategy({});
-// 	const streamStrategies = new Map<StreamToolName, IStreamStrategy>();
-// 	streamStrategies.set(streamStrategy.getStrategyName(), streamStrategy);
-// 	const streamService = new StreamService(streamStrategies);
+Deno.test("StreamService: getToolNameByURL: streamer exists", async () => {
+	const podcast = podcastMother.createYoutubePodcast();
 
-// 	const result = await streamService.getToolNameByURL(podcast.url);
+	const streamStrategyBuilder = new StreamStrategyMockBuilder();
+	streamStrategyBuilder.produceIsSupportedURL(true);
+	const streamStrategy = streamStrategyBuilder.createStreamStrategy();
+	const streamStrategies = new Map<StreamToolName, IStreamStrategy>();
+	streamStrategies.set(streamStrategy.getStrategyName(), streamStrategy);
 
-// 	assertEquals(result, streamStrategy.getStrategyName());
-// });
+	const streamService = new StreamService(streamStrategies);
 
-// Deno.test("StreamService: getToolNameByURL: streamer doesn't exist", async () => {
-// 	const podcast = podcastMother.createYoutubePodcast({});
-// 	const streamStrategy = streamStrategyMother.createYtdlpStreamStrategy({
-// 		_isSupportedUrl: false,
-// 	});
-// 	const streamStrategies = new Map<StreamToolName, IStreamStrategy>();
-// 	streamStrategies.set(streamStrategy.getStrategyName(), streamStrategy);
-// 	const streamService = new StreamService(streamStrategies);
+	const result = await streamService.getToolNameByURL(podcast.url);
 
-// 	const result = await streamService.getToolNameByURL(podcast.url);
+	assertEquals(result, streamStrategy.getStrategyName());
+});
 
-// 	assertEquals(result, null);
-// });
+Deno.test("StreamService: getToolNameByURL: streamer doesn't exist", async () => {
+	const podcast = podcastMother.createYoutubePodcast();
+
+	const streamStrategyBuilder = new StreamStrategyMockBuilder();
+	streamStrategyBuilder.produceIsSupportedURL(false);
+	const streamStrategy = streamStrategyBuilder.createStreamStrategy();
+	const streamStrategies = new Map<StreamToolName, IStreamStrategy>();
+	streamStrategies.set(streamStrategy.getStrategyName(), streamStrategy);
+
+	const streamService = new StreamService(streamStrategies);
+
+	const result = await streamService.getToolNameByURL(podcast.url);
+
+	assertEquals(result, null);
+});
 
 // Deno.test("StreamService: streamPodcast: supported url", () => {
 // 	const podcast = podcastMother.createYoutubePodcast({});
