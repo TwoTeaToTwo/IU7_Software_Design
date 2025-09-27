@@ -1,61 +1,67 @@
 import { assertEquals, assertRejects } from "@std/assert";
-import { createUInt, FeedService, UserFindError } from "../../../mod.ts";
+import { FeedService, UserFindError } from "../../../mod.ts";
 import {
 	FeedMother,
 	PodcastMother,
 	SubscribeMother,
 } from "../../object_mothers.ts";
+import {
+	SearchServiceMockBuilder,
+	SubscribeManageRepositoryMockBuilder,
+} from "../../builders.ts";
 
-// const podcastMother = new PodcastMother();
-// const searchServiceMother = new SearchServiceMockMother();
-// const subscribeMother = new SubscribeMother();
-// const subscribeManageRepositoryMother =
-// 	new SubscribeManageRepositoryMockMother();
-// const feedMother = new FeedMother();
+const podcastMother = new PodcastMother();
+const subscribeMother = new SubscribeMother();
+const feedMother = new FeedMother();
 
-// Deno.test("FeedService: updateFeed: user exists", async () => {
-// 	const podcast1 = podcastMother.createYoutubePodcast({ title: "test1" });
-// 	const podcast2 = podcastMother.createYoutubePodcast({ title: "test2" });
-// 	const podcasts = [podcast1, podcast2];
-// 	const searchService = searchServiceMother.createYoutubeSearchService({
-// 		_podcasts: podcasts,
-// 	});
-// 	const subscribe = subscribeMother.createYoutubeSubscribe({});
-// 	const subscribes = [subscribe];
-// 	const subscribeManageRepository = subscribeManageRepositoryMother
-// 		.createSubscribeManageRepository({ _subscribes: subscribes });
-// 	const feed = feedMother.createFeed(createUInt(podcasts.length));
-// 	const feedService = new FeedService(
-// 		searchService,
-// 		subscribeManageRepository,
-// 	);
+Deno.test("FeedService: updateFeed: user exists", async () => {
+	const podcast = podcastMother.createYoutubePodcast();
+	const podcasts = [podcast];
+	const subscribe = subscribeMother.createYoutubeSubscribe();
+	const subscribes = [subscribe];
 
-// 	await feedService.updateFeed(feed);
+	const searchServiceBuilder = new SearchServiceMockBuilder();
+	searchServiceBuilder.produceGetLastPodcastsByChannel(podcasts);
+	const searchService = searchServiceBuilder.createSearchService();
 
-// 	assertEquals(feed.contents, podcasts);
-// });
+	const subscribeManageRepositoryBuilder =
+		new SubscribeManageRepositoryMockBuilder();
+	subscribeManageRepositoryBuilder.produceFindSubscribesByUserId(subscribes);
+	const subscribeManageRepository = subscribeManageRepositoryBuilder
+		.createSubscribeManageRepository();
 
-// Deno.test("FeedService: updateFeed: use doesn't exist", async () => {
-// 	const podcast1 = podcastMother.createYoutubePodcast({ title: "test1" });
-// 	const podcast2 = podcastMother.createYoutubePodcast({ title: "test2" });
-// 	const podcasts = [podcast1, podcast2];
-// 	const searchService = searchServiceMother.createYoutubeSearchService({
-// 		_podcasts: podcasts,
-// 	});
-// 	const subscribe = subscribeMother.createYoutubeSubscribe({});
-// 	const subscribes = [subscribe];
-// 	const subscribeManageRepository = subscribeManageRepositoryMother
-// 		.createSubscribeManageRepository({
-// 			_subscribes: subscribes,
-// 			_isUserExist: false,
-// 		});
-// 	const feed = feedMother.createFeed(createUInt(podcasts.length));
-// 	const feedService = new FeedService(
-// 		searchService,
-// 		subscribeManageRepository,
-// 	);
+	const feed = feedMother.createFeed();
+	const feedService = new FeedService(
+		searchService,
+		subscribeManageRepository,
+	);
 
-// 	await assertRejects(async () => {
-// 		await feedService.updateFeed(feed);
-// 	}, UserFindError);
-// });
+	await feedService.updateFeed(feed);
+
+	assertEquals(feed.contents, podcasts);
+});
+
+Deno.test("FeedService: updateFeed: use doesn't exist", async () => {
+	const podcast = podcastMother.createYoutubePodcast();
+	const podcasts = [podcast];
+
+	const searchServiceBuilder = new SearchServiceMockBuilder();
+	searchServiceBuilder.produceGetLastPodcastsByChannel(podcasts);
+	const searchService = searchServiceBuilder.createSearchService();
+
+	const subscribeManageRepositoryBuilder =
+		new SubscribeManageRepositoryMockBuilder();
+	subscribeManageRepositoryBuilder.produceFindSubscribesByUserId(null);
+	const subscribeManageRepository = subscribeManageRepositoryBuilder
+		.createSubscribeManageRepository();
+
+	const feed = feedMother.createFeed();
+	const feedService = new FeedService(
+		searchService,
+		subscribeManageRepository,
+	);
+
+	await assertRejects(async () => {
+		await feedService.updateFeed(feed);
+	}, UserFindError);
+});

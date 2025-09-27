@@ -53,6 +53,6 @@ export class FeedMother {
 
 	public createFeed(): Feed {
 		const user = this.userMother.createUser();
-		return new Feed(user.id);
+		return new Feed(user.id, 1);
 	}
 }

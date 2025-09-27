@@ -1,13 +1,6 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { ChannelService, UserFindError } from "../../../mod.ts";
-import {
-	// SearchServiceMockMother,
-	// SubscribeManageRepositoryMockMother,
-	SubscribeMother,
-	// SubscribeRepositoryMockMother,
-	UserMother,
-	// UserRepositoryMockMother,
-} from "../../object_mothers.ts";
+import { SubscribeMother, UserMother } from "../../object_mothers.ts";
 import {
 	SearchServiceMockBuilder,
 	SubscribeManageRepositoryMockBuilder,
