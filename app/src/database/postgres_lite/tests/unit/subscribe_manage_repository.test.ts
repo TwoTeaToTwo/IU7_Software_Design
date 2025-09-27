@@ -7,7 +7,8 @@ import {
 import { SubscribeMother, UserMother } from "@podcast/core";
 import { assertEquals } from "@std/assert";
 import { drizzle } from "drizzle-orm/pglite";
-import { MigrationHelper, SubscribeManageHelper } from "../helpers.ts";
+import { SubscribeManageHelper } from "../helpers.ts";
+import { DatabaseFixture } from "../fixtures.ts";
 
 const subscribeMother = new SubscribeMother();
 const userMother = new UserMother();
@@ -16,9 +17,9 @@ let subscribeManageHelper: SubscribeManageHelper;
 
 Deno.test.beforeAll(async () => {
 	db = drizzle();
-	const migrationHelper = new MigrationHelper(db);
+	const databaseFixture = new DatabaseFixture(db);
 	subscribeManageHelper = new SubscribeManageHelper(db);
-	await migrationHelper.setupTestDb();
+	await databaseFixture.setupTestDb();
 	const user = userMother.createUser();
 	const subscribe = subscribeMother.createYoutubeSubscribe();
 	const subscribeRepository = new SubscribeRepository(db);

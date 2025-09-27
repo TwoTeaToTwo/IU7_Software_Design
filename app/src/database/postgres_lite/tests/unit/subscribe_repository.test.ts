@@ -5,15 +5,15 @@ import {
 import { SubscribeMother } from "@podcast/core";
 import { assertEquals } from "@std/assert";
 import { drizzle } from "drizzle-orm/pglite";
-import { MigrationHelper } from "../helpers.ts";
+import { DatabaseFixture } from "../fixtures.ts";
 
 const subscribeMother = new SubscribeMother();
 let db: PostgresLiteDB;
 
 Deno.test.beforeAll(async () => {
 	db = drizzle();
-	const migrationHelper = new MigrationHelper(db);
-	await migrationHelper.setupTestDb();
+	const databaseFixture = new DatabaseFixture(db);
+	await databaseFixture.setupTestDb();
 });
 
 Deno.test("Database: SubscribeRepository: create: add new subscribe", async () => {
