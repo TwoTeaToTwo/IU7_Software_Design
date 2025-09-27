@@ -50,7 +50,7 @@
 	"tasks": {
 		"build": "deno compile -o ../../out/podcast --target x86_64-unknown-linux-gnu --allow-env --env-file --allow-net --allow-read --allow-write --allow-run=yt-dlp,mpv main.ts",
 		"run": "deno run --allow-env --env-file --allow-net --allow-read --allow-write --allow-sys --allow-run=yt-dlp main.ts",
-		"test-core": "deno test ./core/tests/unit/london --allow-env --env-file --allow-read",
+		"test-core": "deno test ./core/tests/unit/detroit/* --allow-env --env-file --allow-read",
 		"test-db": "deno test ./database/postgres_lite/tests/unit/* --allow-env --env-file --allow-read"
 	}
 }

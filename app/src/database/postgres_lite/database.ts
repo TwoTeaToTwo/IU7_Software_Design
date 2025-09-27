@@ -1,7 +1,7 @@
-import { drizzle as pgLiteDrizzle } from "drizzle-orm/pglite";
+import { drizzle } from "drizzle-orm/pglite";
 
 export const createPostgresLiteDB = () => {
-	return pgLiteDrizzle();
+	return drizzle();
 };
 
 export type PostgresLiteDB = ReturnType<typeof createPostgresLiteDB>;
