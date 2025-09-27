@@ -1,50 +1,44 @@
-// import { assertEquals, assertRejects } from "@std/assert";
-// import {
-// 	createUInt,
-// 	GetPodcastError,
-// 	NonExistentChannelError,
-// 	SearchService,
-// } from "../../../mod.ts";
-// import type { ISearchStrategy, Podcast, SearchPlatform } from "../../../mod.ts";
-// import {
-// 	PodcastMother,
-// 	SearchStrategyMockMother,
-// 	SubscribeMother,
-// } from "../../object_mothers.ts";
+import { assertEquals } from "@std/assert";
+import { SearchService } from "../../../mod.ts";
+import type { ISearchStrategy, Podcast, SearchPlatform } from "../../../mod.ts";
+import { PodcastMother } from "../../object_mothers.ts";
+import { SearchStrategyMockBuilder } from "../../builders.ts";
 
-// const podcastMother = new PodcastMother();
-// const searchStrategyMother = new SearchStrategyMockMother();
-// const subscribeMother = new SubscribeMother();
+const podcastMother = new PodcastMother();
 
-// Deno.test("SearchService: searchPodcast: search existent podcast", async () => {
-// 	const podcast = podcastMother.createYoutubePodcast({});
-// 	const podcasts = [podcast];
-// 	const searchStrategy = searchStrategyMother.createYoutubeSearchStrategy(
-// 		{ _podcast: podcast, _podcasts: podcasts },
-// 	);
-// 	const searchStrategies = new Map<SearchPlatform, ISearchStrategy>();
-// 	searchStrategies.set(searchStrategy.getPlatform(), searchStrategy);
-// 	const searchService = new SearchService(searchStrategies);
+Deno.test("SearchService: searchPodcast: search existent podcast", async () => {
+	const podcast = podcastMother.createYoutubePodcast();
+	const podcasts = [podcast];
 
-// 	const result = await searchService.searchPodcast(podcast.title);
+	const searchStrategyBuilder = new SearchStrategyMockBuilder();
+	searchStrategyBuilder.produceSearchPodcast(podcasts);
+	const searchStrategy = searchStrategyBuilder.createSearchStrategy();
+	const searchStrategies = new Map<SearchPlatform, ISearchStrategy>();
+	searchStrategies.set(searchStrategy.getPlatform(), searchStrategy);
 
-// 	assertEquals(result, podcasts);
-// });
+	const searchService = new SearchService(searchStrategies);
 
-// Deno.test("SearchService: search non-existent podcast", async () => {
-// 	const podcast = podcastMother.createYoutubePodcast({});
-// 	const podcasts: Podcast[] = [];
-// 	const searchStrategy = searchStrategyMother.createYoutubeSearchStrategy(
-// 		{ _podcast: podcast, _podcasts: podcasts },
-// 	);
-// 	const searchStrategies = new Map<SearchPlatform, ISearchStrategy>();
-// 	searchStrategies.set(searchStrategy.getPlatform(), searchStrategy);
-// 	const searchService = new SearchService(searchStrategies);
+	const result = await searchService.searchPodcast(podcast.title);
 
-// 	const result = await searchService.searchPodcast(podcast.title);
+	assertEquals(result, podcasts);
+});
 
-// 	assertEquals(result, podcasts);
-// });
+Deno.test("SearchService: search non-existent podcast", async () => {
+	const podcast = podcastMother.createYoutubePodcast();
+	const podcasts: Podcast[] = [];
+
+	const searchStrategyBuilder = new SearchStrategyMockBuilder();
+	searchStrategyBuilder.produceSearchPodcast(podcasts);
+	const searchStrategy = searchStrategyBuilder.createSearchStrategy();
+	const searchStrategies = new Map<SearchPlatform, ISearchStrategy>();
+	searchStrategies.set(searchStrategy.getPlatform(), searchStrategy);
+
+	const searchService = new SearchService(searchStrategies);
+
+	const result = await searchService.searchPodcast(podcast.title);
+
+	assertEquals(result, podcasts);
+});
 
 // Deno.test("SearchService: getPlatformByURL: get existent platform", () => {
 // 	const podcast = podcastMother.createYoutubePodcast({});
