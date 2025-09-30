@@ -1,6 +1,6 @@
 import { createUInt, Subscribe } from "@podcast/core";
 import type { Id, ISubscribeRepository, SearchPlatform } from "@podcast/core";
-import type { PostgresDB } from "../database.ts";
+import type { PostgresLiteDB } from "../database.ts";
 import { inject, injectable } from "inversify";
 import { INJECT_TYPES } from "../types.ts";
 import { subscriptions } from "../schema.ts";
@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 @injectable()
 export class SubscribeRepository implements ISubscribeRepository {
 	constructor(
-		@inject(INJECT_TYPES.NodePgDatabase) private _db: PostgresDB,
+		@inject(INJECT_TYPES.NodePgDatabase) private _db: PostgresLiteDB,
 	) {}
 	/**
 	 * Return true on success
@@ -18,7 +18,7 @@ export class SubscribeRepository implements ISubscribeRepository {
 		const result = await this._db.delete(subscriptions).where(
 			eq(subscriptions.id, subscribe.id),
 		);
-		return result.rowCount !== 0;
+		return result.affectedRows !== 0;
 	}
 	/**
 	 * Return Subscribe if can find, else null
@@ -50,7 +50,7 @@ export class SubscribeRepository implements ISubscribeRepository {
 			title: subscribe.title,
 			platform: subscribe.platform,
 		}).where(eq(subscriptions.id, subscribe.id));
-		return result.rowCount !== 0;
+		return result.affectedRows !== 0;
 	}
 	/**
 	 * Return Subscribe on success, else null

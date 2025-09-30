@@ -1,5 +1,5 @@
 import type { SearchService } from "./search_service.ts";
-import { inject, injectable } from "npm:inversify";
+import { inject, injectable } from "inversify";
 import type { ISubscribeManageRepository } from "../output_ports/i_subscribe_manage_repository.ts";
 import type { IUserRepository } from "../output_ports/i_user_repository.ts";
 import type { ISubscribeRepository } from "../output_ports/i_subscribe_repository.ts";

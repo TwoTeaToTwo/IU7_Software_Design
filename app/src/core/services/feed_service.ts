@@ -1,6 +1,6 @@
 import type { SearchService } from "./search_service.ts";
 import { Feed } from "../models/feed.ts";
-import { inject, injectable } from "npm:inversify";
+import { inject, injectable } from "inversify";
 import type { ISubscribeManageRepository } from "../output_ports/i_subscribe_manage_repository.ts";
 import { createUInt, INJECT_TYPES, type UInt } from "../types.ts";
 import { UserFindError } from "./errors.ts";

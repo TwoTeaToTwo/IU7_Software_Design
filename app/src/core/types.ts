@@ -1,4 +1,4 @@
-import { z } from "npm:zod";
+import { z } from "zod";
 
 const UIntSchema = z.number().int().nonnegative().brand<"UInt">();
 export type UInt = z.infer<typeof UIntSchema>;
