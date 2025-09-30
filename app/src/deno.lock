@@ -44,9 +44,11 @@
     "npm:@sinclair/typebox@~0.34.41": "0.34.41",
     "npm:@types/node@*": "24.2.0",
     "npm:@types/pg@^8.15.5": "8.15.5",
+    "npm:drizzle-kit@*": "0.31.4_esbuild@0.25.10",
     "npm:drizzle-kit@~0.31.4": "0.31.4_esbuild@0.25.10",
     "npm:drizzle-orm@*": "0.44.5_@electric-sql+pglite@0.3.9_@types+pg@8.15.5_pg@8.16.3",
     "npm:drizzle-orm@~0.44.5": "0.44.5_@electric-sql+pglite@0.3.9_@types+pg@8.15.5_pg@8.16.3",
+    "npm:drizzle-seed@~0.3.1": "0.3.1_drizzle-orm@0.44.5__@electric-sql+pglite@0.3.9__@types+pg@8.15.5__pg@8.16.3_@electric-sql+pglite@0.3.9_@types+pg@8.15.5_pg@8.16.3",
     "npm:fastify@^5.5.0": "5.6.1",
     "npm:googleapis@^150.0.1": "150.0.1",
     "npm:inversify@*": "7.9.0_reflect-metadata@0.2.2",
@@ -895,6 +897,16 @@
         "pg"
       ]
     },
+    "drizzle-seed@0.3.1_drizzle-orm@0.44.5__@electric-sql+pglite@0.3.9__@types+pg@8.15.5__pg@8.16.3_@electric-sql+pglite@0.3.9_@types+pg@8.15.5_pg@8.16.3": {
+      "integrity": "sha512-F/0lgvfOAsqlYoHM/QAGut4xXIOXoE5VoAdv2FIl7DpGYVXlAzKuJO+IphkKUFK3Dz+rFlOsQLnMNrvoQ0cx7g==",
+      "dependencies": [
+        "drizzle-orm",
+        "pure-rand"
+      ],
+      "optionalPeers": [
+        "drizzle-orm"
+      ]
+    },
     "dunder-proto@1.0.1": {
       "integrity": "sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==",
       "dependencies": [
@@ -1477,6 +1489,9 @@
     "process-warning@5.0.0": {
       "integrity": "sha512-a39t9ApHNx2L4+HBnQKqxxHNs1r7KF+Intd8Q/g1bUh6q0WIp9voPXJ/x0j+ZL45KF1pJd9+q2jLIRMfvEshkA=="
     },
+    "pure-rand@6.1.0": {
+      "integrity": "sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA=="
+    },
     "qs@6.14.0": {
       "integrity": "sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w==",
       "dependencies": [
@@ -1720,6 +1735,7 @@
       "npm:@types/pg@^8.15.5",
       "npm:drizzle-kit@~0.31.4",
       "npm:drizzle-orm@~0.44.5",
+      "npm:drizzle-seed@~0.3.1",
       "npm:fastify@^5.5.0",
       "npm:googleapis@^150.0.1",
       "npm:inversify@^7.9.0",

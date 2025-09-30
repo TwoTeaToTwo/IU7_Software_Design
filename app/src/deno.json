@@ -20,6 +20,7 @@
 		"@std/path": "jsr:@std/path@^1.1.2",
 		"@std/testing": "jsr:@std/testing@^1.0.15",
 		"@std/toml": "jsr:@std/toml@^1.0.10",
+		"drizzle-seed": "npm:drizzle-seed@^0.3.1",
 		"fastify": "npm:fastify@^5.5.0",
 		"googleapis": "npm:googleapis@^150.0.1",
 		"inversify": "npm:inversify@^7.9.0",
@@ -45,12 +46,14 @@
 	],
 	"compilerOptions": {
 		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true
+		"emitDecoratorMetadata": true,
+		"strict": true
 	},
 	"tasks": {
 		"build": "deno compile -o ../../out/podcast --target x86_64-unknown-linux-gnu --allow-env --env-file --allow-net --allow-read --allow-write --allow-run=yt-dlp,mpv main.ts",
 		"run": "deno run --allow-env --env-file --allow-net --allow-read --allow-write --allow-sys --allow-run=yt-dlp main.ts",
 		"test-core": "deno test ./core/tests/unit/detroit/* --allow-env --env-file --allow-read",
-		"test-db": "deno test ./database/postgres_lite/tests/unit/* --allow-env --env-file --allow-read"
+		"test-db": "deno test ./database/postgres_lite/tests/unit/* --allow-env --env-file --allow-read",
+		"test-db-int": "deno test ./database/postgres/tests/integration/user_repository.integration.test.ts --allow-env --env-file --allow-read --allow-net"
 	}
 }
