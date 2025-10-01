@@ -54,6 +54,6 @@
 		"run": "deno run --allow-env --env-file --allow-net --allow-read --allow-write --allow-sys --allow-run=yt-dlp main.ts",
 		"test-core": "deno test ./core/tests/unit/detroit/* --allow-env --env-file --allow-read",
 		"test-db": "deno test ./database/postgres_lite/tests/unit/* --allow-env --env-file --allow-read",
-		"test-db-int": "deno test ./database/postgres/tests/integration/user_repository.integration.test.ts --allow-env --env-file --allow-read --allow-net"
+		"test-db-int": "deno test ./database/postgres/tests/integration/subscribe_repository.integration.test.ts --allow-env --env-file --allow-read --allow-net"
 	}
 }
