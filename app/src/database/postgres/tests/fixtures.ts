@@ -1,5 +1,5 @@
 import type { PostgresDB } from "../mod.ts";
-import { subscriptions, users } from "../schema.ts";
+import { subscriptions, users, usersHaveSubscriptions } from "../schema.ts";
 import { sql } from "drizzle-orm";
 import { SubscribeMother, UserMother } from "@podcast/core";
 
@@ -39,5 +39,28 @@ export const fillSubscriptionsTableFixture = async (
 		url: subscribe.url.toString(),
 		title: subscribe.title,
 		platform: subscribe.platform,
+	});
+};
+
+export const clearUsersHaveSubscriptionsTableFixture = async (
+	db: PostgresDB,
+): Promise<void> => {
+	await db.execute(
+		sql`TRUNCATE TABLE ${
+			sql.raw("user_have_subscriptions")
+		} RESTART IDENTITY CASCADE`,
+	);
+};
+
+export const fillUsersHaveSubscriptionsTableFixture = async (
+	db: PostgresDB,
+): Promise<void> => {
+	const subscribeMother = new SubscribeMother();
+	const subscribe = subscribeMother.createYoutubeSubscribe();
+	const userMother = new UserMother();
+	const user = userMother.createUser();
+	await db.insert(usersHaveSubscriptions).values({
+		user_id: user.id,
+		subscription_id: subscribe.id,
 	});
 };
