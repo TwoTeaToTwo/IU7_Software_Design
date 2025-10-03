@@ -2,17 +2,18 @@ import type { FastifyPluginAsync } from "fastify";
 import {
 	getSubscriptionErrorSchema,
 	getSubscriptionOkSchema,
-	getSubscriptionQuerySchema,
+	getSubscriptionSchema,
 	subscribeErrorSchema,
 	subscribeOkSchema,
 	subscribeSchema,
 	unsubscribeErrorSchema,
-	unsubscribeSchema,
+	unsubscribeParamsSchema,
+	updateSubscriptionBodySchema,
 	updateSubscriptionCreatedSchema,
 	updateSubscriptionErrorSchema,
-	updateSubscriptionSchema,
+	updateSubscriptionTitleBodySchema,
 	updateSubscriptionTitleErrorSchema,
-	updateSubscriptionTitleSchema,
+	updateSubscriptionTitleParamsSchema,
 } from "../schemas/channel.schemas.ts";
 import { ChannelController } from "../controllers/channel.controller.ts";
 
@@ -21,72 +22,124 @@ export const userChannelRoutes: FastifyPluginAsync = async (app) => {
 	app.post("", {
 		preHandler: [app.authenticate],
 		schema: {
-			querystring: subscribeSchema,
-			tags: ["user", "channel"],
+			body: subscribeSchema,
+			tags: ["users"],
 			summary: "subscribe to channel",
+			headers: {
+				type: "object",
+				properties: {
+					access_token: {
+						type: "string",
+						description: "bearer token for authorization",
+					},
+				},
+				required: ["access_token"],
+			},
 			security: [{ bearerAuth: [] }],
 			response: {
 				201: subscribeOkSchema,
+				401: subscribeErrorSchema,
 				404: subscribeErrorSchema,
-				500: subscribeErrorSchema,
 			},
 		},
 	}, ChannelController.subscribe);
-	app.delete("", {
+	app.delete("/:id", {
 		preHandler: [app.authenticate],
 		schema: {
-			querystring: unsubscribeSchema,
-			tags: ["user", "channel"],
+			params: unsubscribeParamsSchema,
+			tags: ["users"],
 			summary: "unsubscribe from channel",
+			headers: {
+				type: "object",
+				properties: {
+					access_token: {
+						type: "string",
+						description: "bearer token for authorization",
+					},
+				},
+				required: ["access_token"],
+			},
 			security: [{ bearerAuth: [] }],
 			response: {
 				204: { type: "null" },
+				401: unsubscribeErrorSchema,
 				404: unsubscribeErrorSchema,
-				500: unsubscribeErrorSchema,
 			},
 		},
 	}, ChannelController.unsubscribe);
-	app.get("", {
+	app.get("/:id", {
 		preHandler: [app.authenticate],
 		schema: {
-			querystring: getSubscriptionQuerySchema,
-			tags: ["user", "channel"],
+			params: getSubscriptionSchema,
+			tags: ["users"],
 			summary: "get subscription by id",
+			headers: {
+				type: "object",
+				properties: {
+					access_token: {
+						type: "string",
+						description: "bearer token for authorization",
+					},
+				},
+				required: ["access_token"],
+			},
 			security: [{ bearerAuth: [] }],
 			response: {
 				200: getSubscriptionOkSchema,
+				401: getSubscriptionErrorSchema,
 				404: getSubscriptionErrorSchema,
-				500: getSubscriptionErrorSchema,
 			},
 		},
 	}, () => { //TODO
 	});
-	app.put("", {
+	app.put("/:id", {
 		preHandler: [app.authenticate],
 		schema: {
-			body: updateSubscriptionSchema,
-			tags: ["user", "channel"],
+			params: getSubscriptionSchema,
+			body: updateSubscriptionBodySchema,
+			tags: ["users"],
 			summary: "update subscription information",
+			headers: {
+				type: "object",
+				properties: {
+					access_token: {
+						type: "string",
+						description: "bearer token for authorization",
+					},
+				},
+				required: ["access_token"],
+			},
 			security: [{ bearerAuth: [] }],
 			response: {
 				201: updateSubscriptionCreatedSchema,
 				204: { type: "null" },
-				500: updateSubscriptionErrorSchema,
+				404: updateSubscriptionErrorSchema,
 			},
 		},
 	}, () => { //TODO
 	});
-	app.patch("", {
+	app.patch("/:id", {
 		preHandler: [app.authenticate],
 		schema: {
-			body: updateSubscriptionTitleSchema,
-			tags: ["user", "channel"],
+			params: updateSubscriptionTitleParamsSchema,
+			body: updateSubscriptionTitleBodySchema,
+			tags: ["users"],
 			summary: "update subscription title",
+			headers: {
+				type: "object",
+				properties: {
+					access_token: {
+						type: "string",
+						description: "bearer token for authorization",
+					},
+				},
+				required: ["access_token"],
+			},
 			security: [{ bearerAuth: [] }],
 			response: {
 				204: { type: "null" },
+				401: updateSubscriptionTitleErrorSchema,
 				404: updateSubscriptionTitleErrorSchema,
-				500: updateSubscriptionTitleErrorSchema,
 			},
 		},
 	}, () => { //TODO

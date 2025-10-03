@@ -9,7 +9,7 @@ import {
 
 export const userRoutes: FastifyPluginAsync = async (app) => {
 	await Promise.resolve();
-	app.get("/subscriptions", {
+	app.get("/channels", {
 		preHandler: [app.authenticate],
 		schema: {
 			tags: [
@@ -24,5 +24,5 @@ export const userRoutes: FastifyPluginAsync = async (app) => {
 		},
 	}, UserController.showUserSubscriptions);
 	app.register(feedRoutes, { prefix: "/feed" });
-	app.register(userChannelRoutes, { prefix: "/channel" });
+	app.register(userChannelRoutes, { prefix: "/channels" });
 };

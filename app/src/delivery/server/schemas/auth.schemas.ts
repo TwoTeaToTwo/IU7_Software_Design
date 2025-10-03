@@ -8,9 +8,7 @@ export const loginErrorSchema = Type.String();
 
 export type Login = Static<typeof loginSchema>;
 
-export const loginResponseSchema = Type.Object({
-	result: Type.Boolean(),
-});
+export const loginResponseSchema = Type.Object({});
 
 export const getAccessTokenResponseSchema = Type.Object({
 	accessToken: Type.String(),

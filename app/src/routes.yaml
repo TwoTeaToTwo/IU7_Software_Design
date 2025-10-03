@@ -10,11 +10,11 @@ components:
       bearerFormat: JWT
   schemas: {}
 paths:
-  /session:
+  /sessions:
     post:
       summary: log in
       tags:
-        - session
+        - sessions
       requestBody:
         content:
           application/json:
@@ -33,16 +33,17 @@ paths:
       responses:
         "201":
           description: Default Response
+          headers:
+            refresh_token:
+              schema:
+                type: string
+              description: http-only cookie
           content:
             application/json:
               schema:
                 type: object
-                properties:
-                  result:
-                    type: boolean
-                required:
-                  - result
-        "403":
+                properties: {}
+        "401":
           description: Default Response
           content:
             application/json:
@@ -51,17 +52,31 @@ paths:
     delete:
       summary: log out
       tags:
-        - session
+        - sessions
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: access_token
+          required: true
+          description: bearer token for authorization
       security:
         - bearerAuth: []
       responses:
         "204":
           description: Default Response
-  /session/access_token:
+  /sessions/access_token:
     post:
       summary: get access token
       tags:
-        - session
+        - sessions
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: refresh_token
+          required: true
+          description: http-only cookie
       responses:
         "201":
           description: Default Response
@@ -98,7 +113,7 @@ paths:
               schema:
                 type: string
                 format: binary
-  /api/podcast/results:
+  /api/podcasts/results:
     get:
       summary: search podcasts by query
       tags:
@@ -144,7 +159,7 @@ paths:
                     - duration_s
                     - relevance
                     - url
-  /api/podcast/result:
+  /api/podcasts/result:
     get:
       summary: search podcast by url
       tags:
@@ -194,7 +209,7 @@ paths:
             application/json:
               schema:
                 type: string
-  /api/user/subscriptions:
+  /api/users/channels:
     get:
       summary: get array of user subscriptions
       tags:
@@ -231,7 +246,68 @@ paths:
             application/json:
               schema:
                 type: string
-  /api/user/feed/content:
+    post:
+      summary: subscribe to channel
+      tags:
+        - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                channel_title:
+                  type: string
+                channel_url:
+                  type: string
+              required:
+                - channel_title
+                - channel_url
+        required: true
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: access_token
+          required: true
+          description: bearer token for authorization
+      security:
+        - bearerAuth: []
+      responses:
+        "201":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    minimum: 1
+                    type: integer
+                  url:
+                    type: string
+                  title:
+                    type: string
+                  platform:
+                    type: string
+                required:
+                  - id
+                  - url
+                  - title
+                  - platform
+        "401":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: string
+        "404":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: string
+  /api/users/feed/content:
     get:
       summary: get feed content
       tags:
@@ -279,83 +355,36 @@ paths:
             application/json:
               schema:
                 type: string
-  /api/user/channel:
-    post:
-      summary: subscribe to channel
-      tags:
-        - user
-        - channel
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: channel_title
-          required: true
-        - schema:
-            type: string
-          in: query
-          name: channel_url
-          required: true
-      security:
-        - bearerAuth: []
-      responses:
-        "201":
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    minimum: 1
-                    type: integer
-                  url:
-                    type: string
-                  title:
-                    type: string
-                  platform:
-                    type: string
-                required:
-                  - id
-                  - url
-                  - title
-                  - platform
-        "404":
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: string
-        "500":
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: string
+  /api/users/channels/{id}:
     delete:
       summary: unsubscribe from channel
       tags:
-        - user
-        - channel
+        - users
       parameters:
         - schema:
             minimum: 1
             type: integer
-          in: query
-          name: channel_id
+          in: path
+          name: id
           required: true
+        - schema:
+            type: string
+          in: header
+          name: access_token
+          required: true
+          description: bearer token for authorization
       security:
         - bearerAuth: []
       responses:
         "204":
           description: Default Response
-        "404":
+        "401":
           description: Default Response
           content:
             application/json:
               schema:
                 type: string
-        "500":
+        "404":
           description: Default Response
           content:
             application/json:
@@ -364,15 +393,20 @@ paths:
     get:
       summary: get subscription by id
       tags:
-        - user
-        - channel
+        - users
       parameters:
         - schema:
             minimum: 1
             type: integer
-          in: query
-          name: subscribe_id
+          in: path
+          name: id
           required: true
+        - schema:
+            type: string
+          in: header
+          name: access_token
+          required: true
+          description: bearer token for authorization
       security:
         - bearerAuth: []
       responses:
@@ -397,13 +431,13 @@ paths:
                   - url
                   - title
                   - platform
-        "404":
+        "401":
           description: Default Response
           content:
             application/json:
               schema:
                 type: string
-        "500":
+        "404":
           description: Default Response
           content:
             application/json:
@@ -412,17 +446,13 @@ paths:
     put:
       summary: update subscription information
       tags:
-        - user
-        - channel
+        - users
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                id:
-                  minimum: 1
-                  type: integer
                 url:
                   type: string
                 title:
@@ -430,11 +460,23 @@ paths:
                 platform:
                   type: string
               required:
-                - id
                 - url
                 - title
                 - platform
         required: true
+      parameters:
+        - schema:
+            minimum: 1
+            type: integer
+          in: path
+          name: id
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: access_token
+          required: true
+          description: bearer token for authorization
       security:
         - bearerAuth: []
       responses:
@@ -461,7 +503,7 @@ paths:
                   - platform
         "204":
           description: Default Response
-        "500":
+        "404":
           description: Default Response
           content:
             application/json:
@@ -470,41 +512,49 @@ paths:
     patch:
       summary: update subscription title
       tags:
-        - user
-        - channel
+        - users
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                id:
-                  minimum: 1
-                  type: integer
                 title:
                   type: string
               required:
-                - id
                 - title
         required: true
+      parameters:
+        - schema:
+            minimum: 1
+            type: integer
+          in: path
+          name: id
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: access_token
+          required: true
+          description: bearer token for authorization
       security:
         - bearerAuth: []
       responses:
         "204":
           description: Default Response
+        "401":
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: string
         "404":
           description: Default Response
           content:
             application/json:
               schema:
                 type: string
-        "500":
-          description: Default Response
-          content:
-            application/json:
-              schema:
-                type: string
-  /api/stream:
+  /api/streams:
     get:
       summary: get podcast audio
       tags:

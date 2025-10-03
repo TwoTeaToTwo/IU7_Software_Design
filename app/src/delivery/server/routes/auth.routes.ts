@@ -10,29 +10,60 @@ import { AuthenticationController } from "../controllers/auth.controller.ts";
 
 export const authenticateRoutes: FastifyPluginAsync = async (app) => {
 	await Promise.resolve();
-	app.post("/session", {
+	app.post("/sessions", {
 		schema: {
-			tags: ["session"],
+			tags: ["sessions"],
 			summary: "log in",
 			body: loginSchema,
-			response: { 201: loginResponseSchema, 403: loginErrorSchema },
+			response: {
+				201: {
+					headers: {
+						"refresh_token": {
+							type: "string",
+							description: "http-only cookie",
+						},
+					},
+					...loginResponseSchema,
+				},
+				401: loginErrorSchema,
+			},
 		},
 	}, AuthenticationController.login);
-	app.post("/session/access_token", {
+	app.post("/sessions/access_token", {
 		schema: {
-			tags: ["session"],
+			tags: ["sessions"],
 			summary: "get access token",
+			headers: {
+				type: "object",
+				properties: {
+					refresh_token: {
+						type: "string",
+						description: "http-only cookie",
+					},
+				},
+				required: ["refresh_token"],
+			},
 			response: {
 				201: getAccessTokenResponseSchema,
 				401: getAccessTokenErrorSchema,
 			},
 		},
 	}, AuthenticationController.getAccessToken);
-	app.delete("/session", {
+	app.delete("/sessions", {
 		preHandler: [app.authenticate],
 		schema: {
-			tags: ["session"],
+			tags: ["sessions"],
 			summary: "log out",
+			headers: {
+				type: "object",
+				properties: {
+					access_token: {
+						type: "string",
+						description: "bearer token for authorization",
+					},
+				},
+				required: ["access_token"],
+			},
 			security: [{ bearerAuth: [] }],
 			response: {
 				204: { type: "null" },
