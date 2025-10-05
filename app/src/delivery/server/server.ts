@@ -18,8 +18,8 @@ import { searchRoutes } from "./routes/search.routes.ts";
 import { userRoutes } from "./routes/user.routes.ts";
 import { streamRoutes } from "./routes/stream.routes.ts";
 
-const createServer = () => {
-	const app = fastify({ logger: true }).withTypeProvider<
+const createServer = (logger: boolean) => {
+	const app = fastify({ logger }).withTypeProvider<
 		TypeBoxTypeProvider
 	>();
 	// jwt
@@ -75,10 +75,10 @@ const createServer = () => {
 	return app;
 };
 
-class Server {
+export class Server {
 	private readonly app: FastifyInstance;
-	constructor() {
-		this.app = createServer();
+	constructor(logger: boolean) {
+		this.app = createServer(logger);
 	}
 	public async runServer() {
 		await this.app.listen({
@@ -86,6 +86,9 @@ class Server {
 			host: httpConfig.host,
 		});
 	}
+	public async stopServer() {
+		await this.app.close();
+	}
 }
 
-export const server = new Server();
+export const server = new Server(true);

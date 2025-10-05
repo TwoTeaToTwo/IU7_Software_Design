@@ -39,7 +39,7 @@ function createStreamStrategies(): Map<StreamToolName, IStreamStrategy> {
 	return stream_strategies;
 }
 
-export function createDIContainer(): Container {
+export let createDIContainer = (): Container => {
 	const container = new Container();
 	const search_strategies = createSearchStrategies();
 	const stream_strategies = createStreamStrategies();
@@ -71,6 +71,10 @@ export function createDIContainer(): Container {
 	);
 	container.bind<FeedService>(INJECT_TYPES.FeedService).to(FeedService);
 	return container;
-}
+};
+
+export const setCreateDIContainer = (createMethod: () => Container) => {
+	createDIContainer = createMethod;
+};
 
 export const container = createDIContainer();

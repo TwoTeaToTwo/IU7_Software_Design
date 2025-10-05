@@ -1,1 +1,1 @@
-export { server } from "./server.ts";
+export { Server, server } from "./server.ts";
