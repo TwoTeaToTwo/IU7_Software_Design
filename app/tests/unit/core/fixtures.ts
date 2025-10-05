@@ -14,7 +14,7 @@ export class DatabaseFixture {
 
 	async setupTestDb(): Promise<void> {
 		await migrate(this.db, {
-			migrationsFolder: "./database/postgres_lite/drizzle",
+			migrationsFolder: "./src/database/postgres_lite/drizzle",
 		});
 		const userRepository = new UserRepository(this.db);
 		const userMother = new UserMother();

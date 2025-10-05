@@ -1,5 +1,6 @@
-!#/bin/zsh
+#!/bin/zsh
 
 rm -rf ./report/*
-deno test ./database/postgres_lite/tests/unit/*.test.ts ./core/tests/unit/london/* --env-file --allow-env --allow-read --reporter=junit --junit-path=./report/report.xml
-allure generate ./report allure-report --clean
+deno test ./tests/unit/database/postgres_lite/* --allow-env --env-file --allow-read --reporter=junit --junit-path=./report/db_unit.xml
+deno test ./src/core/tests/unit/* ./tests/unit/core/* --allow-env --env-file --allow-read --reporter=junit --junit-path=./report/core_unit.xml
+allure generate ./report ./allure-report --clean
