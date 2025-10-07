@@ -11,7 +11,7 @@ export class UserMother {
 	public createUser(): User {
 		const userId = createUInt(1);
 		const userLogin = "test";
-		const userPassword = new Password("test");
+		const userPassword = new Password("1234");
 		return new User(userId, userLogin, userPassword);
 	}
 }

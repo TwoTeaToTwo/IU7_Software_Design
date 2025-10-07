@@ -18,7 +18,7 @@ export class SearchController {
 		request: FastifyRequest,
 		reply: FastifyReply,
 	) {
-		const searchService = container.get<SearchService>(
+		const searchService = container().get<SearchService>(
 			INJECT_TYPES.SearchService,
 		);
 		const requestQuery = request.query as SearchPodcastByQuery;
@@ -35,7 +35,7 @@ export class SearchController {
 		request: FastifyRequest,
 		reply: FastifyReply,
 	) {
-		const searchService = container.get<SearchService>(
+		const searchService = container().get<SearchService>(
 			INJECT_TYPES.SearchService,
 		);
 		const requestQuery = request.query as SearchPodcastByURL;

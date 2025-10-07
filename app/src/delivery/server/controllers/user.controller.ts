@@ -8,7 +8,7 @@ export class UserController {
 		request: FastifyRequest,
 		reply: FastifyReply,
 	) {
-		const subscribeManageRepo = container.get<ISubscribeManageRepository>(
+		const subscribeManageRepo = container().get<ISubscribeManageRepository>(
 			INJECT_TYPES.SubscribeManageRepository,
 		);
 		const userID = request.user.id;

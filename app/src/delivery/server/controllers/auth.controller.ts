@@ -30,7 +30,7 @@ export class AuthenticationController {
 		request: FastifyRequest<{ Body: Login }>,
 		reply: FastifyReply,
 	) {
-		const userRepo = container.get<IUserRepository>(
+		const userRepo = container().get<IUserRepository>(
 			INJECT_TYPES.UserRepository,
 		);
 		const login = request.body.login;
@@ -42,14 +42,17 @@ export class AuthenticationController {
 				message: "Invalid login or password",
 			});
 		} else {
+			const isHttpOnly = !httpConfig.isTestMode;
+			const isSecure = !httpConfig.isTestMode;
+			console.log(isHttpOnly);
 			const refreshToken = AuthenticationController
 				.generateRefreshToken(request.server, user.toJSON());
 			reply.setCookie("refresh_token", refreshToken, {
 				path: "/",
-				httpOnly: true,
-				secure: true,
+				httpOnly: isHttpOnly,
+				secure: isSecure,
 			});
-			return reply.code(201).send(true);
+			return reply.code(201).send({ result: true });
 		}
 	}
 

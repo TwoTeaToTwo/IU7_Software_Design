@@ -70,11 +70,19 @@ export let createDIContainer = (): Container => {
 		ChannelService,
 	);
 	container.bind<FeedService>(INJECT_TYPES.FeedService).to(FeedService);
+	console.log("pupupu");
 	return container;
 };
 
 export const setCreateDIContainer = (createMethod: () => Container) => {
+	console.log("di setted");
 	createDIContainer = createMethod;
 };
 
-export const container = createDIContainer();
+let _container: Container;
+export const container = () => {
+	if (!_container) {
+		_container = createDIContainer();
+	}
+	return _container;
+};

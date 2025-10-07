@@ -13,7 +13,7 @@ export class StreamController {
 		request: FastifyRequest,
 		reply: FastifyReply,
 	) {
-		const streamService = container.get<StreamService>(
+		const streamService = container().get<StreamService>(
 			INJECT_TYPES.StreamService,
 		);
 		const query = request.query as StreamPodcastType;

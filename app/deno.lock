@@ -7,6 +7,7 @@
     "jsr:@cliffy/table@1.0.0-rc.8": "1.0.0-rc.8",
     "jsr:@david/code-block-writer@^13.0.3": "13.0.3",
     "jsr:@deno/dnt@~0.42.3": "0.42.3",
+    "jsr:@jd1378/another-cookiejar@^5.0.7": "5.0.7",
     "jsr:@std/assert@^1.0.13": "1.0.14",
     "jsr:@std/assert@^1.0.14": "1.0.14",
     "jsr:@std/async@^1.0.13": "1.0.14",
@@ -98,6 +99,9 @@
         "jsr:@std/path@1",
         "jsr:@ts-morph/bootstrap"
       ]
+    },
+    "@jd1378/another-cookiejar@5.0.7": {
+      "integrity": "788e22828dd428aaebaedc9acbed6ae7033cc240982a10fcfc34aa72dcf01088"
     },
     "@std/assert@1.0.11": {
       "integrity": "2461ef3c368fe88bc60e186e7744a93112f16fd110022e113a0849e94d1c83c1",
@@ -1719,6 +1723,7 @@
     "dependencies": [
       "jsr:@cliffy/command@^1.0.0-rc.8",
       "jsr:@deno/dnt@~0.42.3",
+      "jsr:@jd1378/another-cookiejar@^5.0.7",
       "jsr:@std/assert@^1.0.14",
       "jsr:@std/log@~0.224.14",
       "jsr:@std/path@^1.1.2",

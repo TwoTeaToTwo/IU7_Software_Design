@@ -18,10 +18,10 @@ export class ChannelController {
 		request: FastifyRequest,
 		reply: FastifyReply,
 	) {
-		const channelService = container.get<ChannelService>(
+		const channelService = container().get<ChannelService>(
 			INJECT_TYPES.ChannelService,
 		);
-		const subscribeManageRepo = container.get<ISubscribeManageRepository>(
+		const subscribeManageRepo = container().get<ISubscribeManageRepository>(
 			INJECT_TYPES.SubscribeManageRepository,
 		);
 		const query = request.query as SubscribeType;
@@ -63,7 +63,7 @@ export class ChannelController {
 		request: FastifyRequest,
 		reply: FastifyReply,
 	) {
-		const channelService = container.get<ChannelService>(
+		const channelService = container().get<ChannelService>(
 			INJECT_TYPES.ChannelService,
 		);
 		const query = request.query as UnsubscribeType;

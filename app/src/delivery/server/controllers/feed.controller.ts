@@ -9,7 +9,7 @@ export class FeedController {
 		request: FastifyRequest,
 		reply: FastifyReply,
 	) {
-		const feedService = container.get<FeedService>(
+		const feedService = container().get<FeedService>(
 			INJECT_TYPES.FeedService,
 		);
 		const query = request.query as GetFeedContentType;
