@@ -42,15 +42,12 @@ export class AuthenticationController {
 				message: "Invalid login or password",
 			});
 		} else {
-			const isHttpOnly = !httpConfig.isTestMode;
-			const isSecure = !httpConfig.isTestMode;
-			console.log(isHttpOnly);
 			const refreshToken = AuthenticationController
 				.generateRefreshToken(request.server, user.toJSON());
 			reply.setCookie("refresh_token", refreshToken, {
 				path: "/",
-				httpOnly: isHttpOnly,
-				secure: isSecure,
+				httpOnly: true,
+				secure: true,
 			});
 			return reply.code(201).send({ result: true });
 		}

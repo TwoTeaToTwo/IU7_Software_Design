@@ -55,12 +55,9 @@
 	"tasks": {
 		"build": "deno compile -o ../../out/podcast --target x86_64-unknown-linux-gnu --allow-env --env-file --allow-net --allow-read --allow-write --allow-run=yt-dlp,mpv ./src/main.ts",
 		"run": "deno run --allow-env --env-file --allow-net --allow-read --allow-write --allow-sys --allow-run=yt-dlp ./src/main.ts",
-		"test-unit-core": "deno test ./src/core/tests/unit/* ./tests/unit/core/* --allow-env --env-file --allow-read",
-		"test-unit-db": "deno test ./tests/unit/database/postgres_lite/* --allow-env --env-file --allow-read",
-		"test-int-db": "deno test ./tests/integration/database/postgres/* --allow-env --env-file --allow-read --allow-net",
-		"test-int-core": "deno test ./tests/integration/core/* --allow-env --env-file --allow-read --allow-net",
-		"test-e2e-client": "deno run --allow-env --env-file --allow-net --allow-read --allow-write --allow-sys --allow-run=yt-dlp,deno ./tests/e2e/run_e2e.ts",
-		"run-server": "deno run --allow-env --env-file --allow-net --allow-read --allow-write --allow-sys --allow-run=yt-dlp ./tests/e2e/run_server.ts",
-		"test-e2e": "deno test ./tests/e2e/search_podcast_by_url.e2e.test.ts --allow-env --env-file --allow-net --allow-read --allow-write --allow-sys --allow-run=yt-dlp --trace-leaks"
+		"test-unit-core": "deno test ./src/core/tests/unit/* ./tests/unit/core/* --allow-env --env-file=./.env.test --allow-read",
+		"test-unit-db": "deno test ./tests/unit/database/postgres_lite/* --allow-env --env-file=./.env.test --allow-read",
+		"test-int-db": "deno test ./tests/integration/database/postgres/* --allow-env --env-file=./.env.test --allow-read --allow-net",
+		"test-int-core": "deno test ./tests/integration/core/* --allow-env --env-file=./.env.test --allow-read --allow-net"
 	}
 }

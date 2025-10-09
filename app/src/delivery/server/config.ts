@@ -8,7 +8,6 @@ const HTTPConfigSchema = z.object({
 	accessTokenExpiresIn: z.string(),
 	refreshTokenExpiresIn: z.string(),
 	frontendPath: z.string(),
-	isTestMode: z.boolean(),
 });
 
 const loadHTTPConfig = () => {
@@ -19,7 +18,6 @@ const loadHTTPConfig = () => {
 	const accessTokenExpiresIn = "3m";
 	const refreshTokenExpiresIn = "30d";
 	const frontendPath = Deno.env.get("FRONTEND_PATH");
-	const isTestMode = Deno.env.get("NODE_ENV") === "test";
 	const config = {
 		host,
 		port,
@@ -28,7 +26,6 @@ const loadHTTPConfig = () => {
 		accessTokenExpiresIn,
 		refreshTokenExpiresIn,
 		frontendPath,
-		isTestMode,
 	};
 	return HTTPConfigSchema.parse(config);
 };

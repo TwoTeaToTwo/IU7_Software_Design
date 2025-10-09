@@ -1,0 +1,188 @@
+{
+	"info": {
+		"_postman_id": "475af3e8-c208-407e-a71e-b254bfd89d85",
+		"name": "SearchPodcastByUrl",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49123946",
+		"_collection_link": "https://orange-meadow-4821625.postman.co/workspace/2tea2two's-Workspace~e9f85f11-849c-420a-80b6-43014d234fd5/collection/49123946-475af3e8-c208-407e-a71e-b254bfd89d85?action=share&source=collection_link&creator=49123946"
+	},
+	"item": [
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Login successful\", () => {",
+							"    pm.expect(pm.response.code).to.eql(201);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"login\": \"test\",\n    \"password\": \"1234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{main_url}}/login",
+					"host": [
+						"{{main_url}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAccessToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseData = pm.response.json();",
+							"",
+							"pm.test(\"GetAccessToken successful\", () => {",
+							"    pm.expect(pm.response.code).to.eql(200);",
+							"});",
+							"",
+							"pm.collectionVariables.set(\"accessToken\", responseData.accessToken);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{main_url}}/get_access_token",
+					"host": [
+						"{{main_url}}"
+					],
+					"path": [
+						"get_access_token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "searchPodcastByUrl",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseData = pm.response.json();",
+							"",
+							"pm.test(\"Search podcast successful\", () => {",
+							"    pm.expect(pm.response.code).to.eql(200);",
+							"});",
+							"",
+							"pm.test(\"Compare founded podcast\", () => {",
+							"    pm.expect(responseData.title).to.eql(\"ASMR - Strawberry Ice Cream Rolls | satisfying tapping ear to ear tingles 먹방 mukbang - no talking 4k\");",
+							"    pm.expect(responseData.platform).to.eql(\"youtube\");",
+							"    pm.expect(responseData.duration_s).to.eql(604);",
+							"    pm.expect(responseData.relevance).to.eql(\"2019-11-23T14:00:01.000Z\");",
+							"    pm.expect(responseData.url).to.eql(\"https://www.youtube.com/watch?v=4xST-Kz9pEI\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{accessToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{main_url}}/api/search/by-url?url=https://www.youtube.com/watch?v=4xST-Kz9pEI",
+					"host": [
+						"{{main_url}}"
+					],
+					"path": [
+						"api",
+						"search",
+						"by-url"
+					],
+					"query": [
+						{
+							"key": "url",
+							"value": "https://www.youtube.com/watch?v=4xST-Kz9pEI"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Logout successful\", () => {",
+							"    pm.expect(pm.response.code).to.eql(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{accessToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{main_url}}/logout",
+					"host": [
+						"{{main_url}}"
+					],
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "accessToken",
+			"value": ""
+		}
+	]
+}

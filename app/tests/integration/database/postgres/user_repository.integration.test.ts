@@ -18,7 +18,7 @@ let db: PostgresDB;
 
 Deno.test.beforeEach(() => {
 	connectionPool = new Pool({
-		connectionString: databaseConfig.testConnectionString,
+		connectionString: databaseConfig.connectionString,
 	});
 	db = drizzle(connectionPool);
 });
