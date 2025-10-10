@@ -16,7 +16,7 @@ jobs:
 
       - name: Run unit tests in Docker
         working-directory: ./app
-        run: docker compose run tests sh -c "./tests/scripts/run_tests.sh -u"
+        run: docker compose run tests -u
 
       - name: Upload artifacts
         if: always()
