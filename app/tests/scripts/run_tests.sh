@@ -112,7 +112,7 @@ case $1 in
         run_e2e
         generate_report
         ;;
-    --clear_db)
+    --clear_db) 
         clear_db
         ;;
     -c|--clean)
