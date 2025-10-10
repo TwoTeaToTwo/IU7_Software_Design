@@ -26,7 +26,7 @@ services:
       db:
         condition: service_healthy
     env_file:
-      - .env.tests
+      - .env.test
     environment:
       POSTGRES_URL: postgresql://test:1234@db:5432/podcast_test
     volumes:
