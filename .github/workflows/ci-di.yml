@@ -70,7 +70,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: e2e-results
-          path: ./app/junit_report
+          path: ./app/allure-results
 
       - name: Stop services
         working-directory: ./app
