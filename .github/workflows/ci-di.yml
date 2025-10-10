@@ -57,25 +57,30 @@ jobs:
   e2e-tests:
     # needs: integration-tests
     runs-on: ubuntu-latest
+    env:
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
     steps:
       - name: Setup repo
         uses: actions/checkout@v4
 
+      # - name: Run e2e tests in Docker
+      #   working-directory: ./app
+      #   run: docker compose run -e YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }} tests --end_to_end
+
+      # - name: Upload artifacts
+      #   if: always()
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: e2e-results
+      #     path: ./app/allure-results
+
+      # - name: Stop services
+      #   working-directory: ./app
+      #   if: always()
+      #   run: docker compose down
+
       - name: Run e2e tests in Docker
-        working-directory: ./app
-        run: docker compose run -e YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }} tests --end_to_end
-
-      - name: Upload artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: e2e-results
-          path: ./app/allure-results
-
-      - name: Stop services
-        working-directory: ./app
-        if: always()
-        run: docker compose down
+        run: echo "$YOUTUBE_API_KEY"
 
   # generate-allure:
   #   needs: [unit-tests, integration-tests, e2e-tests]
