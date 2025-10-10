@@ -54,8 +54,31 @@ jobs:
         if: always()
         run: docker compose down
 
+  e2e-tests:
+    needs: integration-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v4
+
+      - name: Run e2e tests in Docker
+        working-directory: ./app
+        run: docker compose run tests -e
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: ./app/junit_report
+
+      - name: Stop services
+        working-directory: ./app
+        if: always()
+        run: docker compose down
+
   generate-allure:
-    needs: [unit-tests, integration-tests]
+    needs: [unit-tests, integration-tests, e2e-tests]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -67,13 +90,18 @@ jobs:
         with:
           name: integration-results
           path: ./all-results/integration
+      - uses: actions/download-artifact@v4
+        with:
+          name: e2e-results
+          path: ./all-results/e2e
       - run: |
           mkdir -p ./all-results/merged
           cp -r ./all-results/unit/* ./all-results/merged/
           cp -r ./all-results/integration/* ./all-results/merged/
+          cp -r ./all-results/e2e/* ./all-results/merged/
       - name: Install Allure
         run: npm install -g allure-commandline --save-dev
-      - run: allure generate ./all-results/merged --clean -o ./allure-report
+      - run: allure generate ./all-results/merged --clean -o ./allure-report --single-file
       - uses: actions/upload-artifact@v4
         with:
           name: final-allure-report
