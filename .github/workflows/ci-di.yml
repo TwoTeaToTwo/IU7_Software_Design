@@ -1,0 +1,30 @@
+name: Podcast CI/DI Pipeline
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v4
+
+      - name: Run unit tests in Docker
+        working-directory: ./app
+        run: docker compose run tests sh -c "./tests/scripts/run_tests.sh -u"
+        
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: ./allure-report/index.html
+            
+      - name: Stop services
+        if: always()
+        run: docker compose down
