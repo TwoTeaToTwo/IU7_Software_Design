@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 rm -rf ./report/*
 deno test ./tests/unit/database/postgres_lite/* --allow-env --env-file --allow-read --reporter=junit --junit-path=./report/db_unit.xml
