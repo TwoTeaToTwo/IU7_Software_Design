@@ -7,3 +7,6 @@
 **/out/
 **/allure-report/
 **/report/
+**/junit_report/
+**/allure-results/
+**/allure_report/
