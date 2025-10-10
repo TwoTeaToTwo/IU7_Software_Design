@@ -63,7 +63,7 @@ jobs:
 
       - name: Run e2e tests in Docker
         working-directory: ./app
-        run: docker compose run tests -e
+        run: docker compose run -e YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }} tests --end_to_end
 
       - name: Upload artifacts
         if: always()
