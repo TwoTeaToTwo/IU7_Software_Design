@@ -19,6 +19,7 @@ jobs:
         run: docker compose run tests -u
 
       - name: Upload artifacts
+        working-directory: ./app
         if: always()
         uses: actions/upload-artifact@v4
         with:
