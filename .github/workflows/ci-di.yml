@@ -23,10 +23,58 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report
-          path: ./app/allure-report/index.html
+          name: unit-results
+          path: ./app/junit_report
 
       - name: Stop services
         working-directory: ./app
         if: always()
         run: docker compose down
+
+  integration-tests:
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v4
+
+      - name: Run integration tests in Docker
+        working-directory: ./app
+        run: docker compose run tests -i
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-results
+          path: ./app/junit_report
+
+      - name: Stop services
+        working-directory: ./app
+        if: always()
+        run: docker compose down
+
+  generate-allure:
+    needs: [unit-tests, integration-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: unit-results
+          path: ./all-results/unit
+      - uses: actions/download-artifact@v4
+        with:
+          name: integration-results
+          path: ./all-results/integration
+      - run: |
+          mkdir -p ./all-results/merged
+          cp -r ./all-results/unit/* ./all-results/merged/
+          cp -r ./all-results/integration/* ./all-results/merged/
+      - name: Install Allure
+        run: npm install -g allure-commandline --save-dev
+      - run: allure generate ./all-results/merged --clean -o ./allure-report
+      - uses: actions/upload-artifact@v4
+        with:
+          name: final-allure-report
+          path: ./allure-report

@@ -74,10 +74,7 @@ run_e2e() {
 
 generate_report() {
     echo "start generating allure report"
-    if [[ -d "$ALLURE_PATH" ]]; then
-        rm -rf "$ALLURE_PATH"
-    fi
-    mkdir "$ALLURE_PATH"
+    mkdir -p "$ALLURE_PATH"
     allure generate "$JUNIT_PATH" "allure-results" --clean -o "$ALLURE_PATH" --single-file
 }
 
@@ -96,15 +93,12 @@ clean() {
 case $1 in
     -u|--units)
         run_units
-        generate_report
         ;;
     -i|--integration)
         run_integrations
-        generate_report
         ;;
     -e|--end_to_end)
         run_e2e
-        generate_report
         ;;
     -a|--all)
         run_units
@@ -117,6 +111,9 @@ case $1 in
         ;;
     -c|--clean)
         clean
+        ;;
+    -r|--report)
+        generate_report
         ;;
     *)
         echo "Undefined flag: $1"
