@@ -25,7 +25,6 @@ fill_db() {
 
 start_server() {
     echo "starting server"
-    echo "youtube is $YOUTUBE_API_KEY"
     deno run --allow-env --env-file=./.env.test --allow-net --allow-read --allow-write --allow-sys --allow-run=yt-dlp ./src/main.ts &
     SERVER_PID=$!
 }
