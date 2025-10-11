@@ -37,13 +37,16 @@ stop_server() {
 }
 
 wait_server() {
-    for _ in {1..20}; do
-        if curl -fs "$SERVER_URL" > /dev/null 2>&1; then
-            echo "server is ready"
-            return
+    for i in {1..20}; do
+        status_code=$(curl -o /dev/null -s -w "%{http_code}" "$SERVER_URL")
+
+        if [[ "$status_code" -ge 200 && "$status_code" -lt 500 ]]; then
+            echo "server is ready (status $status_code)"
+            return 0
         fi
+
+        echo "waiting server attempt $i (status $status_code)"
         sleep 1
-        echo "waiting server attempt $_"
     done
     stop_server
 }

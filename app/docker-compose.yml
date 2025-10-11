@@ -35,7 +35,6 @@ services:
       - ./allure-report:/app/allure-report
       - ./junit_report:/app/junit_report
       - ./allure-results:/app/allure-results
-      - ../frontend/build:/app/frontend/build
     networks:
       - app-network
 

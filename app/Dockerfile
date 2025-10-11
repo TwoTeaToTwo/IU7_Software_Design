@@ -7,7 +7,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY . .
-COPY ../frontend/build /app/frontend/build
 RUN chmod +x ./tests/scripts/run_tests.sh
 RUN deno cache ./src/main.ts
 ENTRYPOINT ["./tests/scripts/run_tests.sh"]
