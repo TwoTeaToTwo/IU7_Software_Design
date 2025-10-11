@@ -64,7 +64,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run e2e tests in Docker
-        working-directory: ./app
         run: docker compose -f ./app/docker-compose.yml run -e YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }} tests --end_to_end
 
       - name: Upload artifacts
