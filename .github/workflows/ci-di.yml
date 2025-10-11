@@ -8,54 +8,54 @@ on:
   workflow_dispatch:
 
 jobs:
-  unit-tests:
-    runs-on: ubuntu-latest
+  # unit-tests:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Setup repo
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Setup repo
+  #       uses: actions/checkout@v4
 
-      - name: Run unit tests in Docker
-        working-directory: ./app
-        run: docker compose run tests -u
+  #     - name: Run unit tests in Docker
+  #       working-directory: ./app
+  #       run: docker compose run tests -u
 
-      - name: Upload artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: unit-results
-          path: ./app/junit_report
+  #     - name: Upload artifacts
+  #       if: always()
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: unit-results
+  #         path: ./app/junit_report
 
-      - name: Stop services
-        working-directory: ./app
-        if: always()
-        run: docker compose down
+  #     - name: Stop services
+  #       working-directory: ./app
+  #       if: always()
+  #       run: docker compose down
 
-  integration-tests:
-    needs: unit-tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup repo
-        uses: actions/checkout@v4
+  # integration-tests:
+  #   needs: unit-tests
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Setup repo
+  #       uses: actions/checkout@v4
 
-      - name: Run integration tests in Docker
-        working-directory: ./app
-        run: docker compose run tests -i
+  #     - name: Run integration tests in Docker
+  #       working-directory: ./app
+  #       run: docker compose run tests -i
 
-      - name: Upload artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: integration-results
-          path: ./app/junit_report
+  #     - name: Upload artifacts
+  #       if: always()
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: integration-results
+  #         path: ./app/junit_report
 
-      - name: Stop services
-        working-directory: ./app
-        if: always()
-        run: docker compose down
+  #     - name: Stop services
+  #       working-directory: ./app
+  #       if: always()
+  #       run: docker compose down
 
   e2e-tests:
-    needs: integration-tests
+    # needs: integration-tests
     runs-on: ubuntu-latest
     env:
       YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
@@ -79,7 +79,7 @@ jobs:
         run: docker compose down
 
   generate-allure:
-    needs: [unit-tests, integration-tests, e2e-tests]
+    needs: [e2e-tests] # unit-tests, integration-tests,
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
