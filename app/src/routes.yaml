@@ -100,19 +100,6 @@ paths:
                     type: string
                 required:
                   - accessToken
-  /:
-    get:
-      summary: home page
-      tags:
-        - static
-      responses:
-        "200":
-          description: File content
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
   /api/podcasts/results:
     get:
       summary: search podcasts by query

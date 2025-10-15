@@ -1,0 +1,84 @@
+type Tokens {
+  accessToken: String!
+  refreshToken: String
+}
+
+type Pagination {
+  page: Int!
+  perPage: Int!
+  total: Int!
+}
+
+type Podcast {
+  title: String!
+  platform: String!
+  duration_s: Int!
+  relevance: String!
+  url: String!
+}
+
+type PodcastResults {
+  podcasts: [Podcast!]!
+  pagination: Pagination!
+}
+
+type Channel {
+  id: Int!
+  url: String!
+  title: String!
+  platform: String!
+}
+
+type ChannelResults {
+  channels: [Channel!]!
+  pagination: Pagination!
+}
+
+type Query {
+  feedContent(
+    page: Int!
+    podcasts_per_page: Int!
+  ): PodcastResults!
+
+  searchPodcasts(
+    query: String
+    page: Int
+    podcasts_per_page: Int
+    url: String
+  ): PodcastResults!
+
+  userChannels(
+    page: Int!
+    channels_per_page: Int!
+  ): ChannelResults!
+
+  channel(id: Int!): Channel!
+
+  stream(url: String!): String!
+}
+
+type Mutation {
+  login(login: String!, password: String!): Tokens!
+
+  logout: Boolean!
+
+  refreshAccessToken(refresh_token: String!): Tokens!
+
+  subscribe(channel_title: String!, channel_url: String!): Channel!
+
+  unsubscribe(id: Int!): Boolean!
+
+  updateChannel(
+    id: Int!
+    url: String!
+    title: String!
+    platform: String!
+  ): Channel!
+
+  updateChannelTitle(id: Int!, title: String!): Channel!
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}
