@@ -4,6 +4,7 @@ import { feedRoutes } from "./feed.routes.ts";
 import { userChannelRoutes } from "./channel.routes.ts";
 import {
 	showUserSubscriptionsOkSchema,
+	showUserSubscriptionsQuery,
 	showUserSubscriptionsUserNotFoundSchema,
 } from "../schemas/user.schemas.ts";
 
@@ -13,16 +14,27 @@ export const userRoutes: FastifyPluginAsync = async (app) => {
 		preHandler: [app.authenticate],
 		schema: {
 			tags: [
-				"user",
+				"users",
 			],
+			querystring: showUserSubscriptionsQuery,
 			summary: "get array of user subscriptions",
 			security: [{ bearerAuth: [] }],
+			headers: {
+				type: "object",
+				properties: {
+					access_token: {
+						type: "string",
+						description: "bearer token for authorization",
+					},
+				},
+				required: ["access_token"],
+			},
 			response: {
 				200: showUserSubscriptionsOkSchema,
-				404: showUserSubscriptionsUserNotFoundSchema,
+				401: showUserSubscriptionsUserNotFoundSchema,
 			},
 		},
 	}, UserController.showUserSubscriptions);
-	app.register(feedRoutes, { prefix: "/feed" });
+	app.register(feedRoutes, { prefix: "/contents" });
 	app.register(userChannelRoutes, { prefix: "/channels" });
 };

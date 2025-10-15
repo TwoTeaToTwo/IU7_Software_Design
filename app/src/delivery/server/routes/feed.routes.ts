@@ -8,16 +8,26 @@ import { FeedController } from "../controllers/feed.controller.ts";
 
 export const feedRoutes: FastifyPluginAsync = async (app) => {
 	await Promise.resolve();
-	app.get("/content", {
+	app.get("", {
 		preHandler: [app.authenticate],
 		schema: {
 			querystring: getFeedContentSchema,
-			tags: ["user", "feed"],
+			tags: ["users"],
 			summary: "get feed content",
 			security: [{ bearerAuth: [] }],
+			headers: {
+				type: "object",
+				properties: {
+					access_token: {
+						type: "string",
+						description: "bearer token for authorization",
+					},
+				},
+				required: ["access_token"],
+			},
 			response: {
 				200: getFeedContentOkSchema,
-				404: getFeedContentErrorSchema,
+				401: getFeedContentErrorSchema,
 			},
 		},
 	}, FeedController.getFeedContent);

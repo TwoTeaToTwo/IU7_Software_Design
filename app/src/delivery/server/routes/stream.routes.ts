@@ -16,6 +16,16 @@ export const streamRoutes: FastifyPluginAsync = async (app) => {
 			],
 			summary: "get podcast audio",
 			security: [{ bearerAuth: [] }],
+			headers: {
+				type: "object",
+				properties: {
+					access_token: {
+						type: "string",
+						description: "bearer token for authorization",
+					},
+				},
+				required: ["access_token"],
+			},
 			response: {
 				200: {
 					content: {

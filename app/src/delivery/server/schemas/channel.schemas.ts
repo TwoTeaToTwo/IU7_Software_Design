@@ -50,4 +50,5 @@ export const updateSubscriptionTitleParamsSchema = Type.Object({
 export const updateSubscriptionTitleBodySchema = Type.Object({
 	title: Type.String(),
 });
+export const updateSubscriptionTitleResponseSchema = subscribeObjectSchema;
 export const updateSubscriptionTitleErrorSchema = Type.String();

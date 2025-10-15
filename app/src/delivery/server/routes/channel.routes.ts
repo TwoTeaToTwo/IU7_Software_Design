@@ -14,6 +14,7 @@ import {
 	updateSubscriptionTitleBodySchema,
 	updateSubscriptionTitleErrorSchema,
 	updateSubscriptionTitleParamsSchema,
+	updateSubscriptionTitleResponseSchema,
 } from "../schemas/channel.schemas.ts";
 import { ChannelController } from "../controllers/channel.controller.ts";
 
@@ -137,7 +138,7 @@ export const userChannelRoutes: FastifyPluginAsync = async (app) => {
 			},
 			security: [{ bearerAuth: [] }],
 			response: {
-				204: { type: "null" },
+				200: updateSubscriptionTitleResponseSchema,
 				401: updateSubscriptionTitleErrorSchema,
 				404: updateSubscriptionTitleErrorSchema,
 			},
