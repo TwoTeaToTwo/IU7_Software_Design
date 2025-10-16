@@ -56,7 +56,7 @@ export class ChannelController {
 		if (!result && !subscribe) {
 			return reply.status(500).send("Subscribe error");
 		}
-		return reply.status(200).send(subscribe);
+		return reply.status(201).send(subscribe);
 	}
 
 	public static async unsubscribe(
@@ -85,6 +85,6 @@ export class ChannelController {
 		if (!result) {
 			return reply.status(500).send("Subscribe error");
 		}
-		return reply.status(200).send(result);
+		return reply.status(204).send();
 	}
 }

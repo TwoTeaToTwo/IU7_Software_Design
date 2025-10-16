@@ -23,7 +23,7 @@ export class StreamController {
 			stream = await streamService.streamPodcast(url);
 		} catch (error) {
 			if (error instanceof GetStreamerError) {
-				return reply.status(400).send(
+				return reply.status(500).send(
 					"Unsupported podcast source platform",
 				);
 			} else if (error instanceof PodcastStreamError) {

@@ -40,6 +40,7 @@
     "npm:@fastify/jwt@10": "10.0.0",
     "npm:@fastify/send@^4.1.0": "4.1.0",
     "npm:@fastify/static@^8.2.0": "8.2.0",
+    "npm:@fastify/swagger@^9.5.2": "9.5.2",
     "npm:@fastify/type-provider-typebox@^5.2.0": "5.2.0_@sinclair+typebox@0.34.41",
     "npm:@makerx/ts-dossier@^4.0.4": "4.0.4",
     "npm:@sinclair/typebox@~0.34.41": "0.34.41",
@@ -663,6 +664,16 @@
         "fastify-plugin",
         "fastq",
         "glob"
+      ]
+    },
+    "@fastify/swagger@9.5.2": {
+      "integrity": "sha512-8e8w/LItg/cF6IR/hYKtnt+E0QImees5o3YWJsTLxaIk+tzNUEc6Z2Ursi4oOHWwUlKjUCnV6yh5z5ZdxvlsWA==",
+      "dependencies": [
+        "fastify-plugin",
+        "json-schema-resolver",
+        "openapi-types",
+        "rfdc",
+        "yaml"
       ]
     },
     "@fastify/type-provider-typebox@5.2.0_@sinclair+typebox@0.34.41": {
@@ -1305,6 +1316,14 @@
         "dequal"
       ]
     },
+    "json-schema-resolver@3.0.0": {
+      "integrity": "sha512-HqMnbz0tz2DaEJ3ntsqtx3ezzZyDE7G56A/pPY/NGmrPu76UzsWquOpHFRAf5beTNXoH2LU5cQePVvRli1nchA==",
+      "dependencies": [
+        "debug",
+        "fast-uri",
+        "rfdc"
+      ]
+    },
     "json-schema-traverse@1.0.0": {
       "integrity": "sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug=="
     },
@@ -1385,6 +1404,9 @@
     },
     "on-exit-leak-free@2.1.2": {
       "integrity": "sha512-0eJJY6hXLGf1udHwfNftBqH+g73EU4B504nZeKpz1sYRKafAghwxEJunB2O7rDZkL4PGfsMVnTXZ2EjibbqcsA=="
+    },
+    "openapi-types@12.1.3": {
+      "integrity": "sha512-N4YtSYJqghVu4iek2ZUvcN/0aqH1kRDuNqzcycDxhOUpg7GdvLa2F3DgS6yBNhInhv2r/6I0Flkn7CqL8+nIcw=="
     },
     "package-json-from-dist@1.0.1": {
       "integrity": "sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw=="
@@ -1715,6 +1737,10 @@
     "xtend@4.0.2": {
       "integrity": "sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ=="
     },
+    "yaml@2.8.1": {
+      "integrity": "sha512-lcYcMxX2PO9XMGvAJkJ3OsNMw+/7FKes7/hgerGUYWIoWu5j/+YQqcZr5JnPZWzOsEBgMbSbiSTn/dv/69Mkpw==",
+      "bin": true
+    },
     "zod@3.25.76": {
       "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ=="
     }
@@ -1734,6 +1760,7 @@
       "npm:@fastify/jwt@10",
       "npm:@fastify/send@^4.1.0",
       "npm:@fastify/static@^8.2.0",
+      "npm:@fastify/swagger@^9.5.2",
       "npm:@fastify/type-provider-typebox@^5.2.0",
       "npm:@makerx/ts-dossier@^4.0.4",
       "npm:@sinclair/typebox@~0.34.41",

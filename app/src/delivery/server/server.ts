@@ -5,12 +5,14 @@ import type {
 	FastifyRequest,
 	HookHandlerDoneFunction,
 } from "fastify";
-import { httpConfig } from "./config.ts";
 import fjwt from "@fastify/jwt";
 import fCookie from "@fastify/cookie";
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import fastifyStatic from "@fastify/static";
+import fastifySwagger from "@fastify/swagger";
 import * as path from "@std/path";
+
+import { httpConfig } from "./config.ts";
 import { authenticateRoutes } from "./routes/auth.routes.ts";
 import { SPARoutes } from "./routes/spa.routes.ts";
 import { AuthenticationController } from "./controllers/auth.controller.ts";
@@ -18,8 +20,8 @@ import { searchRoutes } from "./routes/search.routes.ts";
 import { userRoutes } from "./routes/user.routes.ts";
 import { streamRoutes } from "./routes/stream.routes.ts";
 
-const createServer = (logger: boolean) => {
-	const app = fastify({ logger }).withTypeProvider<
+const createServer = () => {
+	const app = fastify({ logger: true }).withTypeProvider<
 		TypeBoxTypeProvider
 	>();
 	// jwt
@@ -66,29 +68,51 @@ const createServer = (logger: boolean) => {
 		root: path.resolve(httpConfig.frontendPath),
 		prefix: "/",
 	});
+	// swagger
+	app.register(fastifySwagger, {
+		openapi: {
+			openapi: "3.1.1",
+			info: {
+				title: "Podcast stream service",
+				version: "0.0.0",
+			},
+			components: {
+				securitySchemes: {
+					bearerAuth: {
+						type: "http",
+						scheme: "bearer",
+						bearerFormat: "JWT",
+					},
+				},
+			},
+		},
+	});
 	// routes
-	app.register(authenticateRoutes);
+	app.register(authenticateRoutes, { prefix: "/api/v1"});
 	app.register(SPARoutes);
-	app.register(searchRoutes, { prefix: "/api/search" });
-	app.register(userRoutes, { prefix: "/api/user" });
-	app.register(streamRoutes, { prefix: "/api/stream" });
+	app.register(searchRoutes, { prefix: "/api/v1/podcasts" });
+	app.register(userRoutes, { prefix: "/api/v1/users" });
+	app.register(streamRoutes, { prefix: "/api/v1/streams" });
 	return app;
 };
 
-export class Server {
+class Server {
 	private readonly app: FastifyInstance;
-	constructor(logger: boolean) {
-		this.app = createServer(logger);
+	constructor() {
+		this.app = createServer();
+	}
+	private async initServer() {
+		await this.app.ready();
+		const yaml = this.app.swagger({ yaml: true });
+		await Deno.writeTextFile("./routes.yaml", yaml);
 	}
 	public async runServer() {
+		await this.initServer();
 		await this.app.listen({
 			port: httpConfig.port,
 			host: httpConfig.host,
 		});
 	}
-	public async stopServer() {
-		await this.app.close();
-	}
 }
 
-export const server = new Server(true);
+export const server = new Server();
