@@ -10,7 +10,7 @@ components:
       bearerFormat: JWT
   schemas: {}
 paths:
-  /sessions:
+  /api/v1/sessions:
     post:
       summary: log in
       tags:
@@ -65,7 +65,7 @@ paths:
       responses:
         "204":
           description: Default Response
-  /sessions/access_token:
+  /api/v1/sessions/access_token:
     post:
       summary: get access token
       tags:
@@ -100,7 +100,7 @@ paths:
                     type: string
                 required:
                   - accessToken
-  /api/podcasts/results:
+  /api/v1/podcasts:
     get:
       summary: search podcasts by query
       tags:
@@ -197,7 +197,7 @@ paths:
             application/json:
               schema:
                 type: string
-  /api/users/channels:
+  /api/v1/users/channels:
     get:
       summary: get array of user subscriptions
       tags:
@@ -336,7 +336,7 @@ paths:
             application/json:
               schema:
                 type: string
-  /api/users/contents:
+  /api/v1/users/contents:
     get:
       summary: get feed content
       tags:
@@ -417,7 +417,7 @@ paths:
             application/json:
               schema:
                 type: string
-  /api/users/channels/{id}:
+  /api/v1/users/channels/{id}:
     delete:
       summary: unsubscribe from channel
       tags:
@@ -635,7 +635,7 @@ paths:
             application/json:
               schema:
                 type: string
-  /api/streams:
+  /api/v1/streams:
     get:
       summary: get podcast audio
       tags:

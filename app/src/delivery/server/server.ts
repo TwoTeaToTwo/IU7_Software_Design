@@ -88,11 +88,11 @@ const createServer = () => {
 		},
 	});
 	// routes
-	app.register(authenticateRoutes);
+	app.register(authenticateRoutes, { prefix: "/api/v1"});
 	app.register(SPARoutes);
-	app.register(searchRoutes, { prefix: "/api/podcasts" });
-	app.register(userRoutes, { prefix: "/api/users" });
-	app.register(streamRoutes, { prefix: "/api/streams" });
+	app.register(searchRoutes, { prefix: "/api/v1/podcasts" });
+	app.register(userRoutes, { prefix: "/api/v1/users" });
+	app.register(streamRoutes, { prefix: "/api/v1/streams" });
 	return app;
 };
 

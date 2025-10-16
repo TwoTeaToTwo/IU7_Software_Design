@@ -10,7 +10,7 @@ import {
 export const searchRoutes: FastifyPluginAsync = async (app) => {
 	await Promise.resolve();
 	app.get(
-		"/results",
+		"",
 		{
 			preHandler: [app.authenticate],
 			schema: {
