@@ -34,21 +34,34 @@ export const unsubscribeErrorSchema = Type.String();
 export const getSubscriptionSchema = Type.Object({
 	id: Type.Integer({ minimum: 1 }),
 });
+export type GetSubscriptionType = Static<typeof getSubscriptionSchema>;
 export const getSubscriptionOkSchema = subscribeObjectSchema;
 export const getSubscriptionErrorSchema = Type.String();
 
 export const updateSubscriptionParamsSchema = Type.Object({
 	id: Type.Integer({ minimum: 1 }),
 });
+export type UpdateSubscriptionParamsType = Static<
+	typeof updateSubscriptionParamsSchema
+>;
 export const updateSubscriptionBodySchema = subscribeObjectBodySchema;
+export type UpdateSubscriptionBodyType = Static<
+	typeof updateSubscriptionBodySchema
+>;
 export const updateSubscriptionCreatedSchema = subscribeObjectSchema;
 export const updateSubscriptionErrorSchema = Type.String();
 
 export const updateSubscriptionTitleParamsSchema = Type.Object({
 	id: Type.Integer({ minimum: 1 }),
 });
+export type UpdateSubscriptionTitleParamsType = Static<
+	typeof updateSubscriptionTitleParamsSchema
+>;
 export const updateSubscriptionTitleBodySchema = Type.Object({
 	title: Type.String(),
 });
+export type UpdateSubscriptionTitleBodyType = Static<
+	typeof updateSubscriptionTitleBodySchema
+>;
 export const updateSubscriptionTitleResponseSchema = subscribeObjectSchema;
 export const updateSubscriptionTitleErrorSchema = Type.String();

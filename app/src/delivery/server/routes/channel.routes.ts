@@ -91,8 +91,7 @@ export const userChannelRoutes: FastifyPluginAsync = async (app) => {
 				404: getSubscriptionErrorSchema,
 			},
 		},
-	}, () => { //TODO
-	});
+	}, ChannelController.getSubscription);
 	app.put("/:id", {
 		preHandler: [app.authenticate],
 		schema: {
@@ -117,8 +116,7 @@ export const userChannelRoutes: FastifyPluginAsync = async (app) => {
 				404: updateSubscriptionErrorSchema,
 			},
 		},
-	}, () => { //TODO
-	});
+	}, ChannelController.updateSubscription);
 	app.patch("/:id", {
 		preHandler: [app.authenticate],
 		schema: {
@@ -143,6 +141,5 @@ export const userChannelRoutes: FastifyPluginAsync = async (app) => {
 				404: updateSubscriptionTitleErrorSchema,
 			},
 		},
-	}, () => { //TODO
-	});
+	}, ChannelController.updateTitleSubscription);
 };
