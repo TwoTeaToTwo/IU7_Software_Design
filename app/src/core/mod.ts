@@ -5,7 +5,10 @@ export { Password, User } from "./models/user.ts";
 export { Subscribe } from "./models/subscribe.ts";
 
 // Output ports
-export type { ISearchStrategy } from "./output_ports/i_search_strategy.ts";
+export type {
+	GetPodcastsOptions,
+	ISearchStrategy,
+} from "./output_ports/i_search_strategy.ts";
 export type {
 	IPodcastStream,
 	IStreamStrategy,

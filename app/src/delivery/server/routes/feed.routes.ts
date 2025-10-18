@@ -27,7 +27,7 @@ export const feedRoutes: FastifyPluginAsync = async (app) => {
 			},
 			response: {
 				200: getFeedContentOkSchema,
-				401: getFeedContentErrorSchema,
+				404: getFeedContentErrorSchema,
 			},
 		},
 	}, FeedController.getFeedContent);

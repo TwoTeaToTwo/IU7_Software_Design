@@ -1,5 +1,8 @@
 import type { Podcast } from "../models/podcast.ts";
-import type { ISearchStrategy } from "../output_ports/i_search_strategy.ts";
+import type {
+	GetPodcastsOptions,
+	ISearchStrategy,
+} from "../output_ports/i_search_strategy.ts";
 import type { SearchPlatform, UInt } from "../types.ts";
 import { inject, injectable } from "inversify";
 import { createUInt, INJECT_TYPES } from "../types.ts";
@@ -111,7 +114,7 @@ export class SearchService {
 	 */
 	public async getLastPodcastsByChannel(
 		channel_url: URL,
-		count: UInt = createUInt(5),
+		options: GetPodcastsOptions,
 	): Promise<Array<Podcast>> {
 		const podcasts = new Array<Podcast>();
 		const platform = this.getPlatformByURL(channel_url);
@@ -121,7 +124,7 @@ export class SearchService {
 			const search = this._searchers.get(platform);
 			const last_podcasts = await search!.getLastPodcastsByChannel(
 				channel_url,
-				count,
+				options,
 			);
 			if (last_podcasts === null) {
 				throw new NonExistentChannelError();

@@ -1,5 +1,10 @@
 import { createUInt, Podcast, SearchError } from "@podcast/core";
-import type { ISearchStrategy, SearchPlatform, UInt } from "@podcast/core";
+import type {
+	GetPodcastsOptions,
+	ISearchStrategy,
+	SearchPlatform,
+	UInt,
+} from "@podcast/core";
 import { parse, toSeconds } from "iso8601-duration";
 import type { youtube_v3 } from "googleapis";
 import { youtubeConfig } from "./config.ts";
@@ -10,9 +15,11 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 	private readonly api_key: string;
 	private readonly platform = "youtube";
 	private readonly youtube_api_url = "https://www.googleapis.com/youtube/v3";
+	private readonly playlistsPageTokens: Map<string, string>;
 
 	constructor() {
 		this.api_key = youtubeConfig.api_key;
+		this.playlistsPageTokens = new Map<string, string>();
 	}
 
 	public async searchPodcast(
@@ -288,14 +295,26 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 
 	private async getPodcastsFromPlaylist(
 		playlist_id: string,
-		count: UInt,
+		options: GetPodcastsOptions,
 	): Promise<Array<Podcast>> {
 		const podcasts = new Array<Podcast>();
+		if (options.pagination.page === createUInt(1)) {
+			this.playlistsPageTokens.delete(playlist_id);
+		}
 		const url = new URL(`${this.youtube_api_url}/playlistItems`);
 		url.searchParams.set("part", "snippet");
 		url.searchParams.set("playlistId", playlist_id);
-		url.searchParams.set("maxResults", count.toString());
+		url.searchParams.set(
+			"maxResults",
+			options.pagination.podcastsPerPage.toString(),
+		);
 		url.searchParams.set("key", this.api_key);
+		if (this.playlistsPageTokens.has(playlist_id)) {
+			url.searchParams.set(
+				"pageToken",
+				this.playlistsPageTokens.get(playlist_id)!,
+			);
+		}
 		const result = await fetch(url);
 		if (!result.ok) {
 			throw new SearchError(
@@ -303,6 +322,8 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 			);
 		}
 		const data = await result.json();
+		const pageToken = data.nextPageToken as string;
+		this.playlistsPageTokens.set(playlist_id, pageToken);
 		const items: youtube_v3.Schema$PlaylistItem[] | undefined = data.items;
 		if (items !== undefined) {
 			for (const item of items) {
@@ -323,7 +344,7 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 	 */
 	public async getLastPodcastsByChannel(
 		channel_url: URL,
-		max_results: UInt,
+		options: GetPodcastsOptions,
 	): Promise<Array<Podcast> | null> {
 		let podcasts: Array<Podcast> | null = null;
 		const channel_id = this.getChannelId(channel_url);
@@ -335,7 +356,7 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 			if (uploads_id !== undefined) {
 				podcasts = await this.getPodcastsFromPlaylist(
 					uploads_id,
-					max_results,
+					options,
 				);
 			}
 		}
