@@ -310,6 +310,9 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 		}
 		const data = await result.json();
 		const pageToken = data.nextPageToken as string;
+		if (!this.playlistsPageTokens.has(userId)) {
+			this.playlistsPageTokens.set(userId, new Map());
+		}
 		this.playlistsPageTokens.get(userId)?.set(playlist_id, pageToken);
 		const items: youtube_v3.Schema$PlaylistItem[] | undefined = data.items;
 		const videoIds: string[] = [];
