@@ -25,6 +25,7 @@ export type SearchPodcastByURL = Static<typeof searchPodcastByURLSchema>;
 export const searchPodcastsQuerySchema = Type.Partial(
 	Type.Intersect([searchPodcastByQuerySchema, searchPodcastByURLSchema]),
 );
+export type SearchPodcastsQueryType = Static<typeof searchPodcastsQuerySchema>;
 export const searchPodcastsOkSchema = Type.Object({
 	podcasts: Type.Array(podcastSchema),
 	pagination: paginationSchema,

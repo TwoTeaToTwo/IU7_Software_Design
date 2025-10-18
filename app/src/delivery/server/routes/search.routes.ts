@@ -5,7 +5,7 @@ import {
 	searchPodcastsOkSchema,
 	searchPodcastsQuerySchema,
 } from "../schemas/search.schemas.ts";
-// import { SearchController } from "../controllers/search.controller.ts";
+import { SearchController } from "../controllers/search.controller.ts";
 
 export const searchRoutes: FastifyPluginAsync = async (app) => {
 	await Promise.resolve();
@@ -34,7 +34,7 @@ export const searchRoutes: FastifyPluginAsync = async (app) => {
 					404: searchPodcastsNotFoundSchema,
 				},
 			},
-		}, // TODO
-		() => {},
+		},
+		SearchController.searchPodcasts,
 	);
 };

@@ -71,6 +71,7 @@ export class FeedService {
 			) {
 				const channelContent = await this._searcher
 					.getLastPodcastsByChannel(
+						userId,
 						subscribes[i].url,
 						{
 							pagination: {

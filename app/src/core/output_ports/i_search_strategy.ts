@@ -9,7 +9,25 @@ export interface GetPodcastsOptions {
 }
 
 export interface ISearchStrategy {
-	searchPodcast(query: string, max_results: UInt): Promise<Array<Podcast>>;
+	/**
+	 * increment page pointer every call
+	 *
+	 * using same page number provides UB
+	 *
+	 * set page number = 1 to clear page pointer
+	 *
+	 * to change podcast count per page
+	 * set page number = 1
+	 *
+	 * changing podcast count per page
+	 * with out setting page number = 1
+	 * provides UB
+	 */
+	searchPodcast(
+		userId: number,
+		query: string,
+		options: GetPodcastsOptions,
+	): Promise<Array<Podcast>>;
 	/**
 	 * Return Podcast if can find, else null
 	 * May throw SearchError
@@ -42,6 +60,7 @@ export interface ISearchStrategy {
 	 * provides UB
 	 */
 	getLastPodcastsByChannel(
+		userId: number,
 		channel_url: URL,
 		options: GetPodcastsOptions,
 	): Promise<Array<Podcast> | null>;

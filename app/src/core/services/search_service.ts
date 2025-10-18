@@ -5,7 +5,7 @@ import type {
 } from "../output_ports/i_search_strategy.ts";
 import type { SearchPlatform, UInt } from "../types.ts";
 import { inject, injectable } from "inversify";
-import { createUInt, INJECT_TYPES } from "../types.ts";
+import { INJECT_TYPES } from "../types.ts";
 
 export class UnknownPlatformError extends Error {
 	constructor() {
@@ -44,13 +44,14 @@ export class SearchService {
 		>,
 	) {}
 	public async searchPodcast(
+		userId: UInt,
 		query: string,
-		max_results: UInt = createUInt(5),
+		options: GetPodcastsOptions,
 	): Promise<Array<Podcast>> {
 		const podcasts: Array<Podcast> = new Array<Podcast>();
 		for (const searcher of this._searchers) {
 			podcasts.push(
-				...await searcher[1].searchPodcast(query, max_results),
+				...await searcher[1].searchPodcast(userId, query, options),
 			);
 		}
 		return podcasts;
@@ -113,6 +114,7 @@ export class SearchService {
 	 * throw NonExistentChannelError if can't find channel
 	 */
 	public async getLastPodcastsByChannel(
+		userId: number,
 		channel_url: URL,
 		options: GetPodcastsOptions,
 	): Promise<Array<Podcast>> {
@@ -123,6 +125,7 @@ export class SearchService {
 		} else {
 			const search = this._searchers.get(platform);
 			const last_podcasts = await search!.getLastPodcastsByChannel(
+				userId,
 				channel_url,
 				options,
 			);

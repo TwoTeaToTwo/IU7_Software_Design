@@ -3,7 +3,6 @@ import type {
 	GetPodcastsOptions,
 	ISearchStrategy,
 	SearchPlatform,
-	UInt,
 } from "@podcast/core";
 import { parse, toSeconds } from "iso8601-duration";
 import type { youtube_v3 } from "googleapis";
@@ -11,128 +10,105 @@ import { youtubeConfig } from "./config.ts";
 
 type ChannelId = { type: "channel" | "user" | "handle"; id: string };
 
+interface QueryPageToken {
+	query: string;
+	pageToken: string;
+}
+
 export class YoutubeSearchStrategy implements ISearchStrategy {
 	private readonly api_key: string;
 	private readonly platform = "youtube";
 	private readonly youtube_api_url = "https://www.googleapis.com/youtube/v3";
-	private readonly playlistsPageTokens: Map<string, string>;
+	private readonly playlistsPageTokens: Map<number, Map<string, string>>;
+	private readonly podcastsPageTokens: Map<number, QueryPageToken>;
 
 	constructor() {
 		this.api_key = youtubeConfig.api_key;
-		this.playlistsPageTokens = new Map<string, string>();
+		this.playlistsPageTokens = new Map<number, Map<string, string>>();
+		this.podcastsPageTokens = new Map<number, QueryPageToken>();
 	}
 
 	public async searchPodcast(
+		userId: number,
 		query: string,
-		max_results: UInt,
+		options: GetPodcastsOptions,
 	): Promise<Array<Podcast>> {
-		const podcasts = new Array<Podcast>();
+		const podcasts: Podcast[] = [];
+		const { page, podcastsPerPage } = options.pagination;
+		const maxResults = Math.min(podcastsPerPage, 50);
+		let pageToken = "";
+		if (page > 1) {
+			pageToken = this.podcastsPageTokens.get(userId)?.pageToken ??
+				"";
+		} else {
+			this.podcastsPageTokens.delete(userId);
+		}
 		const url = new URL(`${this.youtube_api_url}/search`);
 		url.searchParams.set("part", "snippet");
 		url.searchParams.set("q", query);
 		url.searchParams.set("safeSearch", "none");
 		url.searchParams.set("type", "video");
-		url.searchParams.set("maxResults", max_results.toString());
+		url.searchParams.set("maxResults", maxResults.toString());
 		url.searchParams.set("key", this.api_key);
-		const search_result = await fetch(url);
-		if (!search_result.ok) {
+		if (pageToken) url.searchParams.set("pageToken", pageToken);
+		const res = await fetch(url);
+		if (!res.ok) {
 			throw new SearchError(
-				`YouTube API failed: ${search_result.status} for response: ${url}`,
+				`YouTube API failed: ${res.status} for response: ${url}`,
 			);
 		}
-		const data = await search_result.json();
-		const items = data.items as
+		const data = await res.json();
+		if (data.nextPageToken) {
+			this.podcastsPageTokens.set(userId, data.nextPageToken);
+		}
+		const searchItems = data.items as
 			| youtube_v3.Schema$SearchResult[]
 			| undefined;
-		if (items !== undefined) {
-			for (const item of items) {
-				const video_id = item?.id?.videoId;
-				if (video_id) {
-					const podcast = await this.getPodcastFromVideo(video_id);
-					if (podcast) {
-						podcasts.push(podcast);
-					}
-				}
-			}
+		if (!searchItems?.length) return [];
+		const videoIds = searchItems
+			.map((item) => item?.id?.videoId)
+			.filter((id): id is string => Boolean(id));
+		if (videoIds.length === 0) return [];
+		const videos = await this.getVideosBatch(videoIds);
+		for (const video of videos) {
+			const podcast = this.convertVideoToPodcast(video);
+			if (podcast) podcasts.push(podcast);
 		}
 		return podcasts;
 	}
 
-	private async getVideoDuration(video_id: string): Promise<UInt | null> {
-		let result: UInt | null = null;
-		const video_data = await this.getVideoInfo(video_id, [
-			"contentDetails",
-		]);
-		const video_duration = video_data?.contentDetails?.duration;
-		if (video_duration) {
-			const duration_obj = parse(video_duration);
-			const duration_seconds = toSeconds(duration_obj);
-			result = createUInt(Math.max(1, Math.round(duration_seconds)));
+	private async getVideosBatch(
+		videoIds: string[],
+	): Promise<youtube_v3.Schema$Video[]> {
+		const url = new URL(`${this.youtube_api_url}/videos`);
+		url.searchParams.set("part", "snippet,contentDetails");
+		url.searchParams.set("id", videoIds.join(","));
+		url.searchParams.set("key", this.api_key);
+		const res = await fetch(url);
+		if (!res.ok) {
+			throw new SearchError(
+				`YouTube API failed: ${res.status} for response: ${url}`,
+			);
 		}
-		return result;
+		const data = await res.json();
+		return (data.items as youtube_v3.Schema$Video[]) || [];
 	}
 
-	private async getPodcastFromVideo(
-		video_id: string,
-	): Promise<Podcast | undefined> {
-		let podcast: Podcast | undefined;
-		const url = `${this.youtube_api_url}/videos?part=snippet` +
-			`&id=${video_id}` +
-			`&key=${this.api_key}`;
-		const search_result = await fetch(url);
-		if (!search_result.ok) {
-			throw new SearchError(
-				`YouTube API failed: ${search_result.status} for response: ${url}`,
-			);
+	private convertVideoToPodcast(
+		item: youtube_v3.Schema$Video,
+	): Podcast | undefined {
+		if (!item?.id || !item.snippet?.title || !item.snippet.publishedAt) {
+			return;
 		}
-		const data = await search_result.json();
-		const items = data.items as
-			| youtube_v3.Schema$Video[]
-			| undefined;
-		const item = items?.[0];
-		if (
-			item && item.id && item.snippet && item.snippet.title &&
-			item.snippet.publishedAt
-		) {
-			const url = new URL(
-				`https://www.youtube.com/watch?v=${item.id}`,
-			);
-			const title = item.snippet.title;
-			const duration = await this.getVideoDuration(item.id);
-			if (duration !== null) {
-				const relevance = new Date(item.snippet.publishedAt);
-				podcast = new Podcast(
-					url,
-					title,
-					this.platform,
-					duration,
-					relevance,
-				);
-			}
-		}
-		return podcast;
-	}
-
-	private async getVideoInfo(
-		video_id: string,
-		part: string[],
-	): Promise<youtube_v3.Schema$Video | undefined> {
-		const url = `${this.youtube_api_url}/videos?part=${part.join(",")}` +
-			`&id=${video_id}` +
-			`&maxResults=1` +
-			`&key=${this.api_key}`;
-		const result = await fetch(url);
-		if (!result.ok) {
-			throw new SearchError(
-				`YouTube API failed: ${result.status} for response: ${url}`,
-			);
-		}
-		const data = await result.json();
-		const items = data.items as
-			| youtube_v3.Schema$Video[]
-			| undefined;
-		const item = items?.[0];
-		return item;
+		const url = new URL(`https://www.youtube.com/watch?v=${item.id}`);
+		const title = item.snippet.title;
+		const isoDuration = item.contentDetails?.duration;
+		if (!isoDuration) return;
+		const durationObj = parse(isoDuration);
+		const durationSeconds = toSeconds(durationObj);
+		const duration = createUInt(Math.max(1, Math.round(durationSeconds)));
+		const relevance = new Date(item.snippet.publishedAt);
+		return new Podcast(url, title, this.platform, duration, relevance);
 	}
 
 	private getVideoIdFromUrl(url: URL): string | null {
@@ -152,7 +128,12 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 		const id = this.getVideoIdFromUrl(url);
 		let podcast: Podcast | null = null;
 		if (id !== null) {
-			podcast = await this.getPodcastFromVideo(id) ?? null;
+			const videos = await this.getVideosBatch([id]);
+			if (videos.length > 0) {
+				podcast = this.convertVideoToPodcast(videos[0]) ?? null;
+			} else {
+				podcast = null;
+			}
 		}
 		return podcast;
 	}
@@ -294,12 +275,13 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 	}
 
 	private async getPodcastsFromPlaylist(
+		userId: number,
 		playlist_id: string,
 		options: GetPodcastsOptions,
 	): Promise<Array<Podcast>> {
 		const podcasts = new Array<Podcast>();
 		if (options.pagination.page === createUInt(1)) {
-			this.playlistsPageTokens.delete(playlist_id);
+			this.playlistsPageTokens.get(userId)?.delete(playlist_id);
 		}
 		const url = new URL(`${this.youtube_api_url}/playlistItems`);
 		url.searchParams.set("part", "snippet");
@@ -309,10 +291,10 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 			options.pagination.podcastsPerPage.toString(),
 		);
 		url.searchParams.set("key", this.api_key);
-		if (this.playlistsPageTokens.has(playlist_id)) {
+		if (this.playlistsPageTokens.get(userId)?.has(playlist_id)) {
 			url.searchParams.set(
 				"pageToken",
-				this.playlistsPageTokens.get(playlist_id)!,
+				this.playlistsPageTokens.get(userId)?.get(playlist_id)!,
 			);
 		}
 		const result = await fetch(url);
@@ -323,18 +305,21 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 		}
 		const data = await result.json();
 		const pageToken = data.nextPageToken as string;
-		this.playlistsPageTokens.set(playlist_id, pageToken);
+		this.playlistsPageTokens.get(userId)?.set(playlist_id, pageToken);
 		const items: youtube_v3.Schema$PlaylistItem[] | undefined = data.items;
+		const videoIds: string[] = [];
 		if (items !== undefined) {
 			for (const item of items) {
 				const video_id = item.snippet?.resourceId?.videoId;
 				if (video_id) {
-					const podcast = await this.getPodcastFromVideo(video_id);
-					if (podcast) {
-						podcasts.push(podcast);
-					}
+					videoIds.push(video_id);
 				}
 			}
+		}
+		const videos = await this.getVideosBatch(videoIds);
+		for (const video of videos) {
+			const podcast = this.convertVideoToPodcast(video);
+			if (podcast) podcasts.push(podcast);
 		}
 		return podcasts;
 	}
@@ -343,6 +328,7 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 	 * Return null if channel doesn't exist
 	 */
 	public async getLastPodcastsByChannel(
+		userId: number,
 		channel_url: URL,
 		options: GetPodcastsOptions,
 	): Promise<Array<Podcast> | null> {
@@ -355,6 +341,7 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 				?.uploads;
 			if (uploads_id !== undefined) {
 				podcasts = await this.getPodcastsFromPlaylist(
+					userId,
 					uploads_id,
 					options,
 				);
