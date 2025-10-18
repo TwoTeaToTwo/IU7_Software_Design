@@ -100,19 +100,6 @@ paths:
                     type: string
                 required:
                   - accessToken
-  /:
-    get:
-      summary: home page
-      tags:
-        - static
-      responses:
-        "200":
-          description: File content
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
   /api/v1/podcasts:
     get:
       summary: search podcasts by query
@@ -272,13 +259,13 @@ paths:
                       channels_per_page:
                         minimum: 1
                         type: integer
-                      total_podcasts:
+                      total_channels:
                         minimum: 1
                         type: integer
                     required:
                       - page
                       - channels_per_page
-                      - total_podcasts
+                      - total_channels
                 required:
                   - channels
                   - pagination
@@ -424,7 +411,7 @@ paths:
                 required:
                   - podcasts
                   - pagination
-        "401":
+        "404":
           description: Default Response
           content:
             application/json:

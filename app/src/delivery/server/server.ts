@@ -14,7 +14,6 @@ import * as path from "@std/path";
 
 import { httpConfig } from "./config.ts";
 import { authenticateRoutes } from "./routes/auth.routes.ts";
-import { SPARoutes } from "./routes/spa.routes.ts";
 import { AuthenticationController } from "./controllers/auth.controller.ts";
 import { searchRoutes } from "./routes/search.routes.ts";
 import { userRoutes } from "./routes/user.routes.ts";
@@ -68,6 +67,9 @@ const createServer = () => {
 		root: path.resolve(httpConfig.frontendPath),
 		prefix: "/",
 	});
+	app.setNotFoundHandler((_req, reply) => {
+		reply.sendFile("index.html");
+	});
 	// swagger
 	app.register(fastifySwagger, {
 		openapi: {
@@ -88,8 +90,7 @@ const createServer = () => {
 		},
 	});
 	// routes
-	app.register(authenticateRoutes, { prefix: "/api/v1"});
-	app.register(SPARoutes);
+	app.register(authenticateRoutes, { prefix: "/api/v1" });
 	app.register(searchRoutes, { prefix: "/api/v1/podcasts" });
 	app.register(userRoutes, { prefix: "/api/v1/users" });
 	app.register(streamRoutes, { prefix: "/api/v1/streams" });
