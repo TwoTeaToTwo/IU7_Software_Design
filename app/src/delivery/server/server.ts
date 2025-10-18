@@ -10,6 +10,7 @@ import fCookie from "@fastify/cookie";
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import fastifyStatic from "@fastify/static";
 import fastifySwagger from "@fastify/swagger";
+import fastifyUiSwagger from "@fastify/swagger-ui";
 import * as path from "@std/path";
 
 import { httpConfig } from "./config.ts";
@@ -88,6 +89,10 @@ const createServer = () => {
 				},
 			},
 		},
+	});
+	app.register(fastifyUiSwagger, {
+		routePrefix: "/api/v1/documentation",
+		staticCSP: true,
 	});
 	// routes
 	app.register(authenticateRoutes, { prefix: "/api/v1" });

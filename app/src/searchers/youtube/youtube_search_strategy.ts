@@ -38,8 +38,10 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 		const maxResults = Math.min(podcastsPerPage, 50);
 		let pageToken = "";
 		if (page > 1) {
-			pageToken = this.podcastsPageTokens.get(userId)?.pageToken ??
-				"";
+			const queryPageToken = this.podcastsPageTokens.get(userId);
+			if (queryPageToken?.query === query) {
+				pageToken = queryPageToken?.pageToken ?? "";
+			}
 		} else {
 			this.podcastsPageTokens.delete(userId);
 		}
@@ -59,7 +61,10 @@ export class YoutubeSearchStrategy implements ISearchStrategy {
 		}
 		const data = await res.json();
 		if (data.nextPageToken) {
-			this.podcastsPageTokens.set(userId, data.nextPageToken);
+			this.podcastsPageTokens.set(userId, {
+				query: query,
+				pageToken: data.nextPageToken,
+			});
 		}
 		const searchItems = data.items as
 			| youtube_v3.Schema$SearchResult[]

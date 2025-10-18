@@ -13,6 +13,7 @@
 		"@fastify/send": "npm:@fastify/send@^4.1.0",
 		"@fastify/static": "npm:@fastify/static@^8.2.0",
 		"@fastify/swagger": "npm:@fastify/swagger@^9.5.2",
+		"@fastify/swagger-ui": "npm:@fastify/swagger-ui@^5.2.3",
 		"@fastify/type-provider-typebox": "npm:@fastify/type-provider-typebox@^5.2.0",
 		"@jd1378/another-cookiejar": "jsr:@jd1378/another-cookiejar@^5.0.7",
 		"@makerx/ts-dossier": "npm:@makerx/ts-dossier@^4.0.4",

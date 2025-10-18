@@ -70,7 +70,6 @@ const createDIContainer = (): Container => {
 		ChannelService,
 	);
 	container.bind<FeedService>(INJECT_TYPES.FeedService).to(FeedService);
-	console.log("pupupu");
 	return container;
 };
 

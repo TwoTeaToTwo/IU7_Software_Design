@@ -25,7 +25,7 @@ export class UserController {
 			return reply.status(404).send("User not found");
 		}
 		return reply.status(200).send({
-			subscribes: subscribes,
+			channels: subscribes,
 			pagination: {
 				page,
 				channels_per_page: channelsPerPage,
