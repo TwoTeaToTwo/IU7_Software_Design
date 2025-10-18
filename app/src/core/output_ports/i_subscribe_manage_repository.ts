@@ -1,11 +1,15 @@
 import type { Subscribe } from "../models/subscribe.ts";
-import type { Id } from "../types.ts";
+import type { Id, UInt } from "../types.ts";
 
 export interface ISubscribeManageRepository {
 	/**
 	 * Return null if user doesn't exist
 	 */
-	findSubscribesByUserId(user_id: Id): Promise<Array<Subscribe> | null>;
+	findSubscribesByUserId(
+		user_id: Id,
+		page: UInt,
+		channelsPerPage: UInt,
+	): Promise<Array<Subscribe> | null>;
 	/**
 	 * Return true on success
 	 * Subscribe user on source

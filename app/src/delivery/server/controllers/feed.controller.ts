@@ -26,6 +26,13 @@ export class FeedController {
 				return reply.status(404).send("User not found");
 			}
 		}
-		return reply.status(200).send(podcasts);
+		return reply.status(200).send({
+			podcasts: podcasts,
+			pagination: {
+				page,
+				podcasts_per_page: podcastsPerPage,
+				total_podcasts: (page - 1) * podcastsPerPage + podcasts.length,
+			},
+		});
 	}
 }

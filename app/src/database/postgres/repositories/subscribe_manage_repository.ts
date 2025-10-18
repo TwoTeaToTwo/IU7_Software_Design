@@ -1,5 +1,5 @@
 import { createUInt, Subscribe } from "@podcast/core";
-import type { Id, ISubscribeManageRepository } from "@podcast/core";
+import type { Id, ISubscribeManageRepository, UInt } from "@podcast/core";
 import type { PostgresDB } from "../database.ts";
 import { inject, injectable } from "inversify";
 import { INJECT_TYPES } from "../types.ts";
@@ -16,6 +16,8 @@ export class SubscribeManageRepository implements ISubscribeManageRepository {
 	 */
 	public async findSubscribesByUserId(
 		user_id: Id,
+		page: UInt,
+		channelsPerPage: UInt,
 	): Promise<Array<Subscribe> | null> {
 		const result = await this._db.select({
 			id: subscriptions.id,
@@ -25,7 +27,9 @@ export class SubscribeManageRepository implements ISubscribeManageRepository {
 		}).from(subscriptions).innerJoin(
 			usersHaveSubscriptions,
 			eq(usersHaveSubscriptions.subscription_id, subscriptions.id),
-		).where(eq(usersHaveSubscriptions.user_id, user_id));
+		).where(eq(usersHaveSubscriptions.user_id, user_id)).limit(
+			channelsPerPage,
+		).offset((page - 1) * channelsPerPage);
 		let subscribes: Array<Subscribe> | null;
 		if (result.length === 0) {
 			subscribes = null;

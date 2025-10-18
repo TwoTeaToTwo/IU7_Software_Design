@@ -58,7 +58,14 @@ export class SearchController {
 			query,
 			{ pagination: { page, podcastsPerPage } },
 		);
-		return reply.status(200).send(podcasts);
+		return reply.status(200).send({
+			podcasts: podcasts,
+			pagination: {
+				page,
+				podcasts_per_page: podcastsPerPage,
+				total_podcasts: (page - 1) * podcastsPerPage + podcasts.length,
+			},
+		});
 	}
 
 	private static async searchPodcastByURL(
@@ -90,6 +97,13 @@ export class SearchController {
 				"Podcast not found",
 			);
 		}
-		return reply.status(200).send([podcast]);
+		return reply.status(200).send({
+			podcasts: [podcast],
+			pagination: {
+				page: 1,
+				podcasts_per_page: 1,
+				total_podcasts: 1,
+			},
+		});
 	}
 }
