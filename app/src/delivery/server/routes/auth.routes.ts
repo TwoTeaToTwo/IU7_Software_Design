@@ -41,7 +41,6 @@ export const authenticateRoutes: FastifyPluginAsync = async (app) => {
 						description: "http-only cookie",
 					},
 				},
-				required: ["refresh_token"],
 			},
 			response: {
 				201: getAccessTokenResponseSchema,
@@ -62,7 +61,6 @@ export const authenticateRoutes: FastifyPluginAsync = async (app) => {
 						description: "bearer token for authorization",
 					},
 				},
-				required: ["access_token"],
 			},
 			security: [{ bearerAuth: [] }],
 			response: {

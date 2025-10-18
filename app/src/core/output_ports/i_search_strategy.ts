@@ -20,7 +20,7 @@ export interface ISearchStrategy {
 	 * set page number = 1
 	 *
 	 * changing podcast count per page
-	 * with out setting page number = 1
+	 * without setting page number = 1
 	 * provides UB
 	 */
 	searchPodcast(
@@ -56,7 +56,7 @@ export interface ISearchStrategy {
 	 * set page number = 1
 	 *
 	 * changing podcast count per page
-	 * with out setting page number = 1
+	 * without setting page number = 1
 	 * provides UB
 	 */
 	getLastPodcastsByChannel(

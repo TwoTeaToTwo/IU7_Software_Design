@@ -23,7 +23,6 @@ export const feedRoutes: FastifyPluginAsync = async (app) => {
 						description: "bearer token for authorization",
 					},
 				},
-				required: ["access_token"],
 			},
 			response: {
 				200: getFeedContentOkSchema,

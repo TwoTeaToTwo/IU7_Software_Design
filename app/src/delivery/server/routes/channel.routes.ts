@@ -34,7 +34,6 @@ export const userChannelRoutes: FastifyPluginAsync = async (app) => {
 						description: "bearer token for authorization",
 					},
 				},
-				required: ["access_token"],
 			},
 			security: [{ bearerAuth: [] }],
 			response: {
@@ -58,7 +57,6 @@ export const userChannelRoutes: FastifyPluginAsync = async (app) => {
 						description: "bearer token for authorization",
 					},
 				},
-				required: ["access_token"],
 			},
 			security: [{ bearerAuth: [] }],
 			response: {
@@ -82,7 +80,6 @@ export const userChannelRoutes: FastifyPluginAsync = async (app) => {
 						description: "bearer token for authorization",
 					},
 				},
-				required: ["access_token"],
 			},
 			security: [{ bearerAuth: [] }],
 			response: {
@@ -107,7 +104,6 @@ export const userChannelRoutes: FastifyPluginAsync = async (app) => {
 						description: "bearer token for authorization",
 					},
 				},
-				required: ["access_token"],
 			},
 			security: [{ bearerAuth: [] }],
 			response: {
@@ -132,7 +128,6 @@ export const userChannelRoutes: FastifyPluginAsync = async (app) => {
 						description: "bearer token for authorization",
 					},
 				},
-				required: ["access_token"],
 			},
 			security: [{ bearerAuth: [] }],
 			response: {

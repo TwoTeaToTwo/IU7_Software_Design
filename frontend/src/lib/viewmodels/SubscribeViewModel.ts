@@ -1,5 +1,5 @@
-import { domain } from '../Config.ts';
-import { errorHandler } from '../types.ts';
+import { api, domain } from "../Config.ts";
+import { errorHandler } from "../types.ts";
 
 export interface SubscribeViewModel {
 	id: number;
@@ -8,40 +8,51 @@ export interface SubscribeViewModel {
 	platform: string;
 }
 
+interface GetSubscriptionsResponse {
+	channels: Array<SubscribeViewModel>;
+	pagination: {
+		page: number;
+		channels_per_page: number;
+		total_podcasts: number;
+	};
+}
+
 export const getSubscriptions = async (
 	accessToken: string,
-	errorHandler: errorHandler
+	errorHandler: errorHandler,
 ): Promise<Array<SubscribeViewModel> | undefined> => {
-	const responseURL = `${domain}/api/user/subscriptions`;
+	const responseURL =
+		`${domain}/${api}/users/channels?page=1&channels_per_page=100`;
 	const response = await fetch(responseURL, {
-		method: 'GET',
+		method: "GET",
 		headers: {
 			Authorization: accessToken,
-			'Content-Type': 'application/json'
-		}
+			"Content-Type": "application/json",
+		},
 	});
 	if (!response.ok) {
 		errorHandler("Can't get subscriptions");
 		return undefined;
 	} else {
-		const content = (await response.json()) as Array<SubscribeViewModel>;
-		return content;
+		const { channels } =
+			(await response.json()) as GetSubscriptionsResponse;
+		return channels;
 	}
 };
 
 export const unsubscribe = async (
 	accessToken: string,
 	channelId: number,
-	errorHandler: errorHandler
+	errorHandler: errorHandler,
 ): Promise<boolean | undefined> => {
-	const responseURL = `${domain}/api/user/channel/unsubscribe?channel_id=${channelId}`;
+	const responseURL = `${domain}/${api}/users/channels/${channelId}`;
 	try {
 		const response = await fetch(responseURL, {
-			method: 'GET',
+			method: "DELETE",
 			headers: {
 				Authorization: accessToken,
-				'Content-Type': 'application/json'
-			}
+				"Content-Type": "application/json",
+			},
 		});
 		if (!response.ok) {
 			errorHandler("Can't unsubscribe");
@@ -60,16 +71,21 @@ export const subscribe = async (
 	accessToken: string,
 	title: string,
 	url: string,
-	errorHandler: errorHandler
+	errorHandler: errorHandler,
 ): Promise<SubscribeViewModel | undefined> => {
-	const responseURL = `${domain}/api/user/channel/subscribe?channel_title=${title}&channel_url=${url}`;
+	const responseURL =
+		`${domain}/${api}/users/channels?channel_title=${title}&channel_url=${url}`;
 	try {
 		const response = await fetch(responseURL, {
-			method: 'GET',
+			method: "POST",
 			headers: {
 				Authorization: accessToken,
-				'Content-Type': 'application/json'
-			}
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				channel_title: title,
+				channel_url: url,
+			}),
 		});
 		if (!response.ok) {
 			errorHandler("Can't subscribe!");

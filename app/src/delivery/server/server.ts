@@ -68,9 +68,6 @@ const createServer = () => {
 		root: path.resolve(httpConfig.frontendPath),
 		prefix: "/",
 	});
-	app.setNotFoundHandler((_req, reply) => {
-		reply.sendFile("index.html");
-	});
 	// swagger
 	app.register(fastifySwagger, {
 		openapi: {

@@ -1,5 +1,5 @@
 import { authController } from "../stores/Authentication.ts";
-import { domain } from "../Config.ts";
+import { api, domain } from "../Config.ts";
 import { errorHandler, messageHandler } from "../types.ts";
 
 export const login = (
@@ -7,7 +7,7 @@ export const login = (
 	password: string,
 	messageHandler: messageHandler,
 ): void => {
-	fetch(`${domain}/login`, {
+	fetch(`${domain}/${api}/sessions`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -30,7 +30,7 @@ export const logout = async (
 	errorHandler: errorHandler,
 ): Promise<void> => {
 	try {
-		const responseURL = `${domain}/logout`;
+		const responseURL = `${domain}/${api}/sessions`;
 		const response = await fetch(responseURL, {
 			method: "DELETE",
 			headers: {
