@@ -47,7 +47,7 @@ export class ChannelController {
 			);
 			if (result) {
 				const subscribes = await subscribeManageRepo
-					.findSubscribesByUserId(
+					.findAllSubscribesByUserId(
 						userID,
 					);
 				if (subscribes) {

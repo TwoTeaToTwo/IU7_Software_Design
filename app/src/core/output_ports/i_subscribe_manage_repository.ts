@@ -11,6 +11,12 @@ export interface ISubscribeManageRepository {
 		channelsPerPage: UInt,
 	): Promise<Array<Subscribe> | null>;
 	/**
+	 * Return null if user doesn't exist
+	 */
+	findAllSubscribesByUserId(
+		user_id: Id,
+	): Promise<Array<Subscribe> | null>;
+	/**
 	 * Return true on success
 	 * Subscribe user on source
 	 */

@@ -48,7 +48,7 @@ export class FeedService {
 		options: GetPodcastsOptions,
 	): Promise<Podcast[]> {
 		const subscribes = await this._subscribe_manage_repo
-			.findSubscribesByUserId(
+			.findAllSubscribesByUserId(
 				userId,
 			);
 		const podcasts = new Array<Podcast>();
@@ -57,8 +57,10 @@ export class FeedService {
 			throw new UserFindError();
 		} else {
 			let podcastsPerSubscribe = createUInt(
-				options.pagination.podcastsPerPage /
-					subscribes.length,
+				Math.round(
+					options.pagination.podcastsPerPage /
+						subscribes.length,
+				),
 			);
 			if (podcastsPerSubscribe < 1) {
 				podcastsPerSubscribe = createUInt(1);
@@ -69,6 +71,11 @@ export class FeedService {
 				podcasts.length <= options.pagination.podcastsPerPage;
 				i++
 			) {
+				if ((i + 1) === subscribes.length) {
+					podcastsPerSubscribe = createUInt(
+						options.pagination.podcastsPerPage - podcasts.length,
+					);
+				}
 				const channelContent = await this._searcher
 					.getLastPodcastsByChannel(
 						userId,

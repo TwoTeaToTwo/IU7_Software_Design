@@ -25,6 +25,7 @@ export class FeedController {
 			if (error instanceof UserFindError) {
 				return reply.status(404).send("User not found");
 			}
+			console.log(error);
 		}
 		return reply.status(200).send({
 			podcasts: podcasts,

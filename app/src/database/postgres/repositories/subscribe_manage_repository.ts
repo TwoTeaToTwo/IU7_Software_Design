@@ -48,6 +48,36 @@ export class SubscribeManageRepository implements ISubscribeManageRepository {
 		}
 		return subscribes;
 	}
+	public async findAllSubscribesByUserId(
+		user_id: Id,
+	): Promise<Array<Subscribe> | null> {
+		const result = await this._db.select({
+			id: subscriptions.id,
+			url: subscriptions.url,
+			title: subscriptions.title,
+			platform: subscriptions.platform,
+		}).from(subscriptions).innerJoin(
+			usersHaveSubscriptions,
+			eq(usersHaveSubscriptions.subscription_id, subscriptions.id),
+		).where(eq(usersHaveSubscriptions.user_id, user_id));
+		let subscribes: Array<Subscribe> | null;
+		if (result.length === 0) {
+			subscribes = null;
+		} else {
+			subscribes = new Array<Subscribe>();
+			for (const record of result) {
+				subscribes.push(
+					new Subscribe(
+						createUInt(record.id),
+						new URL(record.url),
+						record.title,
+						record.platform,
+					),
+				);
+			}
+		}
+		return subscribes;
+	}
 	/**
 	 * Return true on success
 	 * Subscribe user on source
