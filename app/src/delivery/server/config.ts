@@ -15,7 +15,7 @@ const loadHTTPConfig = () => {
 	const port = Number(Deno.env.get("PORT"));
 	const secretJWT = Deno.env.get("SECRET_JWT");
 	const secretCookie = Deno.env.get("SECRET_COOKIE");
-	const accessTokenExpiresIn = "3m";
+	const accessTokenExpiresIn = "30d";
 	const refreshTokenExpiresIn = "30d";
 	const frontendPath = Deno.env.get("FRONTEND_PATH");
 	const config = {

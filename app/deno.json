@@ -60,6 +60,8 @@
 		"test-unit-core": "deno test ./src/core/tests/unit/* ./tests/unit/core/* --allow-env --env-file=./.env.test --allow-read",
 		"test-unit-db": "deno test ./tests/unit/database/postgres_lite/* --allow-env --env-file=./.env.test --allow-read",
 		"test-int-db": "deno test ./tests/integration/database/postgres/* --allow-env --env-file=./.env.test --allow-read --allow-net",
-		"test-int-core": "deno test ./tests/integration/core/* --allow-env --env-file=./.env.test --allow-read --allow-net"
+		"test-int-core": "deno test ./tests/integration/core/* --allow-env --env-file=./.env.test --allow-read --allow-net",
+		"test-fill": "deno run --allow-env --env-file=./.env.test --allow-read --allow-net ./benchmarks/scripts/fill_database.ts",
+		"test-run": "deno run --allow-env --env-file=./.env.test  --allow-net --allow-read --allow-write --allow-sys --allow-run=yt-dlp ./src/main.ts"
 	}
 }
