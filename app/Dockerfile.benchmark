@@ -1,0 +1,12 @@
+FROM denoland/deno:latest
+# RUN apt-get update && \
+#     apt-get install -y curl unzip default-jre mpv python3 && \
+#     curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+#     apt-get install -y nodejs && \
+#     npm install -g yt-dlp && \
+#     rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY . .
+RUN mkdir -p ./frontend/build
+RUN deno cache ./src/main.ts
+CMD ["deno", "task", "test-run"]

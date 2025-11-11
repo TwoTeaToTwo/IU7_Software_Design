@@ -1,0 +1,77 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: podcast_test
+    ports:
+      - "5433:5432"
+    volumes:
+      - bench_db_data:/var/lib/postgresql/data
+    networks:
+      - bench-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.benchmark
+    ports:
+      - "32486:32486"
+    env_file:
+      - .env.test
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - bench-network
+
+  k6:
+    image: grafana/k6:latest
+    # depends_on:
+    #   - backend
+    # environment:
+    #   - K6_OUT=experimental-prometheus-rw
+    #   - K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write
+    volumes:
+      - ./benchmarks/k6:/scripts
+    networks:
+      - bench-network
+    command: run /scripts/scenarios/database.test.js
+
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml
+  #   ports:
+  #     - "9090:9090"
+  #   networks:
+  #     - bench-network
+
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   depends_on:
+  #     - prometheus
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=admin
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin
+  #   volumes:
+  #     - ./grafana:/var/lib/grafana
+  #   networks:
+  #     - bench-network
+
+networks:
+  bench-network:
+    driver: bridge
+
+volumes:
+  bench_db_data:

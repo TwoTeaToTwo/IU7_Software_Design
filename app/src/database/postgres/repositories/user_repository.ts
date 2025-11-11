@@ -55,7 +55,7 @@ export class UserRepository implements IUserRepository {
 	 */
 	public async findByLogin(user_login: string): Promise<User | null> {
 		const result = await this._db.select().from(users).where(
-			eq(users.login, user_login),
+			eq(users.login, String(user_login)),
 		);
 		let user: User | null;
 		if (result.length === 0) {
