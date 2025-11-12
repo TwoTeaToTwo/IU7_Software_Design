@@ -8,10 +8,10 @@ import type {
 import fjwt from "@fastify/jwt";
 import fCookie from "@fastify/cookie";
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
-import fastifyStatic from "@fastify/static";
+// import fastifyStatic from "@fastify/static";
 import fastifySwagger from "@fastify/swagger";
 import fastifyUiSwagger from "@fastify/swagger-ui";
-import * as path from "@std/path";
+// import * as path from "@std/path";
 
 import { httpConfig } from "./config.ts";
 import { authenticateRoutes } from "./routes/auth.routes.ts";
@@ -64,10 +64,10 @@ const createServer = () => {
 		hook: "preHandler",
 	});
 	// static
-	app.register(fastifyStatic, {
-		root: path.resolve(httpConfig.frontendPath),
-		prefix: "/",
-	});
+	// app.register(fastifyStatic, {
+	// 	root: path.resolve(httpConfig.frontendPath),
+	// 	prefix: "/",
+	// });
 	// swagger
 	app.register(fastifySwagger, {
 		openapi: {
