@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Management</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; 
+background-color: #fafafa;
+}
+.container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
+    gap: 10px;
+}
+.text {
+    color: #1d1d1f;
+    flex: 1;
+    font-size: 32pt;
+    font-weight: 600;
+}
+.custom-link {
+		color: #494C52;
+		font-size: 20pt;
+		font-weight: 600;
+		text-decoration: none;
+		cursor: pointer;
+	}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="text">Content</div>
+    <a class="custom-link" href="/api/v1">Swagger</a>
+    <a class="custom-link" href="/legacy/">Legacy</a>
+    <a class="custom-link" href="/documentation">Documentation</a>
+    <a class="custom-link" href="/">/</a>
+    <a class="custom-link" href="/reserved/">/reserved</a>
+    <a class="custom-link" href="/admin">Admin</a>
+    <a class="custom-link" href="/status">Status</a>
+</div>
+</body>
+</html>
