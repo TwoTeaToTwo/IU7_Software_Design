@@ -15,19 +15,22 @@ export const durationSecondsToText = (duration_s: number): string => {
 	const secs = seconds % 60;
 	if (hours > 0) {
 		return [
-			hours.toString().padStart(2, '0'),
-			minutes.toString().padStart(2, '0'),
-			secs.toString().padStart(2, '0')
-		].join(':');
+			hours.toString().padStart(2, "0"),
+			minutes.toString().padStart(2, "0"),
+			secs.toString().padStart(2, "0"),
+		].join(":");
 	} else {
-		return [minutes.toString().padStart(2, '0'), secs.toString().padStart(2, '0')].join(':');
+		return [
+			minutes.toString().padStart(2, "0"),
+			secs.toString().padStart(2, "0"),
+		].join(":");
 	}
 };
 
 export const relevanceToText = (relevance: Date): string => {
-	return Intl.DateTimeFormat('en-US', {
-		month: 'short',
-		day: 'numeric',
-		year: 'numeric'
+	return Intl.DateTimeFormat("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
 	}).format(relevance);
 };

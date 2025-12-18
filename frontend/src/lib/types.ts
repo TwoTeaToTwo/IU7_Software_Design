@@ -1,2 +1,2 @@
-export type errorHandler = (message: string) => void;
-export type messageHandler = (message: string, title: string) => void;
+export type ErrorHandler = (message: string) => void;
+export type MessageHandler = (message: string, title: string) => void;

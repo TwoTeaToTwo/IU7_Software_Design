@@ -1,14 +1,18 @@
 <script lang="ts">
-	import { getFeedContent } from '$lib/viewmodels/feed/FeedViewModel';
+	import { searchPodcast } from '$lib/viewmodels/SearchViewModel';
 	import type { PodcastViewModel } from '$lib/viewmodels/PodcastViewModel';
 	import { authController } from '$lib/stores/Authentication';
-	import Podcast from '../Podcast.svelte';
-	import { playingPodcast } from '../../stores/Store';
-	import PopUp from '../PopUp.svelte';
+	import Podcast from './Podcast.svelte';
+	import { playingPodcast } from '../stores/Store';
+	import PopUp from './PopUp.svelte';
+	import Button from './Button.svelte';
+
 	// Pop up messages
+	let { query = $bindable() }: { query: string } = $props();
 	let showMessage = $state(false);
 	let popUpMessage = $state('');
 	let messageTitle = $state('');
+	let page = 1;
 	const messageHandler = (msg: string, title: string) => {
 		messageTitle = title;
 		popUpMessage = msg;
@@ -23,61 +27,55 @@
 	// Variables
 	let isContentLoading = $state(false);
 	let feedContent = $state(new Array<PodcastViewModel>());
-	let isUpdateButtonHovered = $state(false);
 	let isSearching = $state(false);
-	const feedSize = 10;
 	const maxResults = 5;
 	// Functions
-	const updateFeed = () => {
-		isSearching = false;
+	const searchHandler = (searchQuery: string): void => {
+		isSearching = true;
 		isContentLoading = true;
-		messageHandler('Updating feed', 'FEED');
 		authController.getAccessToken().then((accessToken) => {
-			getFeedContent(feedSize, accessToken!, errorHandler).then((podcasts) => {
-				isContentLoading = false;
-				if (podcasts) {
-					feedContent = podcasts;
-					messageHandler('Feed is updated!', 'FEED');
+			searchPodcast(searchQuery, maxResults, accessToken!, messageHandler, page).then(
+				(podcasts) => {
+					isContentLoading = false;
+					if (podcasts) {
+						feedContent = [...feedContent, ...podcasts];
+					}
 				}
-			});
+			);
 		});
 	};
-	const getContentTitle = (): string => {
-		let contentTitle = '';
-		if (!isSearching) {
-			contentTitle = isUpdateButtonHovered ? 'Update Feed' : 'Feed';
-		} else {
-			contentTitle = isUpdateButtonHovered ? 'Return Feed' : 'Search';
-		}
-		return contentTitle;
+
+	const updateContent = (): void => {
+		page++;
+		searchHandler(query);
 	};
+
+	$effect(() => {
+		searchHandler(query);
+	});
 </script>
 
 <PopUp isOpen={showMessage} message={popUpMessage} title={messageTitle} />
-<button
-	class="button_component"
-	onclick={() => updateFeed()}
-	onmouseenter={() => (isUpdateButtonHovered = true)}
-	onmouseleave={() => (isUpdateButtonHovered = false)}
-	disabled={isContentLoading}>{getContentTitle()}</button
->
 <div class="feed-content">
 	<div class="loading-text" hidden={!isContentLoading}>Loading</div>
-	<div class="container" hidden={isContentLoading}>
-		{#each feedContent as podcast}
-			<Podcast
-				title={podcast.title}
-				channel=""
-				platform={podcast.platform}
-				relevance={podcast.relevanceText}
-				duration={podcast.durationText}
-				isSelected={$playingPodcast?.url === podcast.url}
-				clickHandler={() => {
-					$playingPodcast = podcast;
-				}}
-			></Podcast>
-		{/each}
-	</div>
+	{#if !isContentLoading}
+		<div class="container">
+			{#each feedContent as podcast}
+				<Podcast
+					title={podcast.title}
+					channel=""
+					platform={podcast.platform}
+					relevance={podcast.relevanceText}
+					duration={podcast.durationText}
+					isSelected={$playingPodcast?.url === podcast.url}
+					clickHandler={() => {
+						$playingPodcast = podcast;
+					}}
+				></Podcast>
+			{/each}
+			<Button text="Update" buttonStyle="width: 100%;" handler={updateContent} />
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -98,31 +96,6 @@
 		align-items: center;
 		margin-top: 0;
 		margin-bottom: auto;
-	}
-
-	.button_component {
-		color: #ffffff;
-		font-family: 'Nunito Sans', sans-serif;
-		font-size: 72pt;
-		font-weight: bold;
-		margin-top: 0;
-		margin-bottom: auto;
-		position: relative;
-		background: none;
-		border: none;
-		transition: all 0.2s ease;
-	}
-
-	.button_component:hover {
-		text-decoration: underline;
-	}
-
-	.button_component:active {
-		color: #00ccfe;
-	}
-
-	.button_component:disabled {
-		color: #a9a9a9;
 	}
 
 	.loading-text {

@@ -3,8 +3,9 @@ import {
 	type PodcastViewModel,
 	relevanceToText,
 } from "./PodcastViewModel.ts";
-import type { messageHandler } from "../types.ts";
+import type { MessageHandler } from "../types.ts";
 import { api, domain } from "../Config.ts";
+import { browser } from "$app/environment";
 
 interface SearchResponse {
 	podcasts: Array<PodcastViewModel>;
@@ -28,77 +29,83 @@ const searchByQuery = async (
 	query: string,
 	maxResults: number,
 	accessToken: string,
-	messageHandler: messageHandler,
+	messageHandler: MessageHandler,
+	page: number,
 ): Promise<Array<PodcastViewModel> | undefined> => {
-	try {
-		const responseURL =
-			`${domain}/${api}/podcasts?query=${query}&page=1&podcasts_per_page=${maxResults}`;
-		const response = await fetch(responseURL, {
-			method: "GET",
-			headers: {
-				Authorization: accessToken,
-				"Content-Type": "application/json",
-			},
-		});
-		if (!response.ok) {
-			messageHandler("Can't find podcasts", "ERROR");
-		} else {
-			const { podcasts } = (await response.json()) as SearchResponse;
-			for (const podcast of podcasts) {
-				podcast.durationText = durationSecondsToText(
-					podcast.duration_s,
-				);
-				podcast.relevanceText = relevanceToText(
-					new Date(podcast.relevance),
-				);
+	if (browser) {
+		try {
+			const responseURL =
+				`${domain}/${api}/podcasts?query=${query}&page=${page}&podcasts_per_page=${maxResults}`;
+			const response = await fetch(responseURL, {
+				method: "GET",
+				headers: {
+					Authorization: accessToken,
+					"Content-Type": "application/json",
+				},
+			});
+			if (!response.ok) {
+				messageHandler("Can't find podcasts", "ERROR");
+			} else {
+				const { podcasts } = (await response.json()) as SearchResponse;
+				for (const podcast of podcasts) {
+					podcast.durationText = durationSecondsToText(
+						podcast.duration_s,
+					);
+					podcast.relevanceText = relevanceToText(
+						new Date(podcast.relevance),
+					);
+				}
+				messageHandler("Podcasts has founded", "SEARCH");
+				return podcasts;
 			}
-			messageHandler("Podcasts has founded", "SEARCH");
-			return podcasts;
+		} catch {
+			messageHandler("Can't find podcasts", "ERROR");
 		}
-	} catch {
-		messageHandler("Can't find podcasts", "ERROR");
+		return undefined;
 	}
-	return undefined;
 };
 
 const searchByUrl = async (
 	url: string,
 	accessToken: string,
-	messageHandler: messageHandler,
+	messageHandler: MessageHandler,
 ): Promise<Array<PodcastViewModel> | undefined> => {
-	try {
-		const responseURL = `${domain}/${api}/podcasts?url=${url}`;
-		const response = await fetch(responseURL, {
-			method: "GET",
-			headers: {
-				Authorization: accessToken,
-				"Content-Type": "application/json",
-			},
-		});
-		if (!response.ok) {
+	if (browser) {
+		try {
+			const responseURL = `${domain}/${api}/podcasts?url=${url}`;
+			const response = await fetch(responseURL, {
+				method: "GET",
+				headers: {
+					Authorization: accessToken,
+					"Content-Type": "application/json",
+				},
+			});
+			if (!response.ok) {
+				messageHandler("Can't find podcast", "ERROR");
+			} else {
+				const { podcasts } = (await response.json()) as SearchResponse;
+				podcasts[0].durationText = durationSecondsToText(
+					podcasts[0].duration_s,
+				);
+				podcasts[0].relevanceText = relevanceToText(
+					new Date(podcasts[0].relevance),
+				);
+				messageHandler("Podcasts has founded", "SEARCH");
+				return podcasts;
+			}
+		} catch {
 			messageHandler("Can't find podcast", "ERROR");
-		} else {
-			const { podcasts } = (await response.json()) as SearchResponse;
-			podcasts[0].durationText = durationSecondsToText(
-				podcasts[0].duration_s,
-			);
-			podcasts[0].relevanceText = relevanceToText(
-				new Date(podcasts[0].relevance),
-			);
-			messageHandler("Podcasts has founded", "SEARCH");
-			return podcasts;
 		}
-	} catch {
-		messageHandler("Can't find podcast", "ERROR");
+		return undefined;
 	}
-	return undefined;
 };
 
 export const searchPodcast = async (
 	query: string,
 	maxResults: number,
 	accessToken: string,
-	messageHandler: messageHandler,
+	messageHandler: MessageHandler,
+	page: number,
 ): Promise<Array<PodcastViewModel> | undefined> => {
 	let podcasts: Array<PodcastViewModel> | undefined;
 	if (isUrl(query)) {
@@ -109,6 +116,7 @@ export const searchPodcast = async (
 			maxResults,
 			accessToken,
 			messageHandler,
+			page,
 		);
 	}
 	return podcasts;
