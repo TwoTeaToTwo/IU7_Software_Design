@@ -55,7 +55,6 @@ export const unsubscribe = async (
 				method: "DELETE",
 				headers: {
 					Authorization: accessToken,
-					"Content-Type": "application/json",
 				},
 			});
 			if (!response.ok) {
@@ -65,8 +64,8 @@ export const unsubscribe = async (
 				const content = (await response.json()) as boolean;
 				return content;
 			}
-		} catch {
-			errorHandler("Can't unsubscribe");
+		} catch (error) {
+			console.log(error);
 			return undefined;
 		}
 	}
@@ -100,8 +99,9 @@ export const subscribe = async (
 				const content = (await response.json()) as SubscribeViewModel;
 				return content;
 			}
-		} catch {
-			errorHandler("Can't subscribe!");
+		} catch (error) {
+			console.log(error);
+			//errorHandler("Can't subscribe!");
 			return undefined;
 		}
 	}

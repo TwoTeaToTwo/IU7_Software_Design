@@ -51,6 +51,8 @@
 	};
 
 	$effect(() => {
+		page = 1;
+		feedContent = [];
 		searchHandler(query);
 	});
 </script>

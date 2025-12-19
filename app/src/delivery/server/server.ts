@@ -12,6 +12,7 @@ import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import fastifySwagger from "@fastify/swagger";
 import fastifyUiSwagger from "@fastify/swagger-ui";
 // import * as path from "@std/path";
+import cors from "npm:@fastify/cors";
 
 import { httpConfig } from "./config.ts";
 import { authenticateRoutes } from "./routes/auth.routes.ts";
@@ -24,6 +25,19 @@ const createServer = () => {
 	const app = fastify({ logger: true }).withTypeProvider<
 		TypeBoxTypeProvider
 	>();
+	// CORS
+	app.register(cors, {
+		origin: [
+			"http://localhost:5173",
+			"http://127.0.0.1:5173",
+		],
+		credentials: true,
+		methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+		allowedHeaders: [
+			"Content-Type",
+			"Authorization",
+		],
+	});
 	// jwt
 	app.register(fjwt, { secret: httpConfig.secretJWT });
 	app.addHook("preHandler", (request, _, done) => {
