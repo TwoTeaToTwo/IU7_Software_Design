@@ -1,29 +1,32 @@
-import type { CompareFunction, Id, UInt } from "../types.ts";
+import { type CompareFunction, createUInt, type Id } from "../types.ts";
 import type { Podcast } from "./podcast.ts";
+import type { GetPodcastsOptions } from "../output_ports/i_search_strategy.ts";
 
+/**
+ * Deprecated
+ */
 export class Feed {
-	public static readonly DEFAULT_FEED_SIZE = 10;
-	private _max_size = Feed.DEFAULT_FEED_SIZE;
 	private _contents = new Array<Podcast>();
 	constructor(
 		private _user_id: Id,
-		private _start_feed_size = Feed.DEFAULT_FEED_SIZE,
+		private _options: GetPodcastsOptions,
 	) {
-		this._max_size = this._start_feed_size;
 	}
 	public addNewContent(content: Podcast): void {
 		if (
 			!this._contents.includes(content) &&
-			this._contents.length < this._max_size
+			this._contents.length < this.max_size
 		) {
 			this._contents.push(content);
 		}
 	}
-	public expand(new_size: UInt): void {
-		this._max_size = new_size;
+	public addPage(): void {
+		this._options.pagination.page = createUInt(
+			this._options.pagination.page + 1,
+		);
 	}
-	public reset(): void {
-		this._max_size = this._start_feed_size;
+	public clear(): void {
+		this._options.pagination.page = createUInt(1);
 		this._contents.length = 0;
 	}
 	public sortContents(compare_method: CompareFunction<Podcast>): void {
@@ -32,13 +35,20 @@ export class Feed {
 	get contents() {
 		return this._contents;
 	}
+	/**
+	 * return page * podcasts_per_page
+	 */
 	get max_size() {
-		return this._max_size;
+		return this._options.pagination.page *
+			this._options.pagination.podcastsPerPage;
 	}
 	get user_id() {
 		return this._user_id;
 	}
 	get current_size() {
 		return this._contents.length;
+	}
+	get options() {
+		return this._options;
 	}
 }

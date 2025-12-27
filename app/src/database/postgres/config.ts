@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-const databaseConfigSchema = z.object({ connectionString: z.string() });
+const databaseConfigSchema = z.object({
+	connectionString: z.string(),
+});
 
 const loadDatabaseConfig = () => {
 	const connectionString = Deno.env.get("POSTGRES_URL");

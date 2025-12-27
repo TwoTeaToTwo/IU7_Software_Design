@@ -46,7 +46,7 @@
 		border-radius: 20px;
 		display: flex;
 		border: none;
-		background-color: #d9d9d900;
+		background-color: var(--button-blue);
 	}
 
 	.button.selected {

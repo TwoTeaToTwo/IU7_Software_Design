@@ -1,5 +1,5 @@
 import { createUInt, Subscribe } from "@podcast/core";
-import type { Id, ISubscribeManageRepository } from "@podcast/core";
+import type { Id, ISubscribeManageRepository, UInt } from "@podcast/core";
 import type { PostgresDB } from "../database.ts";
 import { inject, injectable } from "inversify";
 import { INJECT_TYPES } from "../types.ts";
@@ -15,6 +15,40 @@ export class SubscribeManageRepository implements ISubscribeManageRepository {
 	 * Return null if user doesn't exist
 	 */
 	public async findSubscribesByUserId(
+		user_id: Id,
+		page: UInt,
+		channelsPerPage: UInt,
+	): Promise<Array<Subscribe> | null> {
+		const result = await this._db.select({
+			id: subscriptions.id,
+			url: subscriptions.url,
+			title: subscriptions.title,
+			platform: subscriptions.platform,
+		}).from(subscriptions).innerJoin(
+			usersHaveSubscriptions,
+			eq(usersHaveSubscriptions.subscription_id, subscriptions.id),
+		).where(eq(usersHaveSubscriptions.user_id, user_id)).limit(
+			channelsPerPage,
+		).offset((page - 1) * channelsPerPage);
+		let subscribes: Array<Subscribe> | null;
+		if (result.length === 0) {
+			subscribes = null;
+		} else {
+			subscribes = new Array<Subscribe>();
+			for (const record of result) {
+				subscribes.push(
+					new Subscribe(
+						createUInt(record.id),
+						new URL(record.url),
+						record.title,
+						record.platform,
+					),
+				);
+			}
+		}
+		return subscribes;
+	}
+	public async findAllSubscribesByUserId(
 		user_id: Id,
 	): Promise<Array<Subscribe> | null> {
 		const result = await this._db.select({

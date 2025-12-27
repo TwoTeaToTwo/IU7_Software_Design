@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Input from '$lib/components/Input.svelte';
 	import TextButton from '$lib/components/TextButton.svelte';
+	import Button from '../Button.svelte';
 	import { login as loginCallback } from '$lib/viewmodels/LoginViewModel';
 	import PopUp from '../PopUp.svelte';
 
@@ -25,9 +26,11 @@
 	<div class="main-container">
 		<Input placeholder="Login" bind:value={login} />
 		<Input placeholder="Password" bind:value={password} type="password" />
-		<TextButton
+		<Button
 			text="Login"
-			handleClick={() => {
+			buttonStyle="width: 500px;"
+			textStyle="font-size: 22pt;"
+			handler={() => {
 				loginCallback(login, password, messageHandler);
 			}}
 		/>

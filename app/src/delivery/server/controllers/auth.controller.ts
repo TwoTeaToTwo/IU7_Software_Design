@@ -30,7 +30,7 @@ export class AuthenticationController {
 		request: FastifyRequest<{ Body: Login }>,
 		reply: FastifyReply,
 	) {
-		const userRepo = container.get<IUserRepository>(
+		const userRepo = container().get<IUserRepository>(
 			INJECT_TYPES.UserRepository,
 		);
 		const login = request.body.login;
@@ -38,7 +38,7 @@ export class AuthenticationController {
 		const user = await userRepo.findByLogin(login);
 		const isMatch = user && user.password.password === password;
 		if (!isMatch) {
-			return reply.code(403).send({
+			return reply.code(401).send({
 				message: "Invalid login or password",
 			});
 		} else {
@@ -49,7 +49,7 @@ export class AuthenticationController {
 				httpOnly: true,
 				secure: true,
 			});
-			return reply.code(201).send(true);
+			return reply.code(201).send();
 		}
 	}
 
@@ -107,11 +107,11 @@ export class AuthenticationController {
 			request.server,
 			payload,
 		);
-		return { accessToken };
+		return reply.status(201).send({ accessToken });
 	}
 
 	public static logout(_request: FastifyRequest, reply: FastifyReply) {
 		reply.clearCookie("refresh_token");
-		return reply.send();
+		return reply.status(204).send();
 	}
 }

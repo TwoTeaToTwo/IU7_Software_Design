@@ -26,6 +26,8 @@ const subscribeCommandName = "subscribe";
 const unsubscribeCommandName = "unsubscribe";
 const showFeedCommandName = "feed";
 
+const defaultUserId = createUInt(1);
+
 const createSearchCommand = () => {
 	return new Command().option("-u, --url <url:string>", "url").option(
 		"-q, --query <query:string>",
@@ -37,10 +39,19 @@ const createSearchCommand = () => {
 				globalLogger.info(
 					`[user] search query=${query} command executed`,
 				);
-				const search_service = container.get<SearchService>(
+				const search_service = container().get<SearchService>(
 					INJECT_TYPES.SearchService,
 				);
-				const podcasts = await search_service.searchPodcast(query);
+				const podcasts = await search_service.searchPodcast(
+					defaultUserId,
+					query,
+					{
+						pagination: {
+							page: createUInt(1),
+							podcastsPerPage: createUInt(5),
+						},
+					},
+				);
 				globalLogger.info(
 					`[user] founded ${podcasts.length} results on request`,
 				);
@@ -55,7 +66,7 @@ const createSearchCommand = () => {
 				globalLogger.info(
 					`[user] search url=${options.url} command executed`,
 				);
-				const search_service = container.get<SearchService>(
+				const search_service = container().get<SearchService>(
 					INJECT_TYPES.SearchService,
 				);
 				try {
@@ -113,7 +124,7 @@ const createPlayCommand = () => {
 			globalLogger.info(
 				`[user] play command executed`,
 			);
-			const stream_service = container.get<StreamService>(
+			const stream_service = container().get<StreamService>(
 				INJECT_TYPES.StreamService,
 			);
 			const stream = await stream_service.streamPodcast(new URL(url));
@@ -126,7 +137,7 @@ const createPlayCommand = () => {
  * @returns user on success else null
  */
 const logIn = async (login: string, password: string) => {
-	const user_repo = container.get<IUserRepository>(
+	const user_repo = container().get<IUserRepository>(
 		INJECT_TYPES.UserRepository,
 	);
 	let user = await user_repo.findByLogin(login);
@@ -158,7 +169,7 @@ const createSubscribeCommand = () => {
 			if (user) {
 				globalLogger.info("[user] login successful");
 				globalLogger.info("[user] subscribe command executed");
-				const channel_service = container.get<ChannelService>(
+				const channel_service = container().get<ChannelService>(
 					INJECT_TYPES.ChannelService,
 				);
 				const channel_url = new URL(url);
@@ -203,7 +214,7 @@ const createUnsubscribeCommand = () => {
 			if (user) {
 				globalLogger.info("[user] login successful");
 				globalLogger.info("[user] unsubscribe command executed");
-				const channel_service = container.get<ChannelService>(
+				const channel_service = container().get<ChannelService>(
 					INJECT_TYPES.ChannelService,
 				);
 				try {
@@ -245,11 +256,15 @@ const createShowFeedCommand = () => {
 					globalLogger.info(
 						"[user] show user subscribes command executed",
 					);
-					const subscribe_manage_repo = container.get<
+					const subscribe_manage_repo = container().get<
 						ISubscribeManageRepository
 					>(INJECT_TYPES.SubscribeManageRepository);
 					const subscribes = await subscribe_manage_repo
-						.findSubscribesByUserId(user.id);
+						.findSubscribesByUserId(
+							user.id,
+							createUInt(1),
+							createUInt(100),
+						);
 					globalLogger.info(
 						`[user] subscribes count=${subscribes?.length}`,
 					);
@@ -262,18 +277,24 @@ const createShowFeedCommand = () => {
 					globalLogger.info(
 						"[user] show feed contents command executed",
 					);
-					const feed_size = options.showContent;
-					const feed_service = container.get<FeedService>(
+					const feed_service = container().get<FeedService>(
 						INJECT_TYPES.FeedService,
 					);
-					const feed = feed_service.createFeed(user.id, feed_size);
-					await feed_service.updateFeed(feed);
-					globalLogger.info(
-						`[user] feed contents length=${feed.current_size}`,
+					const contents = await feed_service.getFeedPageContent(
+						defaultUserId,
+						{
+							pagination: {
+								page: createUInt(1),
+								podcastsPerPage: createUInt(5),
+							},
+						},
 					);
-					for (let i = 0; i < feed.contents.length; i++) {
+					globalLogger.info(
+						`[user] feed contents length=${contents.length}`,
+					);
+					for (let i = 0; i < contents.length; i++) {
 						console.log(
-							`${i + 1} ${JSON.stringify(feed.contents[i])}`,
+							`${i + 1} ${JSON.stringify(contents[i])}`,
 						);
 					}
 				}

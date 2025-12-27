@@ -5,14 +5,17 @@ import type {
 	FastifyRequest,
 	HookHandlerDoneFunction,
 } from "fastify";
-import { httpConfig } from "./config.ts";
 import fjwt from "@fastify/jwt";
 import fCookie from "@fastify/cookie";
 import type { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
-import fastifyStatic from "@fastify/static";
-import * as path from "@std/path";
+// import fastifyStatic from "@fastify/static";
+import fastifySwagger from "@fastify/swagger";
+import fastifyUiSwagger from "@fastify/swagger-ui";
+// import * as path from "@std/path";
+import cors from "npm:@fastify/cors";
+
+import { httpConfig } from "./config.ts";
 import { authenticateRoutes } from "./routes/auth.routes.ts";
-import { SPARoutes } from "./routes/spa.routes.ts";
 import { AuthenticationController } from "./controllers/auth.controller.ts";
 import { searchRoutes } from "./routes/search.routes.ts";
 import { userRoutes } from "./routes/user.routes.ts";
@@ -22,6 +25,19 @@ const createServer = () => {
 	const app = fastify({ logger: true }).withTypeProvider<
 		TypeBoxTypeProvider
 	>();
+	// CORS
+	app.register(cors, {
+		origin: [
+			"http://localhost:5173",
+			"http://127.0.0.1:5173",
+		],
+		credentials: true,
+		methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+		allowedHeaders: [
+			"Content-Type",
+			"Authorization",
+		],
+	});
 	// jwt
 	app.register(fjwt, { secret: httpConfig.secretJWT });
 	app.addHook("preHandler", (request, _, done) => {
@@ -62,16 +78,38 @@ const createServer = () => {
 		hook: "preHandler",
 	});
 	// static
-	app.register(fastifyStatic, {
-		root: path.resolve(httpConfig.frontendPath),
-		prefix: "/",
+	// app.register(fastifyStatic, {
+	// 	root: path.resolve(httpConfig.frontendPath),
+	// 	prefix: "/",
+	// });
+	// swagger
+	app.register(fastifySwagger, {
+		openapi: {
+			openapi: "3.1.1",
+			info: {
+				title: "Podcast stream service",
+				version: "0.0.0",
+			},
+			components: {
+				securitySchemes: {
+					bearerAuth: {
+						type: "http",
+						scheme: "bearer",
+						bearerFormat: "JWT",
+					},
+				},
+			},
+		},
+	});
+	app.register(fastifyUiSwagger, {
+		routePrefix: "/api/v1/documentation",
+		staticCSP: true,
 	});
 	// routes
-	app.register(authenticateRoutes);
-	app.register(SPARoutes);
-	app.register(searchRoutes, { prefix: "/api/search" });
-	app.register(userRoutes, { prefix: "/api/user" });
-	app.register(streamRoutes, { prefix: "/api/stream" });
+	app.register(authenticateRoutes, { prefix: "/api/v1" });
+	app.register(searchRoutes, { prefix: "/api/v1/podcasts" });
+	app.register(userRoutes, { prefix: "/api/v1/users" });
+	app.register(streamRoutes, { prefix: "/api/v1/streams" });
 	return app;
 };
 
@@ -80,7 +118,13 @@ class Server {
 	constructor() {
 		this.app = createServer();
 	}
+	private async initServer() {
+		await this.app.ready();
+		const yaml = this.app.swagger({ yaml: true });
+		await Deno.writeTextFile("./routes.yaml", yaml);
+	}
 	public async runServer() {
+		await this.initServer();
 		await this.app.listen({
 			port: httpConfig.port,
 			host: httpConfig.host,

@@ -11,15 +11,22 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"lint": "prettier --check . && eslint ."
+		"lint": "prettier --check . && eslint .",
+		"test": "vitest",
+		"test:coverage": "vitest run --coverage"
 	},
 	"dependencies": {
 		"@sveltejs/adapter-static": "^3.0.9",
 		"@sveltejs/enhanced-img": "^0.8.1",
+		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/svelte": "^5.2.9",
 		"@types/dom-mediacapture-record": "^1.0.22",
+		"@vitest/coverage-v8": "^4.0.16",
+		"jsdom": "^27.3.0",
 		"svelte-loading-spinners": "^0.3.6",
 		"svelte-range-slider-pips": "^4.0.7",
 		"sveltejs": "^0.0.1-security",
+		"vitest": "^4.0.16",
 		"zod": "^4.1.5"
 	},
 	"devDependencies": {

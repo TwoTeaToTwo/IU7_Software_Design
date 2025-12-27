@@ -5,7 +5,10 @@ export { Password, User } from "./models/user.ts";
 export { Subscribe } from "./models/subscribe.ts";
 
 // Output ports
-export type { ISearchStrategy } from "./output_ports/i_search_strategy.ts";
+export type {
+	GetPodcastsOptions,
+	ISearchStrategy,
+} from "./output_ports/i_search_strategy.ts";
 export type {
 	IPodcastStream,
 	IStreamStrategy,
@@ -44,10 +47,3 @@ export { UnsupportableURLError, UserFindError } from "./services/errors.ts";
 // Types
 export type { Id, SearchPlatform, StreamToolName, UInt } from "./types.ts";
 export { createUInt, INJECT_TYPES } from "./types.ts";
-
-// Tests
-export {
-	PodcastMother,
-	SubscribeMother,
-	UserMother,
-} from "./tests/object_mothers.ts";

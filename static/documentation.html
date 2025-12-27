@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Documentation</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 2rem; }
+    pre { background: #f4f4f4; padding: 1rem; overflow: auto; }
+  </style>
+</head>
+<body>
+  <div id="content">Loading...</div>
+
+  <script>
+    fetch('/Readme.md')
+      .then(res => res.text())
+      .then(md => {
+        document.getElementById('content').innerHTML = marked.parse(md);
+      });
+  </script>
+</body>
+</html>

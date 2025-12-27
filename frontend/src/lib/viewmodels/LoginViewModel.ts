@@ -1,46 +1,53 @@
 import { authController } from "../stores/Authentication.ts";
-import { domain } from "../Config.ts";
-import { errorHandler, messageHandler } from "../types.ts";
+import { api, domain } from "../Config.ts";
+import type { ErrorHandler, MessageHandler } from "../types.ts";
+import { browser } from "$app/environment";
+import { goto } from "$app/navigation";
 
 export const login = (
 	login: string,
 	password: string,
-	messageHandler: messageHandler,
+	messageHandler: MessageHandler,
 ): void => {
-	fetch(`${domain}/login`, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({
-			login: login,
-			password: password,
-		}),
-	})
-		.then(() => {
-			authController.responseAccessToken().then(() => {
-				messageHandler("Logged in successfully", "Message");
-			});
+	if (browser) {
+		fetch(`${domain}/${api}/sessions`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				login: login,
+				password: password,
+			}),
 		})
-		.catch(() => messageHandler("Can't log in", "ERROR"));
+			.then(() => {
+				authController.responseAccessToken().then(() => {
+					messageHandler("Logged in successfully", "Message");
+					goto("/feed");
+				});
+			})
+			.catch(() => messageHandler("Can't log in", "ERROR"));
+	}
 };
 
 export const logout = async (
 	accessToken: string,
-	errorHandler: errorHandler,
+	errorHandler: ErrorHandler,
 ): Promise<void> => {
-	try {
-		const responseURL = `${domain}/logout`;
-		const response = await fetch(responseURL, {
-			method: "DELETE",
-			headers: {
-				Authorization: accessToken,
-			},
-		});
-		if (!response.ok) {
+	if (browser) {
+		try {
+			const responseURL = `${domain}/${api}/sessions`;
+			const response = await fetch(responseURL, {
+				method: "DELETE",
+				headers: {
+					Authorization: accessToken,
+				},
+			});
+			if (!response.ok) {
+				errorHandler("Can't logout");
+			}
+		} catch {
 			errorHandler("Can't logout");
 		}
-	} catch {
-		errorHandler("Can't logout");
 	}
 };

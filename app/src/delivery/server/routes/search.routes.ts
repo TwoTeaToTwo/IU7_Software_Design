@@ -1,18 +1,39 @@
 import type { FastifyPluginAsync } from "fastify";
 import {
-	searchPodcastByQuerySchema,
-	searchPodcastByURLSchema,
+	searchPodcastsErrorSchema,
+	searchPodcastsNotFoundSchema,
+	searchPodcastsOkSchema,
+	searchPodcastsQuerySchema,
 } from "../schemas/search.schemas.ts";
 import { SearchController } from "../controllers/search.controller.ts";
 
 export const searchRoutes: FastifyPluginAsync = async (app) => {
 	await Promise.resolve();
-	app.get("/by-query", {
-		preHandler: [app.authenticate],
-		schema: { querystring: searchPodcastByQuerySchema },
-	}, SearchController.searchPodcastByQuery);
-	app.get("/by-url", {
-		preHandler: [app.authenticate],
-		schema: { querystring: searchPodcastByURLSchema },
-	}, SearchController.searchPodcastByURL);
+	app.get(
+		"",
+		{
+			preHandler: [app.authenticate],
+			schema: {
+				querystring: searchPodcastsQuerySchema,
+				tags: ["podcasts"],
+				summary: "search podcasts by query",
+				security: [{ bearerAuth: [] }],
+				headers: {
+					type: "object",
+					properties: {
+						access_token: {
+							type: "string",
+							description: "bearer token for authorization",
+						},
+					},
+				},
+				response: {
+					200: searchPodcastsOkSchema,
+					401: searchPodcastsErrorSchema,
+					404: searchPodcastsNotFoundSchema,
+				},
+			},
+		},
+		SearchController.searchPodcasts,
+	);
 };

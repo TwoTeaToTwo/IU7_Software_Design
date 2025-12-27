@@ -3,6 +3,7 @@
 	import { subscribe, type SubscribeViewModel } from '$lib/viewmodels/SubscribeViewModel';
 	import Input from '../Input.svelte';
 	import TextButton from '../TextButton.svelte';
+	import Button from '../Button.svelte';
 	import PopUp from '../PopUp.svelte';
 	let {
 		isOpen = $bindable(),
@@ -43,9 +44,11 @@
 	<button class="close" aria-label="close" onclick={() => (isOpen = !isOpen)}></button>
 	<Input placeholder="TITLE" bind:value={title} fontSize={'20pt'} width={'500px'} />
 	<Input placeholder="URL" bind:value={url} fontSize={'20pt'} width={'500px'} />
-	<TextButton
+	<Button
 		text="Subscribe"
-		handleClick={() => {
+		buttonStyle="width: 500px;"
+		textStyle="font-size: 22pt;"
+		handler={() => {
 			subscribeHandler();
 		}}
 	/>

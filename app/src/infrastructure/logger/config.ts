@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { parse } from "jsr:@std/toml";
-import { resolve } from "jsr:@std/path";
+import { parse } from "@std/toml";
+import { resolve } from "@std/path";
 
 const loggerConfigSchema = z.object({
 	logDirPath: z.string(),
